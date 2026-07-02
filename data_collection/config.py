@@ -121,5 +121,7 @@ HDI_TO_SHDI = {
     "gnipc": "gnic",
 }
 
-SHDI_LEVEL_NATIONAL = 1
-SHDI_LEVEL_SUBNATIONAL = 4
+# Confirmed against a real GDL export (2026-07): the 'Level' column is text,
+# not the numeric level=1/4 used in GDL's old query-string API.
+SHDI_LEVEL_NATIONAL = "National"
+SHDI_LEVEL_SUBNATIONAL = "Subnat"

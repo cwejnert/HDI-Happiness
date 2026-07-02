@@ -72,11 +72,15 @@ def read_shdi_extract(path: str | Path) -> pd.DataFrame:
     Load a Global Data Lab SHDI export and return a long-format DataFrame:
     iso3, country, gdlcode, region_name, level, year, indicator, value.
 
-    GDL's download can come out wide (one column per year) or already long
-    (a 'year' + single value column) depending on the 'transposition' option
-    chosen at export time; both are auto-detected. Column names are matched
-    case-insensitively against the aliases below because GDL has changed
-    its export headers across versions.
+    Confirmed against a real export (2026-07): GDL's CSV is already
+    long-by-year (one row per region-year, a 'Year' column, 'Level' as text
+    -- "National" / "Subnat", not a numeric code) with one column per
+    selected indicator (e.g. just 'shdi' if that's all you picked). Column
+    names are matched case-insensitively against the aliases below, and
+    anything left over after resolving the id columns is treated as an
+    indicator column and melted to long -- so this also handles a
+    multi-indicator export (shdi, healthindex, edindex, ... side by side)
+    without changes.
     """
     path = Path(path)
     if path.suffix.lower() in (".xlsx", ".xls"):
@@ -88,10 +92,11 @@ def read_shdi_extract(path: str | Path) -> pd.DataFrame:
     col_aliases = {
         "iso3": ["iso_code", "iso3", "iso3_code", "isocode"],
         "country": ["country", "countryname"],
+        "continent": ["continent"],
         "gdlcode": ["gdlcode", "gdl_code", "region_code"],
         "region_name": ["region", "regname", "region_name"],
         "level": ["level"],
-        "indicator": ["indicator", "indicator_code"],
+        "year": ["year"],
     }
 
     def find_col(aliases):
@@ -113,33 +118,36 @@ def read_shdi_extract(path: str | Path) -> pd.DataFrame:
     rename = {v: k for k, v in resolved.items() if v is not None}
     df = df.rename(columns=rename)
 
-    year_cols = [c for c in df.columns if re.fullmatch(r"(19|20)\d{2}", str(c))]
+    id_cols_present = [c for c in ("iso3", "country", "continent", "gdlcode", "region_name", "level", "year") if c in df.columns]
 
-    if year_cols:
-        # Wide format: one column per year -> melt to long.
+    if "year" in df.columns:
+        # Already long-by-year: whatever's left besides the id columns is
+        # one-or-more indicator value columns (e.g. 'shdi', 'healthindex').
+        indicator_cols = [c for c in df.columns if c not in id_cols_present]
+        if not indicator_cols:
+            raise ValueError(f"No indicator value column found in {path.name}. Actual columns: {list(df.columns)}")
+        long = df.melt(id_vars=id_cols_present, value_vars=indicator_cols,
+                        var_name="indicator", value_name="value")
+        long["year"] = long["year"].astype(int)
+    else:
+        # Wide-by-year (one column per year): older/alternate GDL export style.
+        year_cols = [c for c in df.columns if re.fullmatch(r"(19|20)\d{2}", str(c))]
+        if not year_cols:
+            raise ValueError(
+                f"Could not detect a 'Year' column or year-named columns in {path.name}. "
+                f"Actual columns: {list(df.columns)}"
+            )
         id_vars = [c for c in df.columns if c not in year_cols]
         long = df.melt(id_vars=id_vars, value_vars=year_cols,
                         var_name="year", value_name="value")
         long["year"] = long["year"].astype(int)
         if "indicator" not in long.columns:
-            long["indicator"] = path.stem  # fall back: caller should pass one indicator per file
-    elif "year" in df.columns:
-        long = df.copy()
-        value_col = find_col(["value", "shdi", "score"])
-        if value_col and value_col != "value":
-            long = long.rename(columns={value_col: "value"})
-        if "indicator" not in long.columns:
             long["indicator"] = path.stem
-    else:
-        raise ValueError(
-            f"Could not detect year columns or a 'year' column in {path.name}. "
-            f"Actual columns: {list(df.columns)}"
-        )
 
     keep = ["iso3", "country", "gdlcode", "region_name", "level", "year", "indicator", "value"]
     for c in keep:
         if c not in long.columns:
             long[c] = pd.NA
-    long["level"] = pd.to_numeric(long["level"], errors="coerce")
+    long["indicator"] = long["indicator"].str.lower()
     long["value"] = pd.to_numeric(long["value"], errors="coerce")
     return long[keep]

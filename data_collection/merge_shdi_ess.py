@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import ESS_ROUND_YEAR, SHDI_INDICATORS
+from config import ESS_ROUND_YEAR, SHDI_INDICATORS, SHDI_LEVEL_SUBNATIONAL
 from io_utils import read_ess_extract, read_shdi_extract
 
 
@@ -44,7 +44,7 @@ def main():
     )
     ess["shdi_match_year"] = ess["essround"].map(ESS_ROUND_YEAR)
 
-    shdi_sub = shdi[(shdi["level"] == 4) & (shdi["indicator"].isin(SHDI_INDICATORS))]
+    shdi_sub = shdi[(shdi["level"] == SHDI_LEVEL_SUBNATIONAL) & (shdi["indicator"].isin(SHDI_INDICATORS))]
     shdi_wide = shdi_sub.pivot_table(
         index=["iso3", "region_name", "year"], columns="indicator", values="value", aggfunc="mean"
     ).reset_index()

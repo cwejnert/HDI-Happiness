@@ -26,7 +26,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import ESS_ISO2_TO_ISO3
+from config import ESS_ISO2_TO_ISO3, SHDI_LEVEL_SUBNATIONAL
 from io_utils import read_ess_extract, read_shdi_extract
 
 # Below this similarity score (0-1), a match is flagged for manual review
@@ -63,7 +63,7 @@ def build_crosswalk(ess_df: pd.DataFrame, shdi_df: pd.DataFrame) -> tuple[pd.Dat
     if "region_label" not in ess_df.columns:
         raise ValueError("ESS extract has no 'region_label' -- re-run read_ess_extract on a .sav/.dta file with value labels, or supply labels manually.")
 
-    subnational = shdi_df[shdi_df["level"] == 4].drop_duplicates(["iso3", "gdlcode", "region_name"])
+    subnational = shdi_df[shdi_df["level"] == SHDI_LEVEL_SUBNATIONAL].drop_duplicates(["iso3", "gdlcode", "region_name"])
 
     all_matches, all_review = [], []
     for cntry_code, grp in ess_df.groupby("cntry"):
