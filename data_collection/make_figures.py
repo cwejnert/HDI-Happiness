@@ -102,6 +102,99 @@ def diffs_r2(panel, unit_col, time_col, x_col, y_col):
     return pd.Series(out)
 
 
+def _corr_p(x, y):
+    """Two-sided p-value for a Pearson correlation (t-test on r), mirrors HappinessHDI.R's fast_ols."""
+    from scipy import stats
+    n = len(x)
+    if n < 4 or np.std(x) == 0 or np.std(y) == 0:
+        return np.nan
+    r = np.corrcoef(x, y)[0, 1]
+    if abs(r) >= 1:
+        return 0.0
+    t = r * np.sqrt((n - 2) / (1 - r ** 2))
+    return 2 * stats.t.sf(np.abs(t), df=n - 2)
+
+
+def levels_p(panel, unit_col, x_col, y_col):
+    def _p(g):
+        sub = g.dropna(subset=[x_col, y_col])
+        return _corr_p(sub[x_col].to_numpy(), sub[y_col].to_numpy())
+    return panel.groupby(unit_col).apply(_p)
+
+
+def diffs_p(panel, unit_col, time_col, x_col, y_col):
+    out = {}
+    for unit, grp in panel.sort_values(time_col).groupby(unit_col):
+        grp = grp.dropna(subset=[x_col, y_col])
+        if len(grp) < 5:
+            out[unit] = np.nan
+            continue
+        dx, dy = grp[x_col].diff().to_numpy()[1:], grp[y_col].diff().to_numpy()[1:]
+        ok = ~np.isnan(dx) & ~np.isnan(dy)
+        out[unit] = _corr_p(dx[ok], dy[ok]) if ok.sum() >= 4 else np.nan
+    return pd.Series(out)
+
+
+def bh_fdr(pvals):
+    """Benjamini-Hochberg FDR correction, matching R's p.adjust(method='BH')."""
+    p = np.asarray(pvals, dtype=float)
+    n = len(p)
+    valid = ~np.isnan(p)
+    q = np.full(n, np.nan)
+    if valid.sum() == 0:
+        return q
+    pv = p[valid]
+    order = np.argsort(pv)
+    ranked = pv[order]
+    m = len(pv)
+    adj = ranked * m / np.arange(1, m + 1)
+    adj = np.minimum.accumulate(adj[::-1])[::-1]
+    adj = np.clip(adj, 0, 1)
+    out = np.empty(m)
+    out[order] = adj
+    q[valid] = out
+    return q
+
+
+def significance_share(panel, unit_col, indicators, outcome, spec, time_col=None, alpha=0.05):
+    """
+    For each indicator, the share of units (countries/regions) where that
+    indicator is FDR-significant (q < alpha) -- FDR correction applied
+    jointly across `indicators` within each unit, matching HappinessHDI.R's
+    per-country Benjamini-Hochberg design.
+
+    spec: "levels" or "diffs". Returns a dict {indicator: (n_sig, n_total, pct)}.
+    """
+    units = panel[unit_col].unique()
+    sig_counts = {ind: 0 for ind in indicators}
+    total_counts = {ind: 0 for ind in indicators}
+    for unit in units:
+        grp = panel[panel[unit_col] == unit]
+        pvals = []
+        for ind in indicators:
+            if spec == "levels":
+                sub = grp.dropna(subset=[ind, outcome])
+                p = _corr_p(sub[ind].to_numpy(), sub[outcome].to_numpy())
+            else:
+                sub = grp.sort_values(time_col).dropna(subset=[ind, outcome])
+                dx = sub[ind].diff().to_numpy()[1:]
+                dy = sub[outcome].diff().to_numpy()[1:]
+                ok = ~np.isnan(dx) & ~np.isnan(dy)
+                p = _corr_p(dx[ok], dy[ok]) if ok.sum() >= 4 else np.nan
+            pvals.append(p)
+        q = bh_fdr(pvals)
+        for ind, qi in zip(indicators, q):
+            if not np.isnan(qi):
+                total_counts[ind] += 1
+                if qi < alpha:
+                    sig_counts[ind] += 1
+    return {
+        ind: (sig_counts[ind], total_counts[ind],
+              100 * sig_counts[ind] / total_counts[ind] if total_counts[ind] else np.nan)
+        for ind in indicators
+    }
+
+
 def savefig(fig, name, note=None, top=0.88):
     fig.subplots_adjust(top=top)
     if note:
@@ -184,22 +277,48 @@ def section_b():
     panel.to_csv("processed/country_round_panel.csv", index=False)
     indicators = [HDI_COMPOSITE] + HDI_SUBCOMPS
 
-    # B1: heatmap -- country x HDI indicator, R^2 (levels + diffs), for stflife
+    # B1: heatmap -- country x HDI indicator, FDR significance tier (levels + diffs), for stflife.
+    # BH correction applied across the 5 indicators within each country/spec,
+    # exactly like HappinessHDI.R's sig_levels_fdr / sig_diffs_fdr.
+    def _levels_r2_single(g, ind):
+        sub = g.dropna(subset=[ind, "stflife"])
+        return fast_r2(sub[ind], sub["stflife"])
+
+    def _diffs_r2_single(g, ind):
+        sub = g.sort_values("essround").dropna(subset=[ind, "stflife"])
+        dx, dy = sub[ind].diff().to_numpy()[1:], sub["stflife"].diff().to_numpy()[1:]
+        ok = ~np.isnan(dx) & ~np.isnan(dy)
+        if ok.sum() < 4 or np.std(dx[ok]) == 0 or np.std(dy[ok]) == 0:
+            return np.nan
+        return np.corrcoef(dx[ok], dy[ok])[0, 1] ** 2
+
     rows = []
     for cntry, grp in panel.groupby("cntry"):
+        p_lev = [_corr_p(*[grp.dropna(subset=[ind, "stflife"])[c].to_numpy() for c in (ind, "stflife")])
+                 for ind in indicators]
+        q_lev = bh_fdr(p_lev)
+        p_dif = []
         for ind in indicators:
-            rows.append({
-                "cntry": cntry, "indicator": ind,
-                "r2_levels": fast_r2(grp[ind], grp["stflife"]),
-                "r2_diffs": np.nan,
-            })
+            sub = grp.sort_values("essround").dropna(subset=[ind, "stflife"])
+            dx, dy = sub[ind].diff().to_numpy()[1:], sub["stflife"].diff().to_numpy()[1:]
+            ok = ~np.isnan(dx) & ~np.isnan(dy)
+            p_dif.append(_corr_p(dx[ok], dy[ok]) if ok.sum() >= 4 else np.nan)
+        q_dif = bh_fdr(p_dif)
+        for i, ind in enumerate(indicators):
+            rows.append({"cntry": cntry, "indicator": ind,
+                         "r2_levels": _levels_r2_single(grp, ind), "r2_diffs": _diffs_r2_single(grp, ind),
+                         "q_levels": q_lev[i], "q_diffs": q_dif[i]})
     heat = pd.DataFrame(rows)
-    diffs_by_ind = {ind: diffs_r2(panel, "cntry", "essround", ind, "stflife") for ind in indicators}
-    heat["r2_diffs"] = heat.apply(lambda r: diffs_by_ind[r["indicator"]].get(r["cntry"], np.nan), axis=1)
     heat["ind_label"] = heat["indicator"].map(HDI_IND_SHORT)
-    # Countries with < 4 ESS rounds available can't produce any levels R^2
-    # (fast_r2 needs n>=4) -- drop them from the heatmap instead of showing
-    # blank rows; they're still counted in the round-coverage figures (A1/A2).
+
+    def sig_tier(q):
+        if pd.isna(q):
+            return np.nan
+        return 2 if q < 0.05 else 1 if q < 0.10 else 0
+
+    heat["tier_levels"] = heat["q_levels"].apply(sig_tier)
+    heat["tier_diffs"] = heat["q_diffs"].apply(sig_tier)
+
     has_any = heat.groupby("cntry")["r2_levels"].apply(lambda s: s.notna().any())
     keep_countries = has_any[has_any].index
     dropped = sorted(set(heat["cntry"].unique()) - set(keep_countries))
@@ -208,29 +327,33 @@ def section_b():
     heat["cntry"] = pd.Categorical(heat["cntry"], categories=order, ordered=True)
     heat = heat.sort_values("cntry")
 
+    from matplotlib.colors import ListedColormap
+    sig_cmap = ListedColormap([SIG_COLORS["ns"], SIG_COLORS["weak"], SIG_COLORS["sig"]])
+
     fig, axes = plt.subplots(1, 2, figsize=(12, 10), sharey=True)
-    im = None
-    for ax, spec, col in zip(axes, ["Levels", "Across-round differences"], ["r2_levels", "r2_diffs"]):
-        piv = heat.pivot(index="cntry", columns="ind_label", values=col)
-        piv = piv[[HDI_IND_SHORT[i] for i in indicators]]
-        im = ax.imshow(piv.values, cmap="Blues", vmin=0, vmax=1, aspect="auto")
+    for ax, spec, col, rcol in zip(axes, ["Levels", "Across-round differences"],
+                                    ["tier_levels", "tier_diffs"], ["r2_levels", "r2_diffs"]):
+        piv = heat.pivot(index="cntry", columns="ind_label", values=col)[[HDI_IND_SHORT[i] for i in indicators]]
+        rpiv = heat.pivot(index="cntry", columns="ind_label", values=rcol)[[HDI_IND_SHORT[i] for i in indicators]]
+        ax.imshow(piv.values, cmap=sig_cmap, vmin=0, vmax=2, aspect="auto")
         ax.set_xticks(range(len(piv.columns))); ax.set_xticklabels(piv.columns, rotation=45, ha="right", fontsize=8)
         ax.set_yticks(range(len(piv.index))); ax.set_yticklabels(piv.index, fontsize=6.5)
         ax.set_title(spec, fontsize=10.5, loc="left")
         for i in range(piv.shape[0]):
             for j in range(piv.shape[1]):
-                v = piv.values[i, j]
+                v, r = piv.values[i, j], rpiv.values[i, j]
                 if not np.isnan(v):
-                    ax.text(j, i, f"{v:.2f}", ha="center", va="center", fontsize=5.2,
-                            color="white" if v > 0.5 else INK_SECONDARY)
-    fig.subplots_adjust(right=0.88)
-    cbar_ax = fig.add_axes([0.90, 0.15, 0.015, 0.55])
-    fig.colorbar(im, cax=cbar_ax, label="R²")
-    suptitle(fig, "B1. HDI vs. Life Satisfaction: Country x Indicator Heatmap",
-             "Countries ordered by median levels R². Mirrors HappinessHDI.R's D1 heatmap.")
+                    txt_color = "white" if v == 2 else INK_SECONDARY
+                    ax.text(j, i, f"{r:.2f}", ha="center", va="center", fontsize=5.2, color=txt_color)
+        pct_sig = 100 * (piv.values == 2).sum() / np.isfinite(piv.values).sum()
+        ax.set_xlabel(f"{pct_sig:.0f}% of cells FDR-significant (q<.05)", fontsize=8.5, color=INK_SECONDARY)
+    handles = [plt.Rectangle((0, 0), 1, 1, color=SIG_COLORS[k]) for k in ("ns", "weak", "sig")]
+    fig.legend(handles, ["Not significant", "FDR q<.10", "FDR q<.05"], loc="lower center",
+               bbox_to_anchor=(0.5, -0.02), ncol=3, frameon=False, fontsize=9)
+    suptitle(fig, "B1. HDI vs. Life Satisfaction: Significance Heatmap (FDR-Corrected)",
+             "Countries ordered by median levels R². Color = significance tier (BH-corrected across the 5 "
+             "indicators per country); number in each cell is still R² for reference.")
     note = (f"Excluded (fewer than 4 ESS rounds with HDI/stflife data): {', '.join(dropped)}. "
-            f"Diffs R^2 for a country with only 5 rounds rests on <=4 differenced points -- "
-            f"treat high across-round values with caution (no LOYO cross-validation here, unlike HappinessHDI.R). "
             f"{SOURCE_ESS}") if dropped else SOURCE_ESS
     savefig(fig, "B1_heatmap_country_indicator.png", note, top=0.90)
 
@@ -279,14 +402,18 @@ def section_b():
              "Open circle = levels; filled circle = across-round differences. Mirrors HappinessHDI.R's D3 dumbbell.")
     savefig(fig, "B3_dumbbell_national.png", SOURCE_ESS, top=0.93)
 
-    # B4: collapse bar -- median R^2, levels vs diffs, per indicator x outcome
+    # B4: collapse bar -- share of countries FDR-significant (q<.05), levels vs diffs, per indicator x outcome
     bar_rows = []
-    for ind in indicators:
-        for outcome in ["stflife", "happy"]:
-            lev = levels_r2(panel, "cntry", ind, outcome)
-            dif = diffs_r2(panel, "cntry", "essround", ind, outcome)
-            bar_rows.append({"indicator": HDI_IND_SHORT[ind], "outcome": outcome, "spec": "Levels", "median_r2": lev.median()})
-            bar_rows.append({"indicator": HDI_IND_SHORT[ind], "outcome": outcome, "spec": "Diffs", "median_r2": dif.median()})
+    for outcome in ["stflife", "happy"]:
+        share_lev = significance_share(panel, "cntry", indicators, outcome, "levels")
+        share_dif = significance_share(panel, "cntry", indicators, outcome, "diffs", time_col="essround")
+        for ind in indicators:
+            n_sig, n_tot, pct = share_lev[ind]
+            bar_rows.append({"indicator": HDI_IND_SHORT[ind], "outcome": outcome, "spec": "Levels",
+                             "pct_sig": pct, "n_sig": n_sig, "n_tot": n_tot})
+            n_sig, n_tot, pct = share_dif[ind]
+            bar_rows.append({"indicator": HDI_IND_SHORT[ind], "outcome": outcome, "spec": "Diffs",
+                             "pct_sig": pct, "n_sig": n_sig, "n_tot": n_tot})
     bar_df = pd.DataFrame(bar_rows)
     fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
     for ax, outcome in zip(axes, ["stflife", "happy"]):
@@ -294,16 +421,19 @@ def section_b():
         ind_order = [HDI_IND_SHORT[i] for i in indicators]
         x = np.arange(len(ind_order)); width = 0.35
         for i, spec in enumerate(["Levels", "Diffs"]):
-            vals = [sub[(sub.indicator == ii) & (sub.spec == spec)]["median_r2"].iloc[0] for ii in ind_order]
+            rows_i = [sub[(sub.indicator == ii) & (sub.spec == spec)].iloc[0] for ii in ind_order]
+            vals = [r["pct_sig"] for r in rows_i]
             color = CAT["blue"] if spec == "Levels" else CAT["red"]
             bars = ax.bar(x + (i - 0.5) * width, vals, width, label=spec, color=color, alpha=0.88)
-            ax.bar_label(bars, fmt="%.2f", padding=2, fontsize=7.5, color=INK_SECONDARY)
+            labels = [f"{r['n_sig']:.0f}/{r['n_tot']:.0f}" for r in rows_i]
+            ax.bar_label(bars, labels=labels, padding=2, fontsize=7, color=INK_SECONDARY)
         ax.set_xticks(x); ax.set_xticklabels(ind_order, rotation=30, ha="right", fontsize=8.5)
         ax.set_title(outcome, fontsize=11, loc="left")
-    axes[0].set_ylabel("Median country-level R²")
+        ax.set_ylim(0, 100)
+    axes[0].set_ylabel("% of countries FDR-significant (q<.05)")
     axes[1].legend(frameon=False, fontsize=9)
-    suptitle(fig, "B4. Median R² Across Countries: Levels vs. Across-Round Differences",
-             "Mirrors HappinessHDI.R's D5 collapse bar chart.")
+    suptitle(fig, "B4. Share of Countries Statistically Significant: Levels vs. Differences",
+             "BH-FDR corrected across the 5 indicators within each country. Bar labels show sig./total countries.")
     savefig(fig, "B4_collapse_bar_national.png", SOURCE_ESS)
 
     # B5: quadrant plot -- HDI trend vs stflife trend across ESS rounds
@@ -368,28 +498,27 @@ def section_c():
              "per-country-median R² that's directly comparable to HappinessHDI.R's headline 0.322.")
     savefig(fig, "C1_whr_vs_shdi_national_levels.png", SOURCE_WHR)
 
-    # C2: collapse bar -- HDI vs SHDI-national, levels vs diffs, both vs WHR happiness
-    rows = []
-    for ind, label in [("hdi", "UNDP HDI"), ("shdi_national", "GDL SHDI (national)")]:
-        lev = levels_r2(panel, "iso3", ind, "whr_happiness")
-        dif = diffs_r2(panel, "iso3", "year", ind, "whr_happiness")
-        rows.append({"indicator": label, "spec": "Levels", "median_r2": lev.median()})
-        rows.append({"indicator": label, "spec": "Year-to-year differences", "median_r2": dif.median()})
-    bar_df = pd.DataFrame(rows)
+    # C2: collapse bar -- share of countries FDR-significant, HDI vs SHDI-national, levels vs diffs
+    inds_c2 = ["hdi", "shdi_national"]
+    labels_c2 = {"hdi": "UNDP HDI", "shdi_national": "GDL SHDI (national)"}
+    share_lev = significance_share(panel, "iso3", inds_c2, "whr_happiness", "levels")
+    share_dif = significance_share(panel, "iso3", inds_c2, "whr_happiness", "diffs", time_col="year")
     fig, ax = plt.subplots(figsize=(8, 6.5))
     x = np.arange(2); width = 0.35
-    inds = ["UNDP HDI", "GDL SHDI (national)"]
-    for i, spec in enumerate(["Levels", "Year-to-year differences"]):
-        vals = [bar_df[(bar_df.indicator == ii) & (bar_df.spec == spec)]["median_r2"].iloc[0] for ii in inds]
-        color = CAT["blue"] if spec == "Levels" else CAT["red"]
-        bars = ax.bar(x + (i - 0.5) * width, vals, width, label=spec, color=color, alpha=0.88)
-        ax.bar_label(bars, fmt="%.3f", padding=3, fontsize=9, color=INK_SECONDARY)
+    inds = [labels_c2[i] for i in inds_c2]
+    for i, (spec_label, share) in enumerate([("Levels", share_lev), ("Year-to-year differences", share_dif)]):
+        vals = [share[ind][2] for ind in inds_c2]
+        labels = [f"{share[ind][0]:.0f}/{share[ind][1]:.0f}" for ind in inds_c2]
+        color = CAT["blue"] if spec_label == "Levels" else CAT["red"]
+        bars = ax.bar(x + (i - 0.5) * width, vals, width, label=spec_label, color=color, alpha=0.88)
+        ax.bar_label(bars, labels=labels, padding=3, fontsize=9, color=INK_SECONDARY)
     ax.set_xticks(x); ax.set_xticklabels(inds)
-    ax.set_ylabel("Median country-level R² vs. WHR happiness")
+    ax.set_ylim(0, 100)
+    ax.set_ylabel("% of countries FDR-significant (q<.05) vs. WHR happiness")
     ax.legend(frameon=False, fontsize=9)
     suptitle(fig, "C2. Does SHDI Show the Same Levels-Diffs Collapse as HDI?",
-             "Same collapse design as the original analysis; both national indices tested against WHR happiness.")
-    savefig(fig, "C2_collapse_bar_hdi_vs_shdi.png", SOURCE_WHR)
+             "Same design as the original analysis; FDR-corrected jointly across HDI and SHDI.")
+    savefig(fig, "C2_collapse_bar_hdi_vs_shdi.png", SOURCE_WHR, top=0.82)
 
     # C3: HDI vs SHDI-national agreement check
     fig, ax = plt.subplots(figsize=(7.5, 7.5))
@@ -550,38 +679,38 @@ def section_e():
              "more tightly than development itself.")
     savefig(fig, "E2_mechanism_vs_stflife.png", SOURCE_ESS, top=0.85)
 
-    # E3: ranking bar chart -- R^2 of stflife against HDI/SHDI vs. trust vs. health,
-    # national and regional side by side. Directly answers "which matters most?"
-    nat_r2 = {
-        "HDI": fast_r2(nat["hdi"], nat["stflife"]),
-        "Social trust": fast_r2(nat["ppltrst"], nat["stflife"]),
-        "Self-rated health": fast_r2(nat["health"], nat["stflife"]),
-    }
-    reg_r2 = {
-        "SHDI": fast_r2(reg["shdi"], reg["stflife"]),
-        "Social trust": fast_r2(reg["ppltrst"], reg["stflife"]),
-        "Self-rated health": fast_r2(reg["health"], reg["stflife"]),
-    }
+    # E3: ranking bar chart -- share of units where HDI/SHDI, trust, or health
+    # significantly predicts stflife (levels), national and regional side by
+    # side. FDR-corrected jointly across the 3 predictors within each unit.
+    nat_share = significance_share(nat, "cntry", ["hdi", "ppltrst", "health"], "stflife", "levels")
+    reg_share = significance_share(reg, "region_key", ["shdi", "ppltrst", "health"], "stflife", "levels")
+    nat_labels = {"hdi": "HDI", "ppltrst": "Social trust", "health": "Self-rated health"}
+    reg_labels = {"shdi": "SHDI", "ppltrst": "Social trust", "health": "Self-rated health"}
+
     fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
-    for ax, r2_dict, level in zip(axes, [nat_r2, reg_r2], ["National (country-round)", "Regional (region-round)"]):
-        ordered = sorted(r2_dict.items(), key=lambda kv: kv[1], reverse=True)
-        labels = [k for k, _ in ordered]
-        vals = [v for _, v in ordered]
+    for ax, share, lbl_map, level in zip(
+        axes, [nat_share, reg_share], [nat_labels, reg_labels],
+        ["National (country-level)", "Regional (region-level)"]
+    ):
+        ordered = sorted(share.items(), key=lambda kv: kv[1][2], reverse=True)
+        labels = [lbl_map[k] for k, _ in ordered]
+        vals = [v[2] for _, v in ordered]
+        counts = [f"{v[0]:.0f}/{v[1]:.0f}" for _, v in ordered]
         colors = [CAT["blue"] if lbl in ("HDI", "SHDI") else CAT["aqua"] if lbl == "Social trust" else CAT["violet"]
                   for lbl in labels]
         bars = ax.bar(labels, vals, color=colors, width=0.6, alpha=0.9)
-        ax.bar_label(bars, fmt="%.3f", padding=3, fontsize=10, color=INK_SECONDARY)
+        ax.bar_label(bars, labels=counts, padding=3, fontsize=10, color=INK_SECONDARY)
         ax.set_title(level, fontsize=11, loc="left")
-        ax.set_ylim(0, max(max(nat_r2.values()), max(reg_r2.values())) * 1.25)
+        ax.set_ylim(0, 100)
         plt.setp(ax.get_xticklabels(), fontsize=9.5)
-    axes[0].set_ylabel("R² vs. stflife (pooled)")
+    axes[0].set_ylabel("% of units FDR-significant (q<.05) vs. stflife")
     suptitle(fig, "E3. Which Predictor Explains Life Satisfaction Best?",
-             "Pooled R² of stflife against each predictor alone (mixes between- and within-unit variation, "
-             "like C1/D1 -- not the per-country-median R² used in B1-B4). Bars ranked highest to lowest per panel.")
+             "Share of countries/regions where each predictor is individually FDR-significant, corrected "
+             "jointly across the 3 predictors per unit. Bar labels show sig./total units.")
     savefig(fig, "E3_r2_ranking_stflife.png", SOURCE_ESS)
 
-    print(f"Section E ranking -- National: {sorted(nat_r2.items(), key=lambda kv: -kv[1])}")
-    print(f"Section E ranking -- Regional: {sorted(reg_r2.items(), key=lambda kv: -kv[1])}")
+    print(f"Section E significance share -- National: {sorted(nat_share.items(), key=lambda kv: -kv[1][2])}")
+    print(f"Section E significance share -- Regional: {sorted(reg_share.items(), key=lambda kv: -kv[1][2])}")
 
 
 if __name__ == "__main__":
