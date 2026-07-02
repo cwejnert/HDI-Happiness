@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import ESS_ROUND_YEAR, SHDI_INDICATORS, SHDI_LEVEL_SUBNATIONAL
+from config import ESS_ISO2_TO_ISO3, ESS_ROUND_YEAR, SHDI_INDICATORS, SHDI_LEVEL_SUBNATIONAL
 from io_utils import read_ess_extract, read_shdi_extract
 
 
@@ -35,12 +35,13 @@ def main():
     shdi = read_shdi_extract(shdi_path)
     crosswalk = pd.read_csv(crosswalk_path)
 
-    if "region_label" not in ess.columns:
-        raise ValueError("ESS extract has no 'region_label'; re-export with value labels applied.")
+    if "region" not in ess.columns:
+        raise ValueError("ESS extract has no 'region' column; re-export with the regional identifier included.")
 
+    ess["iso3"] = ess["cntry"].map(ESS_ISO2_TO_ISO3)
     ess = ess.merge(
-        crosswalk[["cntry", "ess_region_name", "gdl_region_name", "match_score"]],
-        left_on=["cntry", "region_label"], right_on=["cntry", "ess_region_name"], how="left",
+        crosswalk[["cntry", "ess_region_code", "ess_region_name", "gdl_region_name", "match_score"]],
+        left_on=["cntry", "region"], right_on=["cntry", "ess_region_code"], how="left",
     )
     ess["shdi_match_year"] = ess["essround"].map(ESS_ROUND_YEAR)
 
@@ -49,8 +50,11 @@ def main():
         index=["iso3", "region_name", "year"], columns="indicator", values="value", aggfunc="mean"
     ).reset_index()
 
+    # Several GDL region names recur across countries (e.g. "Central", "North"),
+    # so every lookup below is scoped by iso3 as well as region_name -- matching
+    # on name alone would silently fan-out the merge across unrelated countries.
     merged_parts = []
-    for (cntry, region), grp in ess.groupby(["cntry", "gdl_region_name"], dropna=False):
+    for (iso3, region), grp in ess.groupby(["iso3", "gdl_region_name"], dropna=False):
         if pd.isna(region):
             grp = grp.copy()
             for ind in SHDI_INDICATORS:
@@ -59,8 +63,8 @@ def main():
             merged_parts.append(grp)
             continue
 
-        region_years = shdi_wide.loc[shdi_wide["region_name"] == region, "year"]
-        if region_years.empty:
+        region_shdi = shdi_wide[(shdi_wide["iso3"] == iso3) & (shdi_wide["region_name"] == region)]
+        if region_shdi.empty:
             grp = grp.copy()
             for ind in SHDI_INDICATORS:
                 grp[ind] = pd.NA
@@ -68,13 +72,13 @@ def main():
             merged_parts.append(grp)
             continue
 
-        years_arr = region_years.to_numpy()
+        years_arr = region_shdi["year"].to_numpy()
         grp = grp.copy()
         grp["shdi_year_used"] = grp["shdi_match_year"].apply(
             lambda y: years_arr[(abs(years_arr - y)).argmin()] if pd.notna(y) else None
         )
         grp = grp.merge(
-            shdi_wide[shdi_wide["region_name"] == region].rename(columns={"year": "shdi_year_used"}),
+            region_shdi.drop(columns=["iso3", "region_name"]).rename(columns={"year": "shdi_year_used"}),
             on="shdi_year_used", how="left", suffixes=("", "_shdi"),
         )
         merged_parts.append(grp)
