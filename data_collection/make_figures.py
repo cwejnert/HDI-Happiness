@@ -526,6 +526,63 @@ def section_e():
              "ppltrst is 0-10 generalized trust. First look only; concept note's full mechanism model is a next step.")
     savefig(fig, "E1_mechanism_variables.png", SOURCE_ESS, top=0.87)
 
+    # E2: same layout, but mechanism variables plotted directly against stflife
+    # (not against HDI/SHDI) -- isolates each variable's own link to wellbeing.
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    specs2 = [
+        (axes[0, 0], nat, "ppltrst", "stflife", "National: Social Trust vs. Life Satisfaction", CAT["blue"]),
+        (axes[0, 1], nat, "health", "stflife", "National: Self-Rated Health vs. Life Satisfaction", CAT["green"]),
+        (axes[1, 0], reg, "ppltrst", "stflife", "Regional: Social Trust vs. Life Satisfaction", CAT["aqua"]),
+        (axes[1, 1], reg, "health", "stflife", "Regional: Self-Rated Health vs. Life Satisfaction", CAT["violet"]),
+    ]
+    for ax, data, xcol, ycol, title, color in specs2:
+        sub = data.dropna(subset=[xcol, ycol])
+        ax.scatter(sub[xcol], sub[ycol], s=16, alpha=0.4, color=color, edgecolors="none")
+        r2 = fast_r2(sub[xcol], sub[ycol])
+        ax.annotate(f"R² = {r2:.3f}  (n={len(sub)})", xy=(0.03, 0.93), xycoords="axes fraction",
+                    fontsize=8.5, color=INK_SECONDARY)
+        ax.set_title(title, fontsize=10.5, loc="left")
+        ax.set_xlabel(xcol.upper())
+        ax.set_ylabel("stflife (mean, country/region-round)")
+    suptitle(fig, "E2. Mechanism Variables vs. Life Satisfaction Directly",
+             "Same variables as E1, now regressed straight onto stflife instead of onto HDI/SHDI -- "
+             "compare these R² to E3's ranking to see whether trust or health tracks wellbeing "
+             "more tightly than development itself.")
+    savefig(fig, "E2_mechanism_vs_stflife.png", SOURCE_ESS, top=0.85)
+
+    # E3: ranking bar chart -- R^2 of stflife against HDI/SHDI vs. trust vs. health,
+    # national and regional side by side. Directly answers "which matters most?"
+    nat_r2 = {
+        "HDI": fast_r2(nat["hdi"], nat["stflife"]),
+        "Social trust": fast_r2(nat["ppltrst"], nat["stflife"]),
+        "Self-rated health": fast_r2(nat["health"], nat["stflife"]),
+    }
+    reg_r2 = {
+        "SHDI": fast_r2(reg["shdi"], reg["stflife"]),
+        "Social trust": fast_r2(reg["ppltrst"], reg["stflife"]),
+        "Self-rated health": fast_r2(reg["health"], reg["stflife"]),
+    }
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
+    for ax, r2_dict, level in zip(axes, [nat_r2, reg_r2], ["National (country-round)", "Regional (region-round)"]):
+        ordered = sorted(r2_dict.items(), key=lambda kv: kv[1], reverse=True)
+        labels = [k for k, _ in ordered]
+        vals = [v for _, v in ordered]
+        colors = [CAT["blue"] if lbl in ("HDI", "SHDI") else CAT["aqua"] if lbl == "Social trust" else CAT["violet"]
+                  for lbl in labels]
+        bars = ax.bar(labels, vals, color=colors, width=0.6, alpha=0.9)
+        ax.bar_label(bars, fmt="%.3f", padding=3, fontsize=10, color=INK_SECONDARY)
+        ax.set_title(level, fontsize=11, loc="left")
+        ax.set_ylim(0, max(max(nat_r2.values()), max(reg_r2.values())) * 1.25)
+        plt.setp(ax.get_xticklabels(), fontsize=9.5)
+    axes[0].set_ylabel("R² vs. stflife (pooled)")
+    suptitle(fig, "E3. Which Predictor Explains Life Satisfaction Best?",
+             "Pooled R² of stflife against each predictor alone (mixes between- and within-unit variation, "
+             "like C1/D1 -- not the per-country-median R² used in B1-B4). Bars ranked highest to lowest per panel.")
+    savefig(fig, "E3_r2_ranking_stflife.png", SOURCE_ESS)
+
+    print(f"Section E ranking -- National: {sorted(nat_r2.items(), key=lambda kv: -kv[1])}")
+    print(f"Section E ranking -- Regional: {sorted(reg_r2.items(), key=lambda kv: -kv[1])}")
+
 
 if __name__ == "__main__":
     section_a()
