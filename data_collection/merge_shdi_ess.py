@@ -1,0 +1,97 @@
+"""
+Approach 2 (concept note): ESS respondents + Subnational HDI (SHDI).
+
+Uses the crosswalk built by build_region_crosswalk.py to attach GDL's
+region code to each ESS respondent, then merges the SHDI panel (composite +
+health/education/income dimension indices) at the region-year level,
+matching each ESS round's fieldwork year to the nearest available SHDI year.
+
+    python merge_shdi_ess.py raw/ess_extract.sav raw/shdi_subnational.csv processed/region_crosswalk.csv
+
+Output: processed/ess_with_shdi.csv
+    One row per ESS respondent with a crosswalk match, with shdi/healthindex/
+    edindex/incindex/lifexp/esch/msch/gnic columns attached, plus 'cntry' kept
+    for the country fixed effects the concept note's Model 1 calls for.
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import pandas as pd
+
+from config import ESS_ROUND_YEAR, SHDI_INDICATORS
+from io_utils import read_ess_extract, read_shdi_extract
+
+
+def main():
+    if len(sys.argv) != 4:
+        print(f"Usage: python {Path(__file__).name} <ess_extract> <shdi_subnational.csv> <region_crosswalk.csv>")
+        sys.exit(1)
+
+    ess_path, shdi_path, crosswalk_path = sys.argv[1], sys.argv[2], sys.argv[3]
+
+    ess = read_ess_extract(ess_path)
+    shdi = read_shdi_extract(shdi_path)
+    crosswalk = pd.read_csv(crosswalk_path)
+
+    if "region_label" not in ess.columns:
+        raise ValueError("ESS extract has no 'region_label'; re-export with value labels applied.")
+
+    ess = ess.merge(
+        crosswalk[["cntry", "ess_region_name", "gdl_region_name", "match_score"]],
+        left_on=["cntry", "region_label"], right_on=["cntry", "ess_region_name"], how="left",
+    )
+    ess["shdi_match_year"] = ess["essround"].map(ESS_ROUND_YEAR)
+
+    shdi_sub = shdi[(shdi["level"] == 4) & (shdi["indicator"].isin(SHDI_INDICATORS))]
+    shdi_wide = shdi_sub.pivot_table(
+        index=["iso3", "region_name", "year"], columns="indicator", values="value", aggfunc="mean"
+    ).reset_index()
+
+    merged_parts = []
+    for (cntry, region), grp in ess.groupby(["cntry", "gdl_region_name"], dropna=False):
+        if pd.isna(region):
+            grp = grp.copy()
+            for ind in SHDI_INDICATORS:
+                grp[ind] = pd.NA
+            grp["shdi_year_used"] = pd.NA
+            merged_parts.append(grp)
+            continue
+
+        region_years = shdi_wide.loc[shdi_wide["region_name"] == region, "year"]
+        if region_years.empty:
+            grp = grp.copy()
+            for ind in SHDI_INDICATORS:
+                grp[ind] = pd.NA
+            grp["shdi_year_used"] = pd.NA
+            merged_parts.append(grp)
+            continue
+
+        years_arr = region_years.to_numpy()
+        grp = grp.copy()
+        grp["shdi_year_used"] = grp["shdi_match_year"].apply(
+            lambda y: years_arr[(abs(years_arr - y)).argmin()] if pd.notna(y) else None
+        )
+        grp = grp.merge(
+            shdi_wide[shdi_wide["region_name"] == region].rename(columns={"year": "shdi_year_used"}),
+            on="shdi_year_used", how="left", suffixes=("", "_shdi"),
+        )
+        merged_parts.append(grp)
+
+    merged = pd.concat(merged_parts, ignore_index=True)
+
+    out_path = Path("processed") / "ess_with_shdi.csv"
+    out_path.parent.mkdir(exist_ok=True)
+    merged.to_csv(out_path, index=False)
+
+    n_total = len(merged)
+    n_region_matched = merged["gdl_region_name"].notna().sum()
+    n_value_matched = merged["shdi"].notna().sum() if "shdi" in merged else 0
+    print(f"Region crosswalk matched: {n_region_matched} / {n_total} respondents.")
+    print(f"SHDI value attached:      {n_value_matched} / {n_total} respondents.")
+    print(f"Saved: {out_path}")
+
+
+if __name__ == "__main__":
+    main()
