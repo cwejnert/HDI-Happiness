@@ -29,6 +29,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 import numpy as np
 import pandas as pd
 
@@ -58,7 +59,9 @@ plt.rcParams.update({
     "figure.dpi": 150, "savefig.dpi": 150, "savefig.facecolor": SURFACE,
 })
 
-SOURCE_ESS = "Sources: ESS rounds 5-11; UNDP HDR; Global Data Lab SHDI."
+ESS_YEARS_USED = sorted(ESS_ROUND_YEAR[r] for r in range(5, 12))
+ESS_YEARS_LABEL = ", ".join(str(y) for y in ESS_YEARS_USED)
+SOURCE_ESS = f"Sources: ESS survey years {ESS_YEARS_USED[0]}-{ESS_YEARS_USED[-1]} ({ESS_YEARS_LABEL}); UNDP HDR; Global Data Lab SHDI."
 SOURCE_WHR = "Sources: UNDP HDR; World Happiness Report / Our World in Data; Global Data Lab SHDI."
 
 
@@ -250,6 +253,32 @@ def section_a():
     suptitle(fig, "A2. Finest Regional Detail Available in ESS, by Country")
     savefig(fig, "A2_nuts_level_by_country.png", SOURCE_ESS)
 
+    # A3: which actual survey years each country has data for -- answers
+    # "what years are we looking at" directly, in years rather than round numbers.
+    ess = pd.read_csv("processed/ess_with_national_hdi.csv", low_memory=False, usecols=["cntry", "essround"])
+    ess["year"] = ess["essround"].map(ESS_ROUND_YEAR)
+    present = ess[["cntry", "year"]].drop_duplicates()
+    present["present"] = 1
+    grid = present.pivot(index="cntry", columns="year", values="present")
+    grid = grid.reindex(columns=ESS_YEARS_USED)
+    order = grid.sum(axis=1).sort_values(ascending=False).index
+    grid = grid.loc[order]
+
+    fig, ax = plt.subplots(figsize=(9, 11))
+    ax.imshow(grid.notna().values, cmap=ListedColormap([SURFACE, CAT["blue"]]), aspect="auto", vmin=0, vmax=1)
+    ax.set_xticks(range(len(ESS_YEARS_USED))); ax.set_xticklabels(ESS_YEARS_USED, fontsize=9)
+    ax.set_yticks(range(len(grid.index))); ax.set_yticklabels(grid.index, fontsize=7.5)
+    for i in range(grid.shape[0]):
+        for j in range(grid.shape[1]):
+            ax.add_patch(plt.Rectangle((j - 0.5, i - 0.5), 1, 1, fill=False, edgecolor=SURFACE, linewidth=1.5))
+    n_years = grid.notna().sum(axis=1)
+    for i, n in enumerate(n_years):
+        ax.text(len(ESS_YEARS_USED) - 0.3, i, f"{n}/7", va="center", fontsize=6.5, color=INK_MUTED)
+    suptitle(fig, "A3. Which Survey Years Each Country Actually Has",
+             f"ESS is a rotating panel of countries, not a fixed set surveyed every wave. Filled = country "
+             f"fielded ESS that year. Years used: {ESS_YEARS_LABEL}.")
+    savefig(fig, "A3_ess_year_coverage.png", SOURCE_ESS, top=0.88)
+
 
 # =============================================================================
 # SECTION B -- National HDI x ESS (Approach 1)
@@ -327,11 +356,10 @@ def section_b():
     heat["cntry"] = pd.Categorical(heat["cntry"], categories=order, ordered=True)
     heat = heat.sort_values("cntry")
 
-    from matplotlib.colors import ListedColormap
     sig_cmap = ListedColormap([SIG_COLORS["ns"], SIG_COLORS["weak"], SIG_COLORS["sig"]])
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 10), sharey=True)
-    for ax, spec, col, rcol in zip(axes, ["Levels", "Across-round differences"],
+    for ax, spec, col, rcol in zip(axes, ["Levels", "Across-year differences"],
                                     ["tier_levels", "tier_diffs"], ["r2_levels", "r2_diffs"]):
         piv = heat.pivot(index="cntry", columns="ind_label", values=col)[[HDI_IND_SHORT[i] for i in indicators]]
         rpiv = heat.pivot(index="cntry", columns="ind_label", values=rcol)[[HDI_IND_SHORT[i] for i in indicators]]
@@ -353,7 +381,7 @@ def section_b():
     suptitle(fig, "B1. HDI vs. Life Satisfaction: Significance Heatmap (FDR-Corrected)",
              "Countries ordered by median levels R². Color = significance tier (BH-corrected across the 5 "
              "indicators per country); number in each cell is still R² for reference.")
-    note = (f"Excluded (fewer than 4 ESS rounds with HDI/stflife data): {', '.join(dropped)}. "
+    note = (f"Excluded (fewer than 4 ESS survey years with HDI/stflife data): {', '.join(dropped)}. "
             f"{SOURCE_ESS}") if dropped else SOURCE_ESS
     savefig(fig, "B1_heatmap_country_indicator.png", note, top=0.90)
 
@@ -374,7 +402,7 @@ def section_b():
                 ax.annotate(cntry, (row["r2_levels"], row["r2_diffs"]), fontsize=7, color=INK_SECONDARY,
                             xytext=(3, 3), textcoords="offset points")
         ax.set_xlim(0, 1); ax.set_ylim(0, 1)
-        ax.set_xlabel("R² -- Levels"); ax.set_ylabel("R² -- Across-round differences")
+        ax.set_xlabel("R² -- Levels"); ax.set_ylabel("R² -- Across-year differences")
         ax.set_title(f"HDI composite x {outcome}", fontsize=11, loc="left")
     axes[1].legend(title="Dev. tier", frameon=False, fontsize=8, loc="upper right")
     suptitle(fig, "B2. Per-Country Collapse: National HDI vs. ESS Wellbeing",
@@ -394,12 +422,12 @@ def section_b():
     ax.scatter(db["r2_levels"], y, s=45, facecolors="white", edgecolors=[TIER_COLORS.get(t, INK_MUTED) for t in db["dev_tier"]],
                linewidths=1.4, zorder=3, label="Levels")
     ax.scatter(db["r2_diffs"], y, s=32, color=[TIER_COLORS.get(t, INK_MUTED) for t in db["dev_tier"]],
-               edgecolors=INK_SECONDARY, linewidths=0.3, zorder=3, label="Across-round differences")
+               edgecolors=INK_SECONDARY, linewidths=0.3, zorder=3, label="Across-year differences")
     ax.set_yticks(y); ax.set_yticklabels(db.index, fontsize=7.5)
     ax.set_xlabel("R² (HDI composite x stflife)")
     ax.legend(frameon=False, fontsize=9, loc="lower right")
     suptitle(fig, "B3. HDI Composite R² Collapse by Country",
-             "Open circle = levels; filled circle = across-round differences. Mirrors HappinessHDI.R's D3 dumbbell.")
+             "Open circle = levels; filled circle = across-year differences. Mirrors HappinessHDI.R's D3 dumbbell.")
     savefig(fig, "B3_dumbbell_national.png", SOURCE_ESS, top=0.93)
 
     # B4: collapse bar -- share of countries FDR-significant (q<.05), levels vs diffs, per indicator x outcome
@@ -436,7 +464,9 @@ def section_b():
              "BH-FDR corrected across the 5 indicators within each country. Bar labels show sig./total countries.")
     savefig(fig, "B4_collapse_bar_national.png", SOURCE_ESS)
 
-    # B5: quadrant plot -- HDI trend vs stflife trend across ESS rounds
+    # B5: quadrant plot -- HDI trend vs stflife trend, per actual survey year
+    # (not per round-index: ESS waves are ~2 years apart except one 3-year
+    # gap, 2020->2023, so slope-per-round would understate that gap's rate).
     def ols_slope(x, y):
         ok = x.notna() & y.notna()
         x, y = x[ok].to_numpy(), y[ok].to_numpy()
@@ -444,8 +474,8 @@ def section_b():
             return np.nan
         return np.polyfit(x, y, 1)[0]
     slopes = panel.groupby("cntry").apply(
-        lambda g: pd.Series({"slope_hdi": ols_slope(g["essround"], g["hdi"]),
-                             "slope_stflife": ols_slope(g["essround"], g["stflife"])})
+        lambda g: pd.Series({"slope_hdi": ols_slope(g["year"], g["hdi"]),
+                             "slope_stflife": ols_slope(g["year"], g["stflife"])})
     ).dropna()
     fig, ax = plt.subplots(figsize=(9, 9))
     ax.axhline(0, color=BASELINE, linewidth=1); ax.axvline(0, color=BASELINE, linewidth=1)
@@ -456,8 +486,8 @@ def section_b():
     for cntry, row in slopes.iterrows():
         ax.annotate(cntry, (row["slope_hdi"], row["slope_stflife"]), fontsize=6.5, color=INK_SECONDARY,
                     xytext=(3, 3), textcoords="offset points")
-    ax.set_xlabel("HDI trend across ESS rounds (slope)")
-    ax.set_ylabel("Life satisfaction trend across ESS rounds (slope)")
+    ax.set_xlabel(f"HDI trend, {ESS_YEARS_USED[0]}-{ESS_YEARS_USED[-1]} (per-year slope)")
+    ax.set_ylabel(f"Life satisfaction trend, {ESS_YEARS_USED[0]}-{ESS_YEARS_USED[-1]} (per-year slope)")
     n_q = {
         "HDI up / stflife up": ((slopes.slope_hdi > 0) & (slopes.slope_stflife > 0)).sum(),
         "HDI down / stflife up": ((slopes.slope_hdi < 0) & (slopes.slope_stflife > 0)).sum(),
@@ -468,7 +498,7 @@ def section_b():
     suptitle(fig, "B5. HDI Progress vs. Life-Satisfaction Trend, by Country", subtitle_txt)
     savefig(fig, "B5_quadrant_national.png", SOURCE_ESS)
 
-    print(f"Section B: {len(panel)} country-round cells, {panel['cntry'].nunique()} countries.")
+    print(f"Section B: {len(panel)} country-year cells, {panel['cntry'].nunique()} countries.")
 
 
 # =============================================================================
@@ -567,9 +597,10 @@ def section_d():
         ax.scatter(sub["shdi"], sub["stflife"], s=24, alpha=0.75, color=palette_cycle[i % len(palette_cycle)],
                    label=cntry, edgecolors="white", linewidths=0.3)
     r2_all = fast_r2(panel["shdi"], panel["stflife"])
-    ax.annotate(f"Pooled R² = {r2_all:.3f}  (n={panel[['shdi','stflife']].dropna().shape[0]} region-rounds)",
+    n_region_years = panel[["shdi", "stflife"]].dropna().shape[0]
+    ax.annotate(f"Pooled R² = {r2_all:.3f}  (n={n_region_years} region-years)",
                 xy=(0.03, 0.95), xycoords="axes fraction", fontsize=9, color=INK_SECONDARY)
-    ax.set_xlabel("Subnational HDI (SHDI)"); ax.set_ylabel("Region-round mean Life Satisfaction")
+    ax.set_xlabel("Subnational HDI (SHDI)"); ax.set_ylabel("Region mean Life Satisfaction (pooled across years)")
     ax.legend(title="Country (top 8 by region count)", frameon=False, fontsize=8, loc="lower right", ncol=2)
     suptitle(fig, "D1. Within- and Between-Country Regional Variation: Life Satisfaction vs. SHDI",
              "Pooled R² mixes between-country and within-country (regional) variation -- see D2 for the "
@@ -590,7 +621,7 @@ def section_d():
         ax.set_title(cntry, fontsize=10.5, loc="left", fontweight="bold")
     for ax in axes.flat[n_top:]:
         ax.axis("off")
-    fig.supxlabel("SHDI (region mean across matched rounds)", fontsize=10)
+    fig.supxlabel("SHDI (region mean across matched survey years)", fontsize=10)
     fig.supylabel("Life Satisfaction (region mean)", fontsize=10)
     suptitle(fig, "D2. Do More-Developed Regions Report Higher Life Satisfaction Within the Same Country?",
              "Core Approach-2 test: within-country regional development vs. wellbeing, national context held fixed.")
@@ -604,8 +635,8 @@ def section_d():
     ax.plot([0, 1], [0, 1], color=BASELINE, linewidth=1, linestyle="--")
     ax.scatter(comp["r2_levels"], comp["r2_diffs"], s=20, alpha=0.5, color=CAT["aqua"])
     ax.set_xlim(0, 1); ax.set_ylim(0, 1)
-    ax.set_xlabel("R² -- Levels (region x SHDI)"); ax.set_ylabel("R² -- Across-round differences")
-    suptitle(fig, f"D3. Per-Region Collapse: stflife x SHDI (n={len(comp)} regions with >=5 rounds)")
+    ax.set_xlabel("R² -- Levels (region x SHDI)"); ax.set_ylabel("R² -- Across-year differences")
+    suptitle(fig, f"D3. Per-Region Collapse: stflife x SHDI (n={len(comp)} regions with >=5 survey years)")
     savefig(fig, "D3_collapse_scatter_regional.png", SOURCE_ESS)
 
     # D4: SHDI distribution by country (within-country heterogeneity)
@@ -616,13 +647,13 @@ def section_d():
                      medianprops={"color": INK_PRIMARY, "linewidth": 1.2})
     for box in bp["boxes"]:
         box.set(facecolor=CAT["blue"], alpha=0.55, edgecolor=CAT["blue"])
-    ax.set_ylabel("SHDI (region-round observations)")
+    ax.set_ylabel("SHDI (region observations, pooled across years)")
     plt.setp(ax.get_xticklabels(), rotation=60, ha="right", fontsize=8)
     suptitle(fig, "D4. Within-Country Spread in Subnational HDI",
              "Wider boxes = more regional development inequality within that country.")
     savefig(fig, "D4_shdi_distribution_by_country.png", SOURCE_ESS)
 
-    print(f"Section D: {len(panel)} region-round cells, {panel['gdl_region_name'].nunique()} distinct regions, "
+    print(f"Section D: {len(panel)} region-year cells, {panel['gdl_region_name'].nunique()} distinct regions, "
           f"{panel['cntry'].nunique()} countries.")
 
 
@@ -649,7 +680,7 @@ def section_e():
                     fontsize=8.5, color=INK_SECONDARY)
         ax.set_title(title, fontsize=10.5, loc="left")
         ax.set_xlabel(xcol.upper())
-        ax.set_ylabel("mean (country/region-round)")
+        ax.set_ylabel("mean (country/region, pooled across years)")
     suptitle(fig, "E. Development vs. Two Mechanism Variables",
              "health is self-rated (1=very good...5=very bad, reverse of intuition -- check sign). "
              "ppltrst is 0-10 generalized trust. First look only; concept note's full mechanism model is a next step.")
@@ -672,7 +703,7 @@ def section_e():
                     fontsize=8.5, color=INK_SECONDARY)
         ax.set_title(title, fontsize=10.5, loc="left")
         ax.set_xlabel(xcol.upper())
-        ax.set_ylabel("stflife (mean, country/region-round)")
+        ax.set_ylabel("stflife (mean, pooled across years)")
     suptitle(fig, "E2. Mechanism Variables vs. Life Satisfaction Directly",
              "Same variables as E1, now regressed straight onto stflife instead of onto HDI/SHDI -- "
              "compare these R² to E3's ranking to see whether trust or health tracks wellbeing "
