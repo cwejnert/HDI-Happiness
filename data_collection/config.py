@@ -59,6 +59,34 @@ ESS_VARIABLES = {
 
 ESS_ALL_VARIABLES = [v for group in ESS_VARIABLES.values() for v in group]
 
+# Highest legitimate substantive value per ESS variable, used to distinguish
+# a real scale score from a repeated-digit missing sentinel (77/88/99 etc.)
+# that happens to share the same digits -- e.g. stflife=8 is a real score on
+# its 0-10 scale, but stflife=88 is "Don't know". A repeated-{6,7,8,9}-digit
+# value only gets recoded to missing in io_utils.read_ess_extract if it
+# exceeds this bound. Variables not listed here (e.g. isco08, whose 4-digit
+# occupation codes can collide with the missing-sentinel pattern) are left
+# untouched rather than risk corrupting real values with a guessed bound.
+ESS_MAX_VALID = {
+    "stflife": 10, "happy": 10,
+    "agea": 100,
+    "domicil": 5,
+    "eisced": 7, "eduyrs": 50, "hinctnta": 10, "hincfel": 4,
+    "uempla": 1, "uempli": 1, "pdwrk": 1, "emplrel": 3,
+    "rshpsts": 6, "hhmmb": 20,
+    "ppltrst": 10, "pplfair": 10, "pplhlp": 10,
+    "trstprl": 10, "trstlgl": 10, "trstplc": 10, "trstplt": 10,
+    "trstprt": 10, "trstep": 10, "trstun": 10,
+    "health": 5, "hlthhmp": 3,
+    "sclmeet": 7, "inprdsc": 6, "sclact": 5,
+    "aesfdrk": 4, "crmvct": 2,
+    "stfeco": 10, "stfgov": 10, "stfdem": 10, "stfedu": 10, "stfhlth": 10,
+    "psppsgva": 5, "actrolga": 5,
+    "ipcrtiv": 6, "imprich": 6, "ipeqopt": 6, "ipshabt": 6, "impsafe": 6,
+    "impfree": 6, "iphlppl": 6, "ipstrgv": 6, "imptrad": 6, "impfun": 6,
+    "gndr": 2,
+}
+
 # ESS round -> fieldwork year used to match against HDI/SHDI year.
 # Rounds span two calendar years in the field; the HDR/SHDI year is matched
 # to the first fieldwork year of the round (adjust if a later round is added).
@@ -106,6 +134,12 @@ ESS_COUNTRY_ISO3 = {
 # -----------------------------------------------------------------------
 HDI_COMPOSITE = "hdi"
 HDI_SUBCOMPS = ["le", "eys", "mys", "gnipc"]
+
+# Short labels for figures, matching HappinessHDI.R's ind_short.
+ind_short = {
+    "hdi": "HDI", "le": "Life Exp.", "eys": "Exp. Schooling",
+    "mys": "Mean Schooling", "gnipc": "GNI p.c.",
+}
 
 SHDI_COMPOSITE = "shdi"
 SHDI_DIMENSION_INDICES = ["healthindex", "edindex", "incindex"]

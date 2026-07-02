@@ -14,7 +14,38 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import ESS_ALL_VARIABLES
+from config import ESS_ALL_VARIABLES, ESS_MAX_VALID
+
+# ESS's official Stata/SPSS recode script (mirrored by the essurvey R
+# package's recode_missings()) treats a value as missing when it's a
+# single digit from {6,7,8,9} repeated to fill the field width -- 6 = not
+# applicable, 7 = refusal, 8 = don't know, 9 = no answer / not available
+# (e.g. 7, 77, 666, 9999). CSV exports from the Data Builder don't carry
+# this recoding automatically (unlike the Stata/SPSS downloads), so it has
+# to be applied here or every mean/regression downstream silently absorbs
+# refusals as if they were real scale points. But a bare repeated-digit
+# match alone is too blunt -- stflife=8 is a real score on its 0-10 scale,
+# only stflife=88 is "Don't know" -- so a value only gets recoded if it ALSO
+# exceeds that variable's legitimate max (config.ESS_MAX_VALID).
+_ESS_MISSING_RE = re.compile(r"^([6789])\1*$")
+
+
+def _recode_ess_missing(df: pd.DataFrame, exclude: set[str]) -> pd.DataFrame:
+    df = df.copy()
+    for col in df.columns:
+        if col in exclude or col not in ESS_MAX_VALID:
+            continue
+        s = df[col]
+        numeric = pd.to_numeric(s, errors="coerce")
+        as_str = numeric.astype("Int64").astype(str)
+        is_missing_code = (
+            as_str.str.fullmatch(_ESS_MISSING_RE)
+            & numeric.notna()
+            & (numeric > ESS_MAX_VALID[col])
+        )
+        if is_missing_code.any():
+            df.loc[is_missing_code, col] = pd.NA
+    return df
 
 
 def read_ess_extract(path: str | Path) -> pd.DataFrame:
@@ -64,7 +95,11 @@ def read_ess_extract(path: str | Path) -> pd.DataFrame:
             f"[read_ess_extract] {len(missing)} requested variables not found "
             f"in export (likely not selected in the Data Builder): {missing}"
         )
-    return df[keep].copy()
+    out = df[keep].copy()
+    # 'idno' (identifier) and 'essround'/'cntry' (round 6/7/8/9 are real values,
+    # not missing sentinels) must never go through the repeated-digit recode.
+    out = _recode_ess_missing(out, exclude={"idno", "essround", "cntry"})
+    return out
 
 
 def read_shdi_extract(path: str | Path) -> pd.DataFrame:
