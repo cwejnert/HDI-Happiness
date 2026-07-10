@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import ESS_ALL_VARIABLES, ESS_MAX_VALID
+from config import ESS_ALL_VARIABLES, ESS_EXTRA_MISSING_CODES, ESS_MAX_VALID
 
 # ESS's official Stata/SPSS recode script (mirrored by the essurvey R
 # package's recode_missings()) treats a value as missing when it's a
@@ -45,6 +45,14 @@ def _recode_ess_missing(df: pd.DataFrame, exclude: set[str]) -> pd.DataFrame:
         )
         if is_missing_code.any():
             df.loc[is_missing_code, col] = pd.NA
+
+    for col, codes in ESS_EXTRA_MISSING_CODES.items():
+        if col in exclude or col not in df.columns:
+            continue
+        numeric = pd.to_numeric(df[col], errors="coerce")
+        is_extra = numeric.isin(codes)
+        if is_extra.any():
+            df.loc[is_extra, col] = pd.NA
     return df
 
 

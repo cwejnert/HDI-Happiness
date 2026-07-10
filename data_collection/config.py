@@ -87,6 +87,17 @@ ESS_MAX_VALID = {
     "gndr": 2,
 }
 
+# Variable-specific sentinel values that fall inside ESS_MAX_VALID's range and
+# so survive the repeated-{6,7,8,9}-digit missing-code sweep, but still aren't
+# real points on the variable's numeric scale. Confirmed against real ESS
+# data (2026-07): eisced=55 is ESS's own "Other" category (level not
+# classifiable on the standard 1-7 ISCED ladder) -- a legitimate response,
+# but not an ordinal position, so it has to drop out of any numeric analysis
+# the same way a missing value would.
+ESS_EXTRA_MISSING_CODES = {
+    "eisced": [55],
+}
+
 # ESS round -> fieldwork year used to match against HDI/SHDI year.
 # Rounds span two calendar years in the field; the HDR/SHDI year is matched
 # to the first fieldwork year of the round (adjust if a later round is added).
