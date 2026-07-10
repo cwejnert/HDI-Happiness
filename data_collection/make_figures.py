@@ -744,10 +744,145 @@ def section_e():
     print(f"Section E significance share -- Regional: {sorted(reg_share.items(), key=lambda kv: -kv[1][2])}")
 
 
+# =============================================================================
+# SECTION F -- SDG comparison and the education deep-dive (HappinessSDG.R tie-in)
+# =============================================================================
+
+SDG_GOAL_LABELS = {
+    1: "1. Poverty", 2: "2. Hunger", 3: "3. Health", 4: "4. Education", 5: "5. Gender",
+    6: "6. Water", 7: "7. Energy", 8: "8. Labor", 9: "9. Infrastructure", 10: "10. Inequality",
+    11: "11. Cities", 12: "12. Consumption", 13: "13. Climate", 14: "14. Ocean",
+    15: "15. Ecosystems", 16: "16. Peace", 17: "17. Partnership",
+}
+
+SOURCE_SDG = "Sources: UN SDG Global Database (via HappinessSDG.R); World Happiness Report."
+
+
+def section_f():
+    # F1: SDG goal significance ranking (levels, pooled, FDR within country across all its indicators)
+    goal_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv").rename(columns={"Goal": "goal_num"})
+    goal_sig = goal_sig.dropna(subset=["pct_sig_levels"]).sort_values("pct_sig_levels", ascending=False)
+    goal_sig["label"] = goal_sig["goal_num"].map(SDG_GOAL_LABELS)
+    fig, ax = plt.subplots(figsize=(12, 6.5))
+    colors = [CAT["blue"] if g == 4 else CAT["red"] if g == 3 else CAT["yellow"] if g in (1, 8, 10) else INK_MUTED
+              for g in goal_sig["goal_num"]]
+    bars = ax.bar(goal_sig["label"], goal_sig["pct_sig_levels"], color=colors, width=0.7)
+    ax.bar_label(bars, fmt="%.1f%%", padding=2, fontsize=8, color=INK_SECONDARY)
+    ax.set_ylabel("% of country-indicator pairs FDR-significant (levels)")
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", fontsize=8.5)
+    suptitle(fig, "F1. SDG Levels-Significance by Goal, Pooled Across Countries",
+             "Blue = Education (Goal 4); red = Health (Goal 3); yellow = income-adjacent goals "
+             "(Poverty/Labor/Inequality). No domain clears 16%; most sit under 10%.")
+    savefig(fig, "F1_sdg_goal_significance_ranking.png", SOURCE_SDG)
+
+    # F2: SDG4 (Education) broken into meaningful sub-categories, not pooled
+    cat = pd.read_csv("processed/sdg_education_category_significance.csv").sort_values("pct_sig_levels", ascending=False)
+    fig, ax = plt.subplots(figsize=(12, 7))
+    cat_colors = {
+        "Access & Participation": CAT["blue"], "Financing": CAT["yellow"],
+        "Attainment & Completion": CAT["aqua"], "Equity / Parity (ratio)": CAT["violet"],
+        "Infrastructure & Inputs": CAT["orange"], "Quality & Learning Outcomes": CAT["red"],
+    }
+    bars = ax.bar(cat["edu_category"], cat["pct_sig_levels"],
+                  color=[cat_colors[c] for c in cat["edu_category"]], width=0.65)
+    labels = [f"{v:.1f}%\n(n={int(n)} series)" for v, n in zip(cat["pct_sig_levels"], cat["n_series"])]
+    ax.bar_label(bars, labels=labels, padding=3, fontsize=8, color=INK_SECONDARY)
+    ax.set_ylabel("% of country-indicator pairs FDR-significant (levels)")
+    plt.setp(ax.get_xticklabels(), rotation=20, ha="right", fontsize=9)
+    fig.subplots_adjust(bottom=0.22)
+    suptitle(fig, "F2. SDG4 Un-Pooled: Access Beats Equity, Quality, Infrastructure",
+             "Over half of SDG4's 35 official indicators are equity/parity RATIOS (gender/location/wealth "
+             "parity), not levels of access or quality -- pooling them all together (3.3%) buried this signal.")
+    savefig(fig, "F2_sdg4_education_categories.png", SOURCE_SDG, top=0.82)
+
+    # F3: HDI vs. SDG cross-reference by domain (Education / Health / Income)
+    hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
+    hdi_summary = hdi_sig.groupby("indicator").agg(
+        n=("r2_levels", lambda s: s.notna().sum()), sig=("sig_levels_fdr", lambda s: (s == "q<.05").sum())
+    ).reset_index()
+    hdi_summary["pct"] = 100 * hdi_summary["sig"] / hdi_summary["n"]
+    hdi_pct = dict(zip(hdi_summary["indicator"], hdi_summary["pct"]))
+    sdg_by_goal = dict(zip(goal_sig["goal_num"], goal_sig["pct_sig_levels"]))
+    edu_by_cat = dict(zip(cat["edu_category"], cat["pct_sig_levels"]))
+
+    groups = ["Education", "Health", "Income"]
+    hdi_bars = {"Education": [("Mean Schooling", hdi_pct["mys"]), ("Exp. Schooling", hdi_pct["eys"])],
+                "Health": [("Life Expectancy", hdi_pct["le"])],
+                "Income": [("GNI p.c.", hdi_pct["gnipc"])]}
+    sdg_bars = {"Education": [("SDG4 pooled", sdg_by_goal[4]), ("SDG4 Access only", edu_by_cat["Access & Participation"])],
+                "Health": [("SDG3 Health", sdg_by_goal[3])],
+                "Income": [("SDG1 Poverty", sdg_by_goal[1]), ("SDG8 Labor", sdg_by_goal[8]), ("SDG10 Inequality", sdg_by_goal[10])]}
+
+    fig, axes = plt.subplots(1, 3, figsize=(15, 6.5), sharey=True)
+    for ax, grp in zip(axes, groups):
+        hb, sb = hdi_bars[grp], sdg_bars[grp]
+        labels = [f"HDI:\n{l}" for l, _ in hb] + [f"SDG:\n{l}" for l, _ in sb]
+        vals = [v for _, v in hb] + [v for _, v in sb]
+        colors = [CAT["blue"]] * len(hb) + [CAT["red"]] * len(sb)
+        bars = ax.bar(labels, vals, color=colors, width=0.6)
+        ax.bar_label(bars, fmt="%.1f%%", padding=2, fontsize=8.5, color=INK_SECONDARY)
+        ax.set_title(grp, fontsize=12, fontweight="bold", loc="left")
+        plt.setp(ax.get_xticklabels(), fontsize=8, rotation=15, ha="right")
+    axes[0].set_ylabel("% of countries FDR-significant (levels)")
+    fig.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=CAT["blue"]), plt.Rectangle((0, 0), 1, 1, color=CAT["red"])],
+               labels=["HDI framework (5 indicators/country)", "SDG framework (dozens+/country)"],
+               loc="lower center", bbox_to_anchor=(0.5, -0.02), ncol=2, frameon=False, fontsize=9)
+    suptitle(fig, "F3. HDI vs. SDG: Where the Two Frameworks Agree and Disagree",
+             "Health is roughly consistent across frameworks. Education is HDI's strongest domain but SDG's "
+             "weakest -- until SDG4 is split (F2), at which point Access narrows the gap substantially. "
+             "Absolute levels aren't directly comparable (very different FDR denominators); rankings within "
+             "each framework are the safer read.")
+    savefig(fig, "F3_hdi_vs_sdg_crossref.png", SOURCE_SDG, top=0.84)
+
+    # F4: ESS individual-level education (eisced, eduyrs) vs. stflife/happy -- per-country R^2 distribution
+    ind = pd.read_csv("processed/ess_individual_education_by_country.csv")
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6.5), sharey=True)
+    for ax, outcome in zip(axes, ["stflife", "happy"]):
+        data, edu_labels = [], []
+        for edu_var in ["eisced", "eduyrs"]:
+            sub = ind[(ind.edu_var == edu_var) & (ind.outcome == outcome)].dropna(subset=["r2"])
+            data.append(sub["r2"].values)
+            n_sig = (sub["p"] < 0.05).sum()
+            edu_labels.append(f"{edu_var}\n(sig. {n_sig}/{len(sub)} countries)")
+        bp = ax.boxplot(data, tick_labels=edu_labels, patch_artist=True, widths=0.5, showfliers=True,
+                        medianprops={"color": INK_PRIMARY, "linewidth": 1.3},
+                        flierprops={"markersize": 3, "markerfacecolor": INK_MUTED, "markeredgecolor": "none"})
+        for box, color in zip(bp["boxes"], [CAT["blue"], CAT["aqua"]]):
+            box.set(facecolor=color, alpha=0.55, edgecolor=color)
+        ax.set_title(outcome, fontsize=11, loc="left")
+    axes[0].set_ylabel("Per-country individual-level R² (n≈9-14k respondents/country)")
+    suptitle(fig, "F4. Individual-Level Education Predicts Wellbeing in Almost Every Country",
+             "Effect sizes are small (median R²≈0.01) but the relationship clears raw p<.05 in "
+             "32-34 of 36 countries -- far more universal than either the SDG4 or HDI country-aggregate tests.")
+    savefig(fig, "F4_ess_individual_education_boxplot.png", SOURCE_ESS, top=0.85)
+
+    # F5: ESS aggregate education (country-level) vs. WHR happiness -- independent data, independent outcome
+    ce = pd.read_csv("processed/ess_country_education_panel.csv")
+    fig, axes = plt.subplots(1, 2, figsize=(13, 6.5))
+    for ax, edu_var, label in zip(axes, ["mean_eisced", "mean_eduyrs"], ["Mean ISCED level", "Mean years of schooling"]):
+        sub = ce.dropna(subset=[edu_var, "whr_happiness"])
+        ax.scatter(sub[edu_var], sub["whr_happiness"], s=26, alpha=0.6, color=CAT["blue"], edgecolors="white", linewidths=0.4)
+        r2 = fast_r2(sub[edu_var], sub["whr_happiness"])
+        ax.annotate(f"R² = {r2:.3f}  (n={len(sub)} country-rounds)", xy=(0.03, 0.94), xycoords="axes fraction",
+                    fontsize=9, color=INK_SECONDARY)
+        ax.set_xlabel(f"ESS {label} (country mean)")
+        ax.set_ylabel("WHR Cantril Ladder")
+        ax.set_title(label, fontsize=11, loc="left")
+    suptitle(fig, "F5. ESS-Measured Education (Aggregated) vs. WHR Happiness")
+    note = ("eduyrs (R²=0.308) tracks WHR happiness almost as well as HDI's own mean-years-of-schooling "
+            "component does against the same outcome (R²=0.326) -- independent survey, independent outcome, "
+            f"same conclusion for the schooling-years construct specifically. {SOURCE_WHR}")
+    fig.subplots_adjust(bottom=0.18)
+    savefig(fig, "F5_ess_agg_education_vs_whr.png", note, top=0.87)
+
+    print("Section F: SDG/education cross-reference figures saved.")
+
+
 if __name__ == "__main__":
     section_a()
     section_b()
     section_c()
     section_d()
     section_e()
+    section_f()
     print(f"\nAll figures saved to {OUT_DIR}/")
