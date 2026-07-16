@@ -1008,7 +1008,96 @@ def section_g():
             f"Slope of region-mean stflife on region-mean SHDI (means pooled across matched years), "
             f"per ESS country with >=6 matched regions. {SOURCE_ESS}")
 
-    print(f"Section G: G1 tiers figure + G2 gradients for {len(grad)} countries ({n_sig} significant).")
+    # G3: within-country regional correlations of stflife with SHDI, social
+    # trust, and (reversed) self-rated health -- signed r, per country.
+    rmeans_m = panel.groupby(["cntry", "gdl_region_name"]).agg(
+        stflife=("stflife", "mean"), shdi=("shdi", "mean"),
+        ppltrst=("ppltrst", "mean"), health=("health", "mean")).reset_index().dropna()
+    rmeans_m["good_health"] = 6 - rmeans_m["health"]  # 1=very good..5=very bad -> reverse
+
+    PRED_LABELS = {"shdi": "Development (SHDI)", "ppltrst": "Social trust", "good_health": "Self-rated health"}
+    PRED_COLORS = {"shdi": CAT["blue"], "ppltrst": CAT["aqua"], "good_health": CAT["violet"]}
+
+    mech_rows = []
+    for cntry, grp in rmeans_m.groupby("cntry"):
+        if len(grp) < 6:
+            continue
+        for pred in PRED_LABELS:
+            r, p = sps.pearsonr(grp[pred], grp["stflife"])
+            mech_rows.append({"cntry": cntry, "predictor": pred, "r": r, "p": p,
+                              "n_regions": len(grp), "nat_hdi": nat_hdi.get(cntry, np.nan)})
+    mech = pd.DataFrame(mech_rows)
+    mech.to_csv("processed/within_country_mechanism_correlations.csv", index=False)
+
+    order = mech.drop_duplicates("cntry").sort_values("nat_hdi")["cntry"].tolist()
+    fig, ax = plt.subplots(figsize=(11, 8))
+    offsets = {"shdi": -0.22, "ppltrst": 0.0, "good_health": 0.22}
+    for pred in PRED_LABELS:
+        sub = mech[mech.predictor == pred].set_index("cntry").loc[order].reset_index()
+        y = np.arange(len(sub)) + offsets[pred]
+        sig_mask = sub["p"] < 0.05
+        ax.scatter(sub.loc[sig_mask, "r"], y[sig_mask.to_numpy()], s=55, color=PRED_COLORS[pred],
+                   edgecolors="white", linewidths=0.6, zorder=3, label=f"{PRED_LABELS[pred]}")
+        ax.scatter(sub.loc[~sig_mask, "r"], y[(~sig_mask).to_numpy()], s=45, facecolors="none",
+                   edgecolors=PRED_COLORS[pred], linewidths=1.3, zorder=3)
+    ax.axvline(0, color=BASELINE, linewidth=1)
+    ax.set_yticks(np.arange(len(order)))
+    ax.set_yticklabels(order, fontsize=8.5)
+    ax.set_xlabel("Within-country regional correlation with life satisfaction (signed r)")
+    ax.set_xlim(-1, 1)
+    ax.legend(frameon=False, fontsize=9, loc="lower left", title="Filled = p<.05, open = ns")
+    suptitle(fig, "G3. Within Countries: What Tracks Regional Wellbeing?",
+             "Region-mean correlations per country (>=6 matched regions), ordered by national HDI. "
+             "Health and trust are mostly positive; development is scattered around zero.")
+    savefig(fig, "G3_within_country_mechanisms.png",
+            f"health reversed so positive = better self-rated health. {SOURCE_ESS}")
+
+    # G4: the ranking flip -- national (both instruments) vs within-country.
+    cmeans = pd.read_csv("processed/country_round_panel.csv")
+    cmeans["good_health"] = 6 - cmeans["health"]
+    cmeans = cmeans.groupby("cntry").agg(
+        stflife=("stflife", "mean"), whr=("whr_happiness", "mean"), hdi=("hdi", "mean"),
+        ppltrst=("ppltrst", "mean"), good_health=("good_health", "mean")).dropna()
+
+    nat_pred = {"shdi": "hdi", "ppltrst": "ppltrst", "good_health": "good_health"}
+    contexts = []
+    for pred in PRED_LABELS:
+        r_whr, _ = sps.pearsonr(cmeans[nat_pred[pred]], cmeans["whr"])
+        r_ess, _ = sps.pearsonr(cmeans[nat_pred[pred]], cmeans["stflife"])
+        within = mech[mech.predictor == pred]
+        contexts.append({"predictor": PRED_LABELS[pred],
+                         "National x WHR": r_whr, "National x ESS": r_ess,
+                         "Within-country (ESS, median)": within["r"].median(),
+                         "n_sig_within": (within["p"] < 0.05).sum(), "n_within": len(within)})
+    ctx = pd.DataFrame(contexts)
+
+    fig, ax = plt.subplots(figsize=(11, 6.5))
+    ctx_cols = ["National x WHR", "National x ESS", "Within-country (ESS, median)"]
+    ctx_colors = [CAT["blue"], CAT["orange"], CAT["green"]]
+    x = np.arange(len(ctx))
+    width = 0.26
+    for i, (col, color) in enumerate(zip(ctx_cols, ctx_colors)):
+        bars = ax.bar(x + (i - 1) * width, ctx[col], width, label=col, color=color, alpha=0.9)
+        ax.bar_label(bars, fmt="%+.2f", padding=3, fontsize=9, color=INK_SECONDARY)
+    for xi, (n_sig_w, n_tot_w) in enumerate(zip(ctx["n_sig_within"], ctx["n_within"])):
+        ax.annotate(f"sig. in {n_sig_w}/{n_tot_w}\ncountries", xy=(xi + width, 0.02), ha="center",
+                    fontsize=7.5, color="white", fontweight="bold")
+    ax.axhline(0, color=BASELINE, linewidth=1)
+    g4_labels = {"Development (SHDI)": "Development\n(HDI nat. / SHDI reg.)"}
+    ax.set_xticks(x)
+    ax.set_xticklabels([g4_labels.get(p, p) for p in ctx["predictor"]], fontsize=10.5)
+    ax.set_ylabel("Correlation with wellbeing (signed r)")
+    ax.set_ylim(-0.1, 1.05)
+    ax.legend(frameon=False, fontsize=9)
+    suptitle(fig, "G4. The Factor Ranking Flips Within Countries",
+             "Nationally, development leads (identically for WHR and ESS -- the instruments agree, r=0.90). "
+             "Within countries, development drops toward zero while health and trust hold up.")
+    savefig(fig, "G4_ranking_flip_national_vs_within.png",
+            f"National bars: country-mean correlations, 35 countries. Within-country bar: median of per-country "
+            f"regional correlations (G3). health reversed so positive = better. {SOURCE_ESS}")
+
+    print(f"Section G: G1 tiers + G2 gradients + G3 mechanisms + G4 ranking flip "
+          f"({len(grad)} countries, {n_sig} significant gradients).")
 
 
 if __name__ == "__main__":
