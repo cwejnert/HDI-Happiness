@@ -824,15 +824,14 @@ def section_f():
         ax.set_title(grp, fontsize=12, fontweight="bold", loc="left")
         plt.setp(ax.get_xticklabels(), fontsize=8, rotation=15, ha="right")
     axes[0].set_ylabel("% of countries FDR-significant (levels)")
-    fig.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=CAT["blue"]), plt.Rectangle((0, 0), 1, 1, color=CAT["red"])],
-               labels=["HDI framework (5 indicators/country)", "SDG framework (dozens+/country)"],
-               loc="lower center", bbox_to_anchor=(0.5, -0.02), ncol=2, frameon=False, fontsize=9)
+    axes[1].legend(handles=[plt.Rectangle((0, 0), 1, 1, color=CAT["blue"]), plt.Rectangle((0, 0), 1, 1, color=CAT["red"])],
+                   labels=["HDI framework (5 indicators/country)", "SDG framework (dozens+/country)"],
+                   loc="upper right", frameon=False, fontsize=8.5)
     suptitle(fig, "F3. HDI vs. SDG: Where the Two Frameworks Agree and Disagree",
-             "Health is roughly consistent across frameworks. Education is HDI's strongest domain but SDG's "
-             "weakest -- until SDG4 is split (F2), at which point Access narrows the gap substantially. "
-             "Absolute levels aren't directly comparable (very different FDR denominators); rankings within "
-             "each framework are the safer read.")
-    savefig(fig, "F3_hdi_vs_sdg_crossref.png", SOURCE_SDG, top=0.84)
+             "Education is HDI's strongest domain but SDG's weakest, unless SDG4 is split into Access vs. the rest (F2).")
+    note = ("Absolute levels are not directly comparable across frameworks (HDI's FDR spans 5 indicators/country, "
+            f"SDG's spans dozens); within-framework rankings are the safer read. {SOURCE_SDG}")
+    savefig(fig, "F3_hdi_vs_sdg_crossref.png", note, top=0.86)
 
     # F4: ESS individual-level education (eisced, eduyrs) vs. stflife/happy -- per-country R^2 distribution
     ind = pd.read_csv("processed/ess_individual_education_by_country.csv")
@@ -874,6 +873,57 @@ def section_f():
             f"same conclusion for the schooling-years construct specifically. {SOURCE_WHR}")
     fig.subplots_adjust(bottom=0.18)
     savefig(fig, "F5_ess_agg_education_vs_whr.png", note, top=0.87)
+
+    # F6: indicator-level ranking -- WHICH specific SDG series are significant
+    # in levels, and does anything at all survive in first-differences.
+    rank = pd.read_csv("processed/sdg_series_significance_ranking.csv")
+    robust = rank[rank["n_countries"] >= 8].copy()
+    top = robust.sort_values(["pct_sig_levels", "n_sig_levels"], ascending=False).head(20).iloc[::-1]
+
+    def short_desc(desc, code):
+        overrides = {
+            "SH_SAN_SAFE": "Safely managed sanitation (%)", "SH_DYN_IMRTN": "Infant deaths (count)",
+            "ER_CBD_SMTA": "Plant-genetic SMTAs (count)", "ER_RSK_LST": "Red List Index (biodiversity)",
+            "SH_DYN_MORTN": "Under-5 deaths (count)", "SH_STA_STNT": "Child stunting (%)",
+            "SH_H2O_SAFE": "Safely managed drinking water (%)", "SH_STA_STNTN": "Children stunted (count)",
+            "SH_DYN_IMRT": "Infant mortality rate", "SH_DYN_MORT": "Under-5 mortality rate",
+            "SP_ACS_BSRVSAN": "Basic sanitation services (%)", "SH_HIV_INCD": "New HIV infections rate",
+            "SH_DYN_NMRTN": "Neonatal deaths (count)", "SH_SAN_HNDWSH": "Basic handwashing facilities (%)",
+            "FB_ATM_TOTL": "ATMs per 100k adults", "SP_ACS_BSRVH2O": "Basic drinking water services (%)",
+            "NV_IND_MANF": "Manufacturing value added (% GDP)", "EN_LKRV_PWAP": "Permanent lake/river water area",
+            "SH_DYN_NMRT": "Neonatal mortality rate", "SH_SAN_DEFECT": "Open defecation (%)",
+            "SH_STA_ANEM": "Anaemia, women 15-49 (%)", "ER_PTD_TERR": "Protected biodiversity areas (%)",
+            "FB_CBK_BRCH": "Bank branches per 100k adults", "IT_NET_BBND": "Fixed broadband per 100",
+            "SH_STA_ANEM_NPRG": "Anaemia, non-pregnant women (%)",
+        }
+        return overrides.get(code, desc[:45])
+
+    top["short"] = [short_desc(d, c) for d, c in zip(top["SeriesDescription"], top["SeriesCode"])]
+    goal_color = {3: CAT["red"], 2: CAT["orange"], 6: CAT["aqua"], 15: CAT["green"],
+                  1: CAT["yellow"], 8: CAT["yellow"], 9: CAT["violet"], 17: CAT["violet"], 4: CAT["blue"]}
+    colors = [goal_color.get(int(g), INK_MUTED) for g in top["Goal"]]
+
+    fig, ax = plt.subplots(figsize=(11, 9))
+    bars = ax.barh(top["short"], top["pct_sig_levels"], color=colors, height=0.65)
+    counts = [f"{int(s)}/{int(n)}  (G{int(g)})" for s, n, g in zip(top["n_sig_levels"], top["n_countries"], top["Goal"])]
+    ax.bar_label(bars, labels=counts, padding=3, fontsize=7.5, color=INK_SECONDARY)
+    ax.set_xlabel("% of countries FDR-significant (levels)")
+    ax.set_xlim(0, 60)
+    best_edu = robust[robust["Goal"] == 4].sort_values("pct_sig_levels", ascending=False).iloc[0]
+    ax.axvline(best_edu["pct_sig_levels"], color=CAT["blue"], linewidth=1.2, linestyle="--")
+    ax.annotate(f"Best education indicator\n(pre-primary participation, "
+                f"{best_edu['pct_sig_levels']:.1f}%, rank ~100/609)",
+                xy=(best_edu["pct_sig_levels"], 0.15), xytext=(36, 1.0),
+                fontsize=8, color=CAT["blue"], va="center",
+                bbox={"boxstyle": "round,pad=0.35", "facecolor": SURFACE, "edgecolor": CAT["blue"], "linewidth": 0.6},
+                arrowprops={"arrowstyle": "->", "color": CAT["blue"], "lw": 0.9})
+    n_any_diffs = (robust["n_sig_diffs"] > 0).sum()
+    suptitle(fig, "F6. Top 20 SDG Indicators by Levels Significance -- None Are Education",
+             f"Survival, water/sanitation, and financial-infrastructure indicators dominate. In first-differences "
+             f"only {n_any_diffs} of {len(robust)} series have even one significant country (max 1) -- no diffs "
+             f"ranking exists. Bars show sig./tested countries and goal number; min. 8 countries per series.")
+    fig.subplots_adjust(left=0.28)
+    savefig(fig, "F6_sdg_indicator_ranking.png", SOURCE_SDG, top=0.88)
 
     print("Section F: SDG/education cross-reference figures saved.")
 
