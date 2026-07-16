@@ -928,6 +928,89 @@ def section_f():
     print("Section F: SDG/education cross-reference figures saved.")
 
 
+
+
+# =============================================================================
+# SECTION G -- Within-country inequality in subnational HDI, by development tier
+# =============================================================================
+
+G1_COUNTRIES = [
+    ("DEU", "Germany", "Very High"), ("GBR", "United Kingdom", "Very High"),
+    ("CHN", "China", "High"), ("BRA", "Brazil", "High"),
+    ("IND", "India", "Medium"), ("BGD", "Bangladesh", "Medium"),
+    ("PAK", "Pakistan", "Low"), ("COD", "DR Congo", "Low"),
+]
+
+
+def section_g():
+    from io_utils import read_shdi_extract
+    from scipy import stats as sps
+
+    shdi = read_shdi_extract("raw/shdi_subnational.csv")
+    latest = shdi[shdi["year"] == 2022]
+    nat = latest[latest["level"] == "National"].set_index("iso3")["value"]
+    sub = latest[latest["level"] == "Subnat"]
+
+    # G1: regional SHDI distributions for 2 countries per development tier.
+    fig, ax = plt.subplots(figsize=(12, 7))
+    rng = np.random.default_rng(0)
+    for i, (iso3, name, tier) in enumerate(G1_COUNTRIES):
+        vals = sub.loc[sub["iso3"] == iso3, "value"].dropna()
+        jitter = rng.uniform(-0.13, 0.13, len(vals))
+        ax.scatter(np.full(len(vals), i) + jitter, vals, s=26, alpha=0.7,
+                   color=TIER_COLORS[tier], edgecolors="white", linewidths=0.4, zorder=3)
+        ax.hlines(nat[iso3], i - 0.28, i + 0.28, color=INK_PRIMARY, linewidth=1.6, zorder=4)
+        spread = vals.max() - vals.min()
+        ax.annotate(f"range\n{spread:.2f}", xy=(i, vals.min()), xytext=(0, -26),
+                    textcoords="offset points", ha="center", fontsize=7.5, color=INK_SECONDARY)
+    ax.set_xticks(range(len(G1_COUNTRIES)))
+    ax.set_xticklabels([f"{n}\n({t})" for _, n, t in G1_COUNTRIES], fontsize=9)
+    ax.set_ylabel("Subnational HDI, 2022 (dot = one region; line = national)")
+    ax.set_ylim(0.25, 1.0)
+    handles = [plt.Line2D([], [], marker="o", linestyle="", color=TIER_COLORS[t], markersize=7) for t in TIER_ORDER]
+    ax.legend(handles, TIER_ORDER, title="UNDP development tier", frameon=False, fontsize=8.5, loc="lower left")
+    suptitle(fig, "G1. Within-Country Inequality in Human Development, by Tier",
+             "Regional spread widens sharply below the Very High tier -- China and India each contain "
+             "multiple tiers' worth of development internally.")
+    savefig(fig, "G1_within_country_shdi_inequality.png",
+            f"National SHDI (black line) and every subnational region (dots), 2022. {SOURCE_WHR}")
+
+    # G2: within-country regional stflife-SHDI gradient, per ESS country
+    # (region means pooled across matched years; countries with >= 6 regions).
+    panel = pd.read_csv("processed/region_round_panel.csv")
+    rmeans = panel.groupby(["cntry", "gdl_region_name"]).agg(
+        shdi=("shdi", "mean"), stflife=("stflife", "mean")).reset_index().dropna()
+    nat_hdi = pd.read_csv("processed/country_round_panel.csv").groupby("cntry")["hdi"].mean()
+
+    rows = []
+    for cntry, grp in rmeans.groupby("cntry"):
+        if len(grp) < 6:
+            continue
+        res = sps.linregress(grp["shdi"], grp["stflife"])
+        rows.append({"cntry": cntry, "n_regions": len(grp), "slope_per_01shdi": res.slope * 0.01,
+                     "p": res.pvalue, "se_per_01shdi": res.stderr * 0.01, "nat_hdi": nat_hdi.get(cntry, np.nan)})
+    grad = pd.DataFrame(rows).dropna(subset=["nat_hdi"]).sort_values("nat_hdi")
+    grad.to_csv("processed/within_country_shdi_gradients.csv", index=False)
+
+    fig, ax = plt.subplots(figsize=(12, 6.5))
+    colors = [CAT["blue"] if p < 0.05 else INK_MUTED for p in grad["p"]]
+    x = np.arange(len(grad))
+    ax.bar(x, grad["slope_per_01shdi"], color=colors, width=0.65,
+           yerr=1.96 * grad["se_per_01shdi"], error_kw={"elinewidth": 0.8, "ecolor": BASELINE, "capsize": 2})
+    ax.axhline(0, color=BASELINE, linewidth=1)
+    ax.set_xticks(x)
+    ax.set_xticklabels([f"{c}\n(HDI {h:.2f})" for c, h in zip(grad["cntry"], grad["nat_hdi"])], fontsize=7.5)
+    ax.set_ylabel("Life-satisfaction gain per +0.01 regional SHDI")
+    n_sig = (grad["p"] < 0.05).sum()
+    suptitle(fig, "G2. The Within-Country Development-Wellbeing Gradient Varies Widely",
+             f"Blue = p<.05 ({n_sig}/{len(grad)} countries); whiskers = 95% CI. Ordered by national HDI.")
+    savefig(fig, "G2_within_country_gradients.png",
+            f"Slope of region-mean stflife on region-mean SHDI (means pooled across matched years), "
+            f"per ESS country with >=6 matched regions. {SOURCE_ESS}")
+
+    print(f"Section G: G1 tiers figure + G2 gradients for {len(grad)} countries ({n_sig} significant).")
+
+
 if __name__ == "__main__":
     section_a()
     section_b()
@@ -935,4 +1018,5 @@ if __name__ == "__main__":
     section_d()
     section_e()
     section_f()
+    section_g()
     print(f"\nAll figures saved to {OUT_DIR}/")
