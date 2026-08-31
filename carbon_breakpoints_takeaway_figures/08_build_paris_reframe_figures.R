@@ -63,8 +63,10 @@ p2a <- ggplot(proj, aes(Year, idx)) +
   facet_wrap(~component, ncol = 3, scales = "free_y") +
   scale_color_manual(values = kcols) + scale_fill_manual(values = kcols) +
   scale_y_log10() +
-  labs(title = "Ten years on, global intensity is falling almost exactly as the pre-Paris trend predicted",
-       subtitle = "Each panel: 1990 = 100 (log scale). Solid line: 1990-2015 trend; dashed: its extrapolation with a 95% prediction band; red points: observed after Paris.\nA Paris effect on realized outcomes must eventually appear as an acceleration below this band - it has not yet.",
+  labs(title = "Since Paris, global intensity is finally outrunning its old trend - but the bend began before the treaty",
+       subtitle = paste0("Each panel: 1990 = 100 (log scale). Solid line: 1990-2015 trend; dashed: its extrapolation with a 95% prediction band; red points: observed after Paris.\n",
+                         "The fall below the band is a real supply-side acceleration (C/E -0.7 pp/yr, Newey-West t = 4.3; C/GDP -0.9, t = 2.9), but candidate onsets from 2011 to 2016 fit the full record\n",
+                         "about equally well (best: 2013), and the demand side (E/GDP -0.3, t = 1.5) shows no acceleration - so a Paris effect cannot yet be separated from the renewables cost decline that preceded it."),
        x = NULL, y = "Index (1990 = 100)") +
   theme_takeaway
 save_both(p2a, "takeaway_fig02a_paris_and_the_long_trend", 13, 6)
@@ -89,14 +91,16 @@ p2b <- ggplot(ar, aes(val, part, fill = part)) +
   geom_col(width = .62, show.legend = FALSE) +
   geom_vline(xintercept = 0, color = "#555555") +
   geom_vline(data = need, aes(xintercept = -gdp), linetype = "dotted", color = "#333333", linewidth = .8) +
-  geom_text(aes(label = sprintf("%+.1f%%", val), hjust = ifelse(val > 0, -.15, 1.15)), size = 3.8) +
+  geom_text(aes(label = sprintf("%+.1f%%", round(val, 1) + 0), hjust = ifelse(val > 0, -.15, 1.15)), size = 3.8) +
   geom_text(data = need, aes(x = -gdp, y = .62, label = "intensity decline needed\nto hold emissions flat"),
             inherit.aes = FALSE, size = 3, color = "#333333", hjust = 0, nudge_x = .08, lineheight = .95) +
   facet_wrap(~era) +
   scale_fill_manual(values = pcols) +
   scale_x_continuous(expand = expansion(mult = .22)) +
   labs(title = "The arithmetic of bending the curve: intensity must fall as fast as GDP grows",
-       subtitle = "Average annual log growth rates of the global Kaya terms. CO2 growth = GDP growth + fuel-mix change + energy-intensity change,\nso the emissions curve cannot bend until the two intensity slopes accelerate - which is where any policy signal must appear first.",
+       subtitle = paste0("Average annual log growth rates of the global Kaya terms. CO2 growth = GDP growth + fuel-mix change + energy-intensity change, so the emissions\n",
+                         "curve cannot bend until the intensity slopes accelerate - which is where any policy signal must appear first. Emissions growth slowed from +2.1% to\n",
+                         "+0.4% per year after 2015: roughly two-thirds of that slowdown is slower GDP growth, one-third a cleaner fuel mix."),
        x = "Average annual change (%)", y = NULL) +
   theme_takeaway
 save_both(p2b, "takeaway_fig02b_stabilization_arithmetic", 13, 6)
@@ -110,6 +114,13 @@ det <- lapply(levels(series$component), function(k) {
 })
 writeLines(c("Post-Paris detectability with data through 2023 (hinge-at-2015 model on 1990-2023):",
              unlist(det),
-             "Compare: the entire post-1973 global C/GDP trend is about -0.8%/yr."),
+             "Compare: the entire post-1973 global C/GDP trend is about -0.8%/yr.",
+             "",
+             "Treaty-ladder verdict for Paris on the global aggregate (Newey-West, per the design lock):",
+             "1990+ window: C/GDP -0.92 pp/yr (t=-2.85), C/E -0.66 (t=-4.27), E/GDP -0.26 (t=-1.49, ns);",
+             "on this window 2015 is the best knot in 2000-2016 for C/GDP and C/E.",
+             "Full-sample placebo sweep (10-yr pre / 7-yr post margins): C/GDP knot-|t| plateaus over 2011-2016",
+             "with the best year 2013; C/E does not clear the top-decile bar against its full history (best year 1986).",
+             "Reading: a real supply-side acceleration whose onset predates Paris; attribution is not yet identified."),
            file.path(od, "paris_detectability_note.txt"))
 cat(readLines(file.path(od, "paris_detectability_note.txt")), sep = "\n")

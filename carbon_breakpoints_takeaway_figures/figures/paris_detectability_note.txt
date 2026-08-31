@@ -1,0 +1,12 @@
+Post-Paris detectability with data through 2023 (hinge-at-2015 model on 1990-2023):
+C/GDP: minimum detectable post-2015 slope change (95%, ~50% power) about 0.54 pp/yr; for 80% power about 0.78 pp/yr
+C/E: minimum detectable post-2015 slope change (95%, ~50% power) about 0.25 pp/yr; for 80% power about 0.36 pp/yr
+E/GDP: minimum detectable post-2015 slope change (95%, ~50% power) about 0.34 pp/yr; for 80% power about 0.49 pp/yr
+Compare: the entire post-1973 global C/GDP trend is about -0.8%/yr.
+
+Treaty-ladder verdict for Paris on the global aggregate (Newey-West, per the design lock):
+1990+ window: C/GDP -0.92 pp/yr (t=-2.85), C/E -0.66 (t=-4.27), E/GDP -0.26 (t=-1.49, ns);
+on this window 2015 is the best knot in 2000-2016 for C/GDP and C/E.
+Full-sample placebo sweep (10-yr pre / 7-yr post margins): C/GDP knot-|t| plateaus over 2011-2016
+with the best year 2013; C/E does not clear the top-decile bar against its full history (best year 1986).
+Reading: a real supply-side acceleration whose onset predates Paris; attribution is not yet identified.
