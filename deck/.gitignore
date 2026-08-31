@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+# regenerate with build_artifact.py; published as an artifact instead
+education_exception.html
