@@ -44,17 +44,21 @@ GREY = "#8A8A8A"
 BG = "#FCFCFB"
 INK = "#1A1A1A"
 
-PROVENANCE = """Panel a: HappinessSDG.R (SDG); make_figures.py section B (HDI), section C (SHDI).
-Panel b: make_figures.py section F, SDG4 indicators classified by construct.
-Panel c: sections B, D, F. Denominators differ by row and are labelled."""
+PROVENANCE = """Panel a, SDG: robust_all_for_figures.csv, countries with >=1 FDR-significant
+series (42 countries carry SDG coverage; median 456 series each).
+Panel a, HDI: HDI_indicator_summary.csv, the `hdi` composite row (HappinessHDI.R);
+independently reproduced here to 63/150 -> 3/150.
+Panel a, SHDI: GDL national aggregate vs WHR happiness, one test per country.
+Panel b: SDG4's 35 series classified by construct (make_figures.py section F).
+Panel c: as above plus ESS individual-level tests. Denominators differ by row."""
 
 # --------------------------------------------------------------------------
 # (a) The collapse: countries FDR-significant in levels vs. first-differences
 # --------------------------------------------------------------------------
 COLLAPSE = [
     # label,                  n_sig_levels, n_sig_diffs, n_countries
-    ("SDG indicators\n(original paper)", 64, 3, 151),
-    ("Human Development\nIndex", 67, 6, 150),
+    ("SDG indicators\n(any of ~456 series)", 30, 2, 42),
+    ("Human Development\nIndex (composite)", 64, 3, 151),
     ("Subnational HDI\n(national aggregate)", 66, 6, 148),
 ]
 
@@ -78,8 +82,8 @@ EDU_LADDER = [
     # label,                            denominator note,               pct,  colour
     ("SDG4, all 35 indicators pooled", "of country × indicator pairs", 3.3, GREY),
     ("SDG4, access indicators only", "of country × indicator pairs", 12.7, VERMILION),
-    ("HDI expected years of schooling", "of 150 countries", 33.6, BLUE),
-    ("HDI mean years of schooling", "of 150 countries", 40.9, BLUE),
+    ("HDI expected years of schooling", "of 150 countries", 34.0, BLUE),
+    ("HDI mean years of schooling", "of 150 countries", 40.7, BLUE),
     ("ESS respondents' own attainment", "of 36 countries (32 of 36)", 88.9, GREEN),
 ]
 
@@ -115,14 +119,17 @@ def panel_a(ax):
 
     ax.set_xticks(list(x))
     ax.set_xticklabels(labels, fontsize=8.5)
-    ax.set_ylim(0, 62)
+    ax.set_ylim(0, 88)
     ax.set_ylabel("% of countries with a significant\ndevelopment–happiness association", fontsize=9)
     ax.legend(frameon=False, fontsize=8.5, loc="upper center", ncol=2,
               bbox_to_anchor=(0.5, 1.02))
     style_axes(ax)
     ax.set_title("a  The collapse is not an artifact of the SDG framework",
-                 fontsize=10.5, fontweight="bold", color=INK, loc="left", pad=24)
-    ax.text(0, 1.012, "Same design, three development frameworks, one outcome (WHR Cantril ladder).",
+                 fontsize=10.5, fontweight="bold", color=INK, loc="left", pad=34)
+    ax.text(0, 1.012,
+            "One outcome (WHR Cantril ladder). The SDG test asks whether ANY of a country's\n"
+            "series is significant, so its levels rate is higher by construction — "
+            "the collapse ratio is what compares.",
             transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
 
 
@@ -216,7 +223,60 @@ def main():
         fig.savefig(path, dpi=220, facecolor=BG)
         print(f"Saved: {path}")
     plt.close(fig)
+    build_c2(outdir)
 
+
+
+
+# ==========================================================================
+# Replacement for the pipeline's C2 figure.
+#
+# The original C2 reported the HDI composite as 67/150 -> 6/150. That does not
+# reproduce: HappinessHDI.R's own HDI_indicator_summary.csv gives 64/151 -> 3/151
+# for the `hdi` row, and an independent recomputation from HDI_with_happiness.csv
+# gives 63/150 -> 3/150. The SHDI side (66/148 -> 6/148) does reproduce and is
+# unchanged. This rebuilds the figure on the authoritative numbers.
+# ==========================================================================
+C2 = [
+    ("UNDP HDI\n(composite)", 64, 3, 151),
+    ("GDL SHDI\n(national aggregate)", 66, 6, 148),
+]
+
+
+def build_c2(outdir: Path):
+    fig, ax = plt.subplots(figsize=(11, 6.2))
+    fig.patch.set_facecolor(BG)
+    lev = [100 * c[1] / c[3] for c in C2]
+    dif = [100 * c[2] / c[3] for c in C2]
+    x, w = range(len(C2)), 0.32
+
+    ax.bar([i - w / 2 for i in x], lev, w, color=BLUE, label="Levels")
+    ax.bar([i + w / 2 for i in x], dif, w, color=RED, label="Year-to-year differences")
+    for i, (lv, dv, c) in enumerate(zip(lev, dif, C2)):
+        ax.text(i - w / 2, lv + 1.0, f"{c[1]}/{c[3]}", ha="center", fontsize=10, color=INK)
+        ax.text(i + w / 2, dv + 1.0, f"{c[2]}/{c[3]}", ha="center", fontsize=10, color=INK)
+
+    ax.set_xticks(list(x))
+    ax.set_xticklabels([c[0] for c in C2], fontsize=10)
+    ax.set_ylim(0, 60)
+    ax.set_ylabel("% of countries FDR-significant (q<.05) vs. WHR happiness", fontsize=9.5)
+    ax.legend(frameon=False, fontsize=9.5, loc="upper right")
+    style_axes(ax)
+    ax.set_title("Does the SHDI show the same levels-to-differences collapse as the HDI?",
+                 fontsize=13, fontweight="bold", color=INK, loc="left", pad=30)
+    ax.text(0, 1.015,
+            "One test per country per index, Benjamini–Hochberg corrected. "
+            "Both indices collapse by an order of magnitude.",
+            transform=ax.transAxes, fontsize=9, color="#5A5A5A", va="bottom")
+    fig.text(0.008, 0.02,
+             "Sources: UNDP HDR (HDI_indicator_summary.csv, HappinessHDI.R); "
+             "Global Data Lab SHDI; World Happiness Report.",
+             fontsize=8, color=GREY)
+    fig.tight_layout(rect=(0, 0.045, 1, 1))
+    path = outdir / "collapse_hdi_shdi_whr.png"
+    fig.savefig(path, dpi=200, facecolor=BG)
+    plt.close(fig)
+    print(f"Saved: {path}")
 
 if __name__ == "__main__":
     main()

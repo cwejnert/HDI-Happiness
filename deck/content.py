@@ -19,9 +19,9 @@ SUBTITLE = (
 )
 DATELINE = "Working synthesis for the co-author team · August 2026"
 SCOPE = (
-    "SDG: 151 countries · HDI &amp; SHDI × World Happiness Report: 150 countries, "
-    "2011–2023 · European Social Survey: 36 countries, 351,023 respondents, "
-    "rounds 5–11 (2010–2023)"
+    "SDG: 42 countries, 661 series · HDI &amp; SHDI × World Happiness Report: "
+    "148–151 countries, 2011–2023 · European Social Survey: 36 countries, "
+    "351,023 respondents, rounds 5–11 (2010–2023)"
 )
 
 # --------------------------------------------------------------------------
@@ -34,9 +34,9 @@ HOOK = {
         "The SDG paper now under review makes a narrow, awkward claim: the "
         "association between development indicators and happiness is strong "
         "when countries are compared with one another, and close to absent "
-        "when each country is compared with its own past. Sixty-four of 151 "
-        "countries show a significant SDG–happiness association in levels. "
-        "Three do in year-to-year changes.",
+        "when each country is compared with its own past. Thirty of the 42 "
+        "countries with usable SDG coverage show a significant SDG–happiness "
+        "association in levels. Two do in year-to-year changes.",
         "There is an obvious way to dismiss that result. The SDG framework is "
         "a sprawling, politically negotiated instrument of more than two "
         "hundred indicators with uneven coverage; a null finding inside it "
@@ -68,9 +68,9 @@ ACTS = [
         "numeral": "I",
         "title": "The collapse is a property, not an artifact",
         "key_numbers": [
-            ("67 → 6", "of 150 countries significant, HDI levels → differences"),
-            ("66 → 6", "of 148, subnational HDI"),
-            ("3 × 2", "spatial scales × wellbeing instruments"),
+            ("71% → 5%", "of countries significant, SDG levels → differences"),
+            ("42% → 2%", "the same collapse under the HDI composite"),
+            ("45% → 4%", "and under the subnational HDI"),
         ],
         "thesis": (
             "Run the original design on three unrelated development "
@@ -88,17 +88,22 @@ ACTS = [
                     "dimensions rather than seventeen goals, a single custodian, "
                     "a stable definition, near-universal coverage. Substituting "
                     "it for the SDG indicators and holding everything else fixed "
-                    "gives 67 of 150 countries FDR-significant in levels and 6 of "
-                    "150 in first differences.",
-                    "The original SDG result was 64 of 151 and 3 of 151. Whatever "
-                    "produces the asymmetry, it is not the design of the SDG "
-                    "indicator set.",
+                    "gives 64 of 151 countries FDR-significant in levels and 3 of "
+                    "151 in first differences — 42% down to 2%.",
+                    "The SDG framework collapsed from 71% of countries to 5%. The "
+                    "two rates are not directly comparable, because the SDG test "
+                    "asks whether <em>any</em> of a country's several hundred "
+                    "series is significant while the HDI test asks about one "
+                    "composite; that difference is exactly why the SDG levels "
+                    "rate is higher. What compares is the collapse itself, and it "
+                    "is an order of magnitude in both. Whatever produces the "
+                    "asymmetry, it is not the design of the SDG indicator set.",
                 ],
                 "figure": "collapse_hdi_shdi_whr.png",
                 "caption": "Countries with an FDR-significant development–happiness "
                            "association, levels versus first differences, for the HDI "
                            "and for the Global Data Lab's subnational HDI aggregated "
-                           "to the national level.",
+                           "to the national level. One test per country per index.",
             },
             {
                 "label": "Replication 2 · a second producer",
@@ -108,8 +113,8 @@ ACTS = [
                     "household surveys rather than from the national accounts "
                     "and administrative series the UNDP uses. Aggregated back to "
                     "the national level it gives 66 of 148 in levels and 6 of 148 "
-                    "in differences — within sampling noise of both the HDI and "
-                    "the SDG results.",
+                    "in differences — 45% down to 4%, statistically "
+                    "indistinguishable from the HDI's 42% down to 2%.",
                 ],
             },
             {
@@ -176,19 +181,22 @@ ACTS = [
                 "label": "The autopsy",
                 "heading": "What survives in levels is the raw development gradient",
                 "body": [
-                    "Ranking all 609 SDG series by the share of countries in "
+                    "Ranking the 632 SDG series with usable coverage by the share of countries in "
                     "which they are FDR-significant puts child mortality, "
                     "stunting, water and sanitation, and access to financial "
                     "services at the top. These are survival and basic "
                     "infrastructure — the steep part of the development curve, "
                     "not the 2030 Agenda's institutional superstructure.",
                     "The best-performing education indicator ranks about "
-                    "hundredth. In first differences, only 9 of 609 series have "
+                    "101st of 632 — and it is participation in organized learning before "
+                    "primary entry, an access measure, which is the same "
+                    "construct Act II turns on. In first differences, only 9 of "
+                    "the 661 series have "
                     "even one significant country, which is why there is no "
                     "differences ranking to report at all.",
                 ],
                 "figure": "sdg_indicator_top20.png",
-                "caption": "The 20 highest-ranking SDG series of 609, by share of "
+                "caption": "The 20 highest-ranking SDG series of 632, by share of "
                            "countries FDR-significant in levels.",
             },
             {
@@ -196,9 +204,10 @@ ACTS = [
                 "heading": "Yet inside the HDI, education is the strongest domain",
                 "body": [
                     "Mean years of schooling is FDR-significant against World "
-                    "Happiness Report happiness in 40.9% of countries and "
-                    "expected years of schooling in 33.6%, against 40.0% for GNI "
-                    "per capita and 19.3% for life expectancy. Education "
+                    "Happiness Report happiness in 61 of 150 countries (40.7%) and "
+                    "expected years of schooling in 51 of 150 (34.0%), against 61 "
+                    "of 151 (40.4%) for GNI per capita and 30 of 151 (19.9%) for "
+                    "life expectancy. Education "
                     "supplies two of the HDI's three strongest components; "
                     "pooled SDG4 sits at 3.3%. This is the sharpest disagreement "
                     "between the two frameworks anywhere in the project.",
@@ -424,7 +433,7 @@ ACTS = [
                     "an empty metric.",
                     "Every level of aggregation we can test points the other "
                     "way. Attainment and access carry the wellbeing signal — "
-                    "12.7% for SDG4 access, 33.6% and 40.9% for the HDI's "
+                    "12.7% for SDG4 access, 34.0% and 40.7% for the HDI's "
                     "schooling components, 32 of 36 countries at the individual "
                     "level — while measured learning outcomes sit at 0.9% and "
                     "parity ratios at 2.5%.",
@@ -509,7 +518,7 @@ DECISIONS = [
 APPENDIX = [
     ("sdg_by_goal.png", "SDG significance by goal, pooled",
      "The leading goal (Energy, 16.0%) clears FDR significance in barely one "
-     "country-test in six; pooled Education ranks 11th of 16."),
+     "country-test in six; pooled Education ranks 12th of 17."),
     ("shdi_vs_hdi_validation.png", "Subnational HDI validated against the UNDP HDI",
      "National aggregates agree closely, which is what licenses the "
      "region-level analysis."),
