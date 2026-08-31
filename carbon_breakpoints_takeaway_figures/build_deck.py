@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Build the final narrative deck: What Bends the Curve? — Paris at ten."""
+"""Build the final narrative deck: What Bends the Curve? — Paris at ten.
+v2: plain-language methods, and a 'How to read it' guide on every figure slide."""
 from pptx import Presentation
-from pptx.util import Inches, Pt, Emu
+from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
 from PIL import Image
@@ -19,9 +20,8 @@ BLUE = RGBColor(0x3A, 0x66, 0xA5)
 RED = RGBColor(0xB3, 0x3A, 0x3A)
 AMBER = RGBColor(0xC7, 0x7F, 0x00)
 
-W, H = Inches(13.333), Inches(7.5)
 prs = Presentation()
-prs.slide_width, prs.slide_height = W, H
+prs.slide_width, prs.slide_height = Inches(13.333), Inches(7.5)
 BLANK = prs.slide_layouts[6]
 
 
@@ -48,50 +48,49 @@ def para(tf, text, size=14, color=INK, bold=False, italic=False, first=False,
     return p
 
 
-def runs(tf, parts, size=14, first=False, space_after=6, align=PP_ALIGN.LEFT):
-    """parts: list of (text, color, bold)"""
+def runs(tf, parts, size=14, first=False, space_after=6, align=PP_ALIGN.LEFT, italic=False):
     p = tf.paragraphs[0] if first and not tf.paragraphs[0].runs else tf.add_paragraph()
     p.alignment = align
     p.space_after = Pt(space_after)
     for t, c, b in parts:
         r = p.add_run(); r.text = t
         r.font.size, r.font.bold, r.font.name = Pt(size), b, "Calibri"
+        r.font.italic = italic
         r.font.color.rgb = c
     return p
 
 
-def kicker_title(s, kicker, title, tcolor=INK, kcolor=GREEN):
-    tf = box(s, 0.55, 0.28, 12.25, 1.15)
+def kicker_title(s, kicker, title, kcolor=GREEN):
+    tf = box(s, 0.55, 0.3, 12.25, 1.0)
     para(tf, kicker, size=12, color=kcolor, bold=True, first=True, space_after=2)
-    para(tf, title, size=27, color=tcolor, bold=True, space_after=0)
+    para(tf, title, size=24, color=INK, bold=True, space_after=0)
 
 
-def fit_image(s, path, x, y, maxw, maxh, align="center"):
+def fit_image(s, path, x, y, maxw, maxh):
     iw, ih = Image.open(path).size
-    scale = min(maxw / iw, maxh / ih)
-    w, h = iw * scale, ih * scale
-    if align == "center":
-        x = x + (maxw - w) / 2
-    y = y + (maxh - h) / 2
-    return s.shapes.add_picture(path, Inches(x), Inches(y), Inches(w), Inches(h))
+    sc = min(maxw / iw, maxh / ih)
+    w, h = iw * sc, ih * sc
+    return s.shapes.add_picture(path, Inches(x + (maxw - w) / 2), Inches(y + (maxh - h) / 2),
+                                Inches(w), Inches(h))
 
 
 def notes(s, text):
     s.notes_slide.notes_text_frame.text = text
 
 
-def figure_slide(kicker, title, img, takeaway=None, note="", src_note=None, img_top=1.45):
+def figure_slide(kicker, title, img, guide=None, takeaway=None, note="", kcolor=GREEN):
     s = slide()
-    kicker_title(s, kicker, title)
-    top = img_top
+    kicker_title(s, kicker, title, kcolor=kcolor)
+    top = 1.32
     if takeaway:
-        tf = box(s, 0.55, 1.32, 12.25, 0.45)
-        para(tf, takeaway, size=13.5, color=GRAY, first=True, space_after=0)
-        top = max(top, 1.82)
-    fit_image(s, img, 0.35, top, 12.63, 7.06 - top)
-    if src_note:
-        tf = box(s, 0.55, 7.08, 12.25, 0.35)
-        para(tf, src_note, size=9, color=LGRAY, first=True, space_after=0)
+        tf = box(s, 0.55, top, 12.25, 0.42)
+        para(tf, takeaway, size=13, color=INK, bold=True, first=True, space_after=0)
+        top += 0.44
+    if guide:
+        tf = box(s, 0.55, top, 12.25, 0.66)
+        runs(tf, [("How to read it:  ", BLUE, True), (guide, GRAY, False)], size=12.5, first=True, space_after=0)
+        top += 0.68
+    fit_image(s, img, 0.35, top + 0.04, 12.63, 7.18 - top)
     notes(s, note)
     return s
 
@@ -121,48 +120,54 @@ para(tf, "Worst-case emissions scenarios have moved off the table, and global CO
 para(tf, "The open question:", size=17, bold=True, space_after=4)
 para(tf, "Is the global improvement a direct effect of the agreement — or the continuation of trends rooted decades earlier, which Paris coordinates and reinforces?", size=15, color=GRAY, space_after=14)
 para(tf, "Our approach:", size=17, bold=True, space_after=4)
-para(tf, "Rather than assuming treaty years are turning points, we estimate structural breaks from the data — globally and for every country with adequate annual series — then use historical evidence to ask why the trend changed.", size=15, color=GRAY, space_after=0)
+para(tf, "Rather than assuming treaty years are turning points, we let the data tell us when trends actually changed — globally and for every country with enough annual data — and then use historical evidence to ask why.", size=15, color=GRAY, space_after=0)
 tf = box(s, 8.15, 1.6, 4.65, 5.4)
 para(tf, "Why intensity comes first", size=17, bold=True, color=GREEN, first=True, space_after=6)
-para(tf, "growth of CO2  =  growth of GDP", size=14, space_after=0, font="Consolas")
-para(tf, "  +  change in C/E  (fuel mix)", size=14, space_after=0, font="Consolas")
-para(tf, "  +  change in E/GDP  (efficiency)", size=14, space_after=10, font="Consolas")
-para(tf, "Emissions cannot bend until an intensity slope accelerates. Intensity is the leading indicator: any policy signal must appear there first — on carbon or energy intensity, not necessarily on emissions.", size=14, color=GRAY, space_after=8)
-para(tf, "Unless the intensity terms outpace GDP growth, emissions cannot stabilize.", size=14, color=INK, bold=True, space_after=0)
+para(tf, "Emissions can be split into three moving parts:", size=14, color=GRAY, space_after=4)
+para(tf, "CO2 growth = economic growth + change in fuel mix + change in energy efficiency", size=14, bold=True, space_after=10)
+para(tf, "Emissions cannot bend until the fuel mix or efficiency improves faster. Intensity is the leading indicator: any policy effect must show up there first — before it can ever show up in emissions.", size=14, color=GRAY, space_after=8)
+para(tf, "Unless intensity improves faster than the economy grows, emissions cannot stabilize.", size=14, color=INK, bold=True, space_after=0)
 notes(s, "Set the sympathetic frame, then pivot to the identity: the mathematically required location of any policy signal is the intensity slopes. That justifies the paper's whole design.")
 
-# ---------------------------------------------------------------- 3 · methods 1
+# ---------------------------------------------------------------- 3 · methods 1 (plain language)
 s = slide()
-kicker_title(s, "METHODS", "What a breakpoint means — and the Kaya lens", kcolor=BLUE)
-tf = box(s, 0.55, 1.6, 6.1, 5.4)
-para(tf, "The breakpoint model", size=16, bold=True, first=True, space_after=6)
-para(tf, "y(t) = a + b·t + d·max(t − k, 0) + e(t)", size=14, font="Consolas", space_after=6)
-para(tf, "b is the pre-break slope; b + d the post-break slope; d the change. The unrestricted model searches all admissible years for the strongest slope change; a moving-block bootstrap describes how stable that date is under serially dependent noise.", size=13.5, color=GRAY, space_after=10)
-para(tf, "A breakpoint identifies when a trend changed — with uncertainty. It is not a peak year, not a policy-adoption date, and never a causal estimate by itself. Historical and external evidence answers why.", size=13.5, color=INK, space_after=10)
-para(tf, "Inference: Newey–West standard errors for fixed-date tests; BIC for model evidence; moving-block bootstrap for date stability.", size=13.5, color=GRAY, space_after=0)
-tf = box(s, 7.0, 1.6, 5.8, 5.4)
-para(tf, "The Kaya decomposition", size=16, bold=True, first=True, space_after=6)
-para(tf, "C/GDP = (C/E) × (E/GDP)", size=15, font="Consolas", space_after=8)
-runs(tf, [("C/GDP — ", BLUE, True), ("aggregate carbon intensity of output: the observed outcome.", GRAY, False)], size=13.5, space_after=6)
-runs(tf, [("C/E — ", GREEN, True), ("supply side: fuel mix, electricity systems, conversion technology.", GRAY, False)], size=13.5, space_after=6)
-runs(tf, [("E/GDP — ", AMBER, True), ("demand side: efficiency, sectoral structure, economic composition.", GRAY, False)], size=13.5, space_after=10)
-para(tf, "We estimate all three, for the world aggregate and every country, with one harmonized procedure. The component pattern constrains which mechanisms are plausible.", size=13.5, color=INK, space_after=0)
-notes(s, "One methods slide on the estimator, one on the sample. Emphasize: 'when, not why' — the design lock's central discipline.")
+kicker_title(s, "HOW WE MEASURE IT", "Finding the bend: two straight lines and a kink", kcolor=BLUE)
+tf = box(s, 0.55, 1.55, 6.1, 5.5)
+para(tf, "Three steps, no assumptions about treaty years", size=15.5, bold=True, first=True, space_after=8)
+runs(tf, [("1.  ", BLUE, True), ("Plot each series on a log scale, so a straight line means a steady percentage change per year.", GRAY, False)], size=13.5, space_after=8)
+runs(tf, [("2.  ", BLUE, True), ("Fit two straight lines that meet at a kink — the 'breakpoint'. Try every possible kink year and keep the one that fits the data best. That year is the estimate of when the trend changed.", GRAY, False)], size=13.5, space_after=8)
+runs(tf, [("3.  ", BLUE, True), ("Stress-test the date: re-estimate it on many statistically reshuffled versions of the series. If the estimated year barely moves, the break is credible; if it jumps around, we say so.", GRAY, False)], size=13.5, space_after=12)
+para(tf, "A breakpoint tells us when a trend changed — never, by itself, why. Historical evidence answers that separately.", size=13.5, color=INK, bold=True, space_after=8)
+para(tf, "(Formally: y(t) = a + b·t + d·max(t−k, 0); slope b before year k, b+d after. Uncertainty via moving-block bootstrap; autocorrelation-robust standard errors for fixed-date tests.)", size=10.5, color=LGRAY, italic=True, space_after=0)
+tf = box(s, 7.0, 1.55, 5.8, 5.5)
+para(tf, "Two doors for any improvement", size=15.5, bold=True, first=True, space_after=8)
+para(tf, "Carbon intensity — CO2 per dollar of output — can only improve through one of two doors:", size=13.5, color=GRAY, space_after=8)
+runs(tf, [("Cleaner energy (C/E):  ", GREEN, True), ("less CO2 per unit of energy — fuel switching, nuclear, renewables, the power system.", GRAY, False)], size=13.5, space_after=8)
+runs(tf, [("Less energy per dollar (E/GDP):  ", AMBER, True), ("efficiency, and changes in what the economy makes — industry versus services.", GRAY, False)], size=13.5, space_after=10)
+para(tf, "We estimate the bend in the overall series and in both doors, for the world and for every country, with one identical procedure. Which door moved tells us what kind of transition happened — a fuel-mix bend points to energy policy or markets; an efficiency bend often points to economic change.", size=13.5, color=INK, space_after=0)
+notes(s, "Keep this conversational: two lines and a kink, tried at every year; then shake the data to see if the date holds still. The 'two doors' framing sets up the mechanism logic used throughout Acts II-III.")
 
-# ---------------------------------------------------------------- 4 · methods 2 (evidence base)
+# ---------------------------------------------------------------- 4 · methods 2 (plain language)
 s = slide()
-kicker_title(s, "METHODS", "From 204 jurisdictions to 97 eligible national breaks", kcolor=BLUE)
-tf = box(s, 0.55, 1.5, 5.4, 5.6)
-para(tf, "Eligibility is strict by design", size=16, bold=True, first=True, space_after=6)
-for t in ["at least 40 annual observations, 10+ years on each side of the break, break 10+ years from the boundary",
-          "BIC improvement of at least 6 over the unbroken trend",
-          "70%+ of bootstrap dates within 5 years; interval no wider than 12 years",
-          "standardized slope change of at least 0.25"]:
-    runs(tf, [("•  ", GREEN, True), (t, GRAY, False)], size=13, space_after=5)
-para(tf, "204 jurisdictions → 158 estimable → 97 countries with an eligible, stable headline break; nearby component breaks consolidate into 107 transition episodes (15-year grouping; 10/20-year sensitivity).", size=13, color=INK, space_after=8)
-para(tf, "Treaty attribution ladder (all five required): Newey–West significance → top 10% vs nearby placebo dates → best date within 3 years of the treaty → compatible unrestricted break → plausible domestic mechanism.", size=13, color=INK, bold=True, space_after=0)
-fit_image(s, M("image1.png"), 6.15, 1.5, 6.85, 5.6)
-notes(s, "The funnel figure is from the current deck. The five-step ladder is the frozen attribution standard — it returns in Act I applied to Paris itself.")
+kicker_title(s, "HOW WE MEASURE IT", "Which breaks do we trust — and when does a treaty get credit?", kcolor=BLUE)
+tf = box(s, 0.55, 1.55, 5.5, 5.5)
+para(tf, "A country's break counts only if:", size=15.5, bold=True, first=True, space_after=8)
+for t in ["the series is long enough (40+ years, with at least 10 on each side of the break);",
+          "the two-line model fits clearly better than a single straight line;",
+          "the estimated year stays put when the data are reshuffled; and",
+          "the change in slope is big enough to matter, not a statistical whisker."]:
+    runs(tf, [("•  ", GREEN, True), (t, GRAY, False)], size=13.5, space_after=7)
+para(tf, "204 jurisdictions → 158 with estimable series → 97 countries with a break that passes every test. Breaks close together in time are read as one national transition: 107 episodes in all.", size=13.5, color=INK, space_after=0)
+tf = box(s, 6.35, 1.55, 6.45, 5.5)
+para(tf, "A treaty year gets credit only if all five hold:", size=15.5, bold=True, first=True, space_after=8)
+for i, t in enumerate(["the slope genuinely changes at the treaty year (by a robust statistical test);",
+                       "the treaty year beats nearly all nearby 'placebo' years — because when a trend curves gently, almost any year looks significant;",
+                       "the best-fitting year is within three years of the treaty;",
+                       "the data-chosen break agrees with it; and",
+                       "there is a documented domestic policy story that fits."], 1):
+    runs(tf, [(f"{i}.  ", BLUE, True), (t, GRAY, False)], size=13.5, space_after=7)
+para(tf, "This ladder is deliberately hard to climb. Many series pass step 1; few pass them all. We hold Paris itself to the same standard.", size=13.5, color=INK, bold=True, space_after=0)
+notes(s, "The placebo idea in one line: a significant result at the treaty year means little if 1990 and 1994 are just as 'significant'. The ladder is the paper's discipline — and Act I applies it to Paris.")
 
 # ---------------------------------------------------------------- 5 · four acts
 s = slide()
@@ -178,61 +183,67 @@ for roman, t, d in acts:
     para(tf, t, size=16, bold=True, space_after=8)
     para(tf, d, size=12.5, color=GRAY, space_after=0)
     x += 3.12
-notes(s, "Act I is reframed relative to earlier drafts: not 'treaties failed' but 'the record shows a real recent acceleration whose timing cannot yet separate Paris from the renewables cost decline.'")
+notes(s, "Act I is reframed: not 'treaties failed' but 'the record shows a real recent acceleration whose timing cannot yet separate Paris from the renewables cost decline.'")
 
 # ---------------------------------------------------------------- 6 · Act I fig 1
 figure_slide("ACT I · IS THE GLOBAL BEND PARIS?",
-             "Global curves first bent in the 1970s — decades before the climate regime",
+             "Global curves first bent in the 1970s",
              F("takeaway_fig01_global_bend_predates_treaties.png"),
-             note="C/GDP breaks ~1973, E/GDP ~1974 — the oil-shock era. C/E's point estimate is 1992 but its interval spans 1978–2011: it does not uniquely identify Rio. Multiple-break models show several episodes, not one intervention. Robust to consumption-based emissions, excluding former Soviet economies, PPP GDP.")
+             guide="Gray dots are the world's CO2 per dollar of output each year (1965 = 100). The red line is the best-fitting pair of straight lines; where they meet — 1973 — is the estimated break. Rio and Paris are marked for comparison: both come long after the bend. The lower panel repeats the estimate for each component; the whiskers show how uncertain each break year is.",
+             note="C/GDP breaks ~1973, E/GDP ~1974 — the oil-shock era. C/E's point estimate is 1992 but its interval spans 1978–2011: it does not uniquely identify Rio. Robust to consumption-based emissions, excluding former Soviet economies, PPP GDP.")
 
 # ---------------------------------------------------------------- 7 · Act I fig 2A
 figure_slide("ACT I · IS THE GLOBAL BEND PARIS?",
-             "Paris at ten: intensity is outrunning its old trend — but the bend began earlier",
+             "Paris at ten: ahead of trend — but the bend began earlier",
              F("takeaway_fig02a_paris_and_the_long_trend.png"),
-             note="The post-2015 points fall below the extrapolated Rio-to-Paris trend: a real supply-side acceleration (C/E −0.7 pp/yr, NW t=4.3; C/GDP −0.9, t=2.9). But onsets from 2011–2016 fit the full record about equally well (best 2013), and E/GDP shows no acceleration. So the acceleration is what an effective Paris should look like — and it cannot yet be separated from the renewables cost collapse that preceded the treaty.")
+             guide="We draw the 1990–2015 trend, then extend it past Paris (dashed line) with a band showing where future years should fall if nothing changed. Red dots are the actual years since Paris. Dots below the band mean the world is now improving faster than its old trend — clearly so for the fuel mix, not at all for energy efficiency.",
+             note="A real supply-side acceleration (C/E −0.7 pp/yr, NW t=4.3; C/GDP −0.9, t=2.9). But onsets from 2011–2016 fit the full record about equally well (best 2013), and E/GDP shows no acceleration. What an effective Paris should look like — and not yet separable from the renewables cost collapse that preceded the treaty.")
 
 # ---------------------------------------------------------------- 8 · Act I fig 2B
 figure_slide("ACT I · IS THE GLOBAL BEND PARIS?",
-             "The arithmetic of bending the curve: intensity must fall as fast as GDP grows",
+             "The arithmetic: intensity must fall as fast as GDP grows",
              F("takeaway_fig02b_stabilization_arithmetic.png"),
-             note="Kaya growth accounting by era. Emissions growth slowed from +2.1 to +0.4%/yr after 2015 — but roughly two-thirds of the slowdown is slower GDP growth; one-third is the cleaner fuel mix. The dotted line marks the intensity decline needed to hold emissions flat: the world is still short of it.")
+             guide="Each bar is an average annual growth rate. By construction, the red emissions bar equals the gray GDP bar plus the two colored intensity bars. Emissions stop growing only when the colored bars together are as long as the gray one — the dotted line marks that target. We are closer than before Paris, but not there.",
+             note="Emissions growth slowed from +2.1 to +0.4%/yr after 2015 — but roughly two-thirds of the slowdown is slower GDP growth; one-third is the cleaner fuel mix. The gap to the dotted line is the remaining task.")
 
 # ---------------------------------------------------------------- 9 · Act I placebo
 figure_slide("ACT I · IS THE GLOBAL BEND PARIS?",
-             "The placebo discipline: many years look like turning points",
+             "Why a treaty-year result needs a placebo test",
              F("takeaway_fig02_placebo_test.png"),
-             note="Top: the model-fit profile across candidate break years is a plateau — why a significant treaty-year hinge is weak evidence alone. Bottom: the evidentiary funnel. Nominal treaty-date significance is common (48–69% of series); date-uniqueness is rare (Rio: 10 C/GDP, 21 C/E, 34 E/GDP series; Paris: 14, 5, 6). Applied to Paris's own decade, the same discipline dates the global acceleration's onset to ~2013.")
+             guide="Top: we place the break at every possible year, one at a time, and record how much better the model fits. Rio fits well — but so do many neighboring years, which is why a good fit at a treaty year proves little on its own. Bottom: the share of country series with a significant change at each treaty year (left point) versus the share where the treaty year also beats its neighbors (right point).",
+             note="Nominal treaty-date significance is common (48–69% of series); date-uniqueness is rare (Rio: 10/21/34 series by component; Paris: 14/5/6). The same discipline applied to Paris's decade dates the global acceleration's onset to ~2013.")
 
 # ---------------------------------------------------------------- 10 · Act I verdict
 s = slide()
 kicker_title(s, "ACT I · VERDICT", "The global record can show an acceleration — not yet its author")
 tf = box(s, 0.55, 1.6, 6.05, 5.4)
 para(tf, "What the data establishes", size=16, bold=True, color=GREEN, first=True, space_after=6)
-for t in ["A real post-2013 supply-side acceleration: C/E falling −0.5%/yr after a flat quarter-century; C/GDP −0.9 pp/yr faster than the Rio-to-Paris trend (Newey–West).",
+for t in ["A real post-2013 supply-side acceleration: the fuel mix is improving −0.5%/yr after a flat quarter-century; overall intensity is falling ~0.9 pp/yr faster than its Rio-to-Paris trend.",
           "Emissions growth slowed from +2.1 to +0.4%/yr — the direction an effective Paris requires.",
-          "No acceleration on the demand side (E/GDP): efficiency and structure continue their 50-year trend."]:
+          "No acceleration on the demand side: energy efficiency continues its 50-year trend, no faster."]:
     runs(tf, [("•  ", GREEN, True), (t, GRAY, False)], size=13.5, space_after=7)
 tf = box(s, 7.0, 1.6, 5.8, 5.4)
 para(tf, "Why attribution stays open", size=16, bold=True, color=RED, first=True, space_after=6)
-for t in ["Timing: candidate onsets 2011–2016 fit about equally well (best 2013) — indistinguishable from the renewables cost collapse that preceded Paris.",
-          "Power: with 8 post-Paris years, only an acceleration ≈0.8 pp/yr is detectable at 80% power — Paris would have had to double a 50-year trend to prove itself already.",
+for t in ["Timing: start years from 2011 to 2016 fit about equally well (best: 2013) — indistinguishable from the renewables cost collapse that preceded Paris.",
+          "Power: with only 8 post-Paris years, we could only detect a very large acceleration — Paris would have had to double a 50-year trend to prove itself already.",
           "Aggregation: China's WTO-era coal boom flattened the global fuel-mix baseline; the world series is a China-weighted average that hides national signals.",
-          "Design: Paris works through NDCs and national transformation — its signature should appear country by country. So we look there."]:
+          "Design: Paris works through national pledges and national transformation — its signature should appear country by country. So we look there."]:
     runs(tf, [("•  ", RED, True), (t, GRAY, False)], size=13.5, space_after=7)
-notes(s, "This is the hinge of the talk: the non-attribution is not a failure of Paris — it is the reason the analysis must descend to the national level, where attribution machinery actually has power.")
+notes(s, "The hinge of the talk: the non-attribution is not a failure of Paris — it is the reason the analysis must descend to the national level, where attribution machinery has power.")
 
 # ---------------------------------------------------------------- 11 · Act II timeline
 figure_slide("ACT II · WHAT BENDS NATIONAL CURVES?",
-             "97 national breaks across five decades — tracking economic history",
+             "97 national breaks, five decades of economic history",
              F("takeaway_fig03_when_and_why_curves_bend.png"),
-             note="No common treaty era: breaks scatter 1970–2013 and pile up around oil shocks, post-Cold-War upheaval, crises, and the renewables era. Bottom: among 71 documented episodes, events sit near the estimated breaks far more often than restricted random dates allow (45% vs 17% within 2 years; 80% vs 37% within 5; 70% vs 33% inside the episode) — the historical classifications carry real temporal information.")
+             guide="Top: each dot is one country, placed at its estimated break year; green triangles are the nine policy-enabled cases. Shaded bands mark major economic and political episodes; Rio and Paris are the two dashed lines. Bottom: how often a documented historical event falls near a country's break (red) versus what randomly chosen years would produce (blue).",
+             note="No common treaty era: breaks scatter 1970–2013 and pile up around oil shocks, post-Cold-War upheaval, crises, and the renewables era. Event alignment: 45% vs 17% within 2 years; 80% vs 37% within 5; 70% vs 33% inside the episode.")
 
 # ---------------------------------------------------------------- 12 · Act II census
 figure_slide("ACT II · WHAT BENDS NATIONAL CURVES?",
-             "What accompanied the bends: mostly markets, restructuring, disruption",
+             "What accompanied the bends",
              F("takeaway_fig04_mechanism_census.png"),
-             note="One square per country. Fuel and energy markets 22, restructuring 18, political disruption 11, macro shocks 9, development and access 6 — and climate policy with low-carbon technology in 9 of 97. 22 remain honestly unresolved. Mechanisms are structured author-coded interpretations against documentary sources — not causal estimates.")
+             guide="One square per country, grouped by the historical process best supported by documentary evidence around its break. Green marks the countries where climate policy and low-carbon technology are that best-supported process; light gray means the record cannot yet explain the break — reported honestly rather than forced into a category.",
+             note="Fuel and energy markets 22, restructuring 18, political disruption 11, macro shocks 9, development and access 6, policy 9, unresolved 22. Author-coded against authoritative sources with a stopping rule — interpretations, not causal estimates.")
 
 # ---------------------------------------------------------------- 13 · Act III framework
 s = slide()
@@ -249,7 +260,7 @@ for name, d in [("Policy-enabled low carbon", "deliberate climate/energy policy 
     runs(tf, [(name + " — ", INK, True), (d + ".", GRAY, False)], size=12, space_after=4)
 tf = box(s, 7.0, 1.5, 5.8, 5.7)
 para(tf, "VERDICTS — four tests of the outcome", size=14, bold=True, first=True, space_after=4)
-para(tf, "favorable? persistent? absolute CO2 falling? constructive mechanism?", size=12.5, italic=True, color=GRAY, space_after=8)
+para(tf, "Did the trend improve? Did it last? Did absolute CO2 actually fall? Was the underlying process constructive?", size=12.5, italic=True, color=GRAY, space_after=8)
 for name, n, d in [("Constructive persistent decarbonization", 9, "passes all four — the gold standard"),
                    ("Persistent fuel substitution", 13, "durable supply-side switch; narrower transformation"),
                    ("Intensity gain; CO2 still rising", 12, "relative gain overwhelmed by growth"),
@@ -261,53 +272,62 @@ notes(s, "The reading key for everything that follows. Note the two distinct 22s
 
 # ---------------------------------------------------------------- 14 · sankey
 figure_slide("ACT III · DID THE BENDS COUNT?",
-             "From mechanism to verdict: 97 countries flow to six outcomes",
+             "From mechanism to verdict: 97 countries, six outcomes",
              M("image4.png"),
-             note="Shocks flow into contraction; restructuring often ends in 'intensity gain, CO2 rising'. Only nine countries end in constructive persistent decarbonization. The gray band on the left axis is the distinct 22 with no attributed mechanism.")
+             guide="Each ribbon carries countries from the process that accompanied their break (left) to how the outcome is judged (right); ribbon width is the number of countries. Follow any left-hand category to see where those transitions actually ended up.",
+             note="Shocks flow into contraction; restructuring often ends in 'intensity gain, CO2 rising'. Only nine countries end in constructive persistent decarbonization.", kcolor=AMBER)
 
 # ---------------------------------------------------------------- 15 · quadrant
 figure_slide("ACT III · DID THE BENDS COUNT?",
-             "Lower carbon intensity is not the same as falling emissions",
+             "Lower intensity is not the same as falling emissions",
              F("takeaway_fig05_bend_vs_success.png"),
-             note="Raw quadrant counts: 55 favorable bends coincide with still-rising CO2; only 19 with falling CO2. The stricter quality classification — adding persistence and mechanism — narrows these to 12 improving-but-rising and 9 constructive. Green triangles are the 9 policy-enabled cases: Bhutan and Paraguay improve intensity while absolute emissions still rise — policy-enabled and constructive overlap but are not identical.")
+             guide="Each dot is a country. Further right means its intensity trend improved more after the break; below the dashed horizontal line means absolute emissions are actually falling. Success lives only in the lower right — and most improving countries sit above the line, where growth still outruns their gains.",
+             note="Raw counts: 55 favorable bends with rising CO2; 19 with falling CO2. The stricter classification narrows these to 12 and 9. Green triangles: the 9 policy-enabled cases — Bhutan and Paraguay improve intensity while emissions still rise, so policy-enabled and constructive are overlapping but different sets.", kcolor=AMBER)
 
 # ---------------------------------------------------------------- 16 · the nine
 figure_slide("ACT III · DID THE BENDS COUNT?",
              "The nine constructive persistent decarbonizations",
              M("image7.png"),
              takeaway="Sweden 1986 · Finland 1993 · Hungary 1996 · Switzerland 1999 · Nauru 1999 · Denmark 2002 · Portugal 2004 · United Kingdom 2010 · Ireland 2012",
-             note="The defining test: intensity AND absolute CO2 both fall after the break. Six of nine are policy-enabled; Hungary, Nauru, and Ireland arrived via restructuring. Caveat: Nauru is a micro-state whose 'restructuring' is the phosphate collapse — treat with care. This is the paper's constructive core: policy made physical in fuel mix, infrastructure, and economic structure.")
+             guide="Each panel is one country. Both lines are set to 100 at its break year: blue is carbon intensity, red is absolute CO2. The defining test is that both fall together after the break (shaded region) — intensity improved, and total emissions genuinely declined.",
+             note="Six of nine are policy-enabled; Hungary, Nauru, and Ireland arrived via restructuring. Caveat: Nauru is a micro-state whose 'restructuring' is the phosphate collapse — treat with care.", kcolor=AMBER)
 
 # ---------------------------------------------------------------- 17 · nineteen cutters
 figure_slide("ACT III · DID THE BENDS COUNT?",
              "Nineteen countries cut emissions — ten don't earn the verdict",
              M("image8.png"),
-             note="Three routes around the constructive verdict: fuel substitution (5), evidence limits (4), collapse (1). Netherlands 1975 is gas-substitution decarbonization forty years before the US shale version. Somalia 1985 is the caution: collapse mimics decarbonization in every raw statistic; only the persistence screen catches it. Even genuine emission-cutters span 1975–2012 — no treaty era here either.")
+             guide="Each row is a country where absolute CO2 fell after a favorable bend. The whisker is the uncertainty around its break year; rows are grouped by the verdict, and each label names the best-supported mechanism. Falling emissions alone are not enough — the route matters.",
+             note="Routes around the constructive verdict: fuel substitution (5), evidence limits (4), collapse (1). Netherlands 1975: gas substitution forty years before US shale. Somalia 1985: collapse mimics decarbonization in every raw statistic; only the persistence screen catches it. Breaks span 1975–2012 — no treaty era here either.", kcolor=AMBER)
 
 # ---------------------------------------------------------------- 18 · geography
 s = slide()
-kicker_title(s, "ACT III · THE GEOGRAPHY", "Mechanisms are regional stories; success concentrates where policy changed physical systems", kcolor=AMBER)
-fit_image(s, M("image9.png"), 0.30, 1.55, 6.35, 5.5)
-fit_image(s, M("image10.png"), 6.75, 1.55, 6.35, 5.5)
-notes(s, "Left: primary mechanism by country — fuel-market transformations cluster in the Americas and MENA, restructuring across Asia-Pacific, policy-enabled cases in northern Europe. Right: transition quality — dark-green outlines mark the nine; much of the map is contraction, incompleteness, or intensity gains overwhelmed by growth.")
+kicker_title(s, "ACT III · THE GEOGRAPHY", "Mechanisms are regional; success is concentrated", kcolor=AMBER)
+tf = box(s, 0.55, 1.32, 12.25, 0.66)
+runs(tf, [("How to read it:  ", BLUE, True),
+          ("Left map: each country is colored by the process that accompanied its break. Right map: the same countries colored by outcome verdict — dark green marks the nine constructive cases, concentrated in northern Europe.", GRAY, False)],
+     size=12.5, first=True, space_after=0)
+fit_image(s, M("image9.png"), 0.30, 2.05, 6.35, 5.0)
+fit_image(s, M("image10.png"), 6.75, 2.05, 6.35, 5.0)
+notes(s, "Fuel-market transformations cluster in the Americas and MENA; restructuring across Asia-Pacific; policy-enabled cases in northern Europe. Right: much of the map is contraction, incompleteness, or intensity gains overwhelmed by growth.")
 
 # ---------------------------------------------------------------- 19 · Act IV ratings
 figure_slide("ACT IV · CAN WE TRUST THE STORY?",
-             "Independent raters recognize the same countries — on thin coverage",
+             "Independent raters recognize the same countries",
              F("takeaway_fig06_external_corroboration.png"),
-             note="Policy-enabled cases rank high on independent assessments: median CAT percentile ~64 vs 34 for other classified breaks; CCPI ~91 vs 44. But CAT covers only 3 of the 9 and CCPI 2 — every covered country is shown as a dot so the thin coverage is visible. Corroborative, not definitive.")
+             guide="Each dot is a country covered by the rating, placed by where it ranks among covered countries (right = rated better). Green triangles are our policy-enabled cases; the vertical bars mark each group's median. The policy cases rank high on both ratings — but only 3 and 2 of them are covered, so we show every point rather than hide the small sample.",
+             note="Median CAT percentile ~64 vs 34; CCPI ~91 vs 44. Corroborative, not definitive.", kcolor=RED)
 
 # ---------------------------------------------------------------- 20 · robustness & limits
 s = slide()
 kicker_title(s, "ACT IV · CAN WE TRUST THE STORY?", "Robustness, corroboration, and honest limits", kcolor=RED)
 col = [("Consumption-based accounting",
-        "Of 17 countries eligible under both accountings, only 6 agree within 5 years; the median gap is ~12 years. Some 'domestic' transitions partly reflect trade and offshoring — a main result, not a footnote. (Consumption series begin in 1990, so very early production breaks cannot be matched by construction.)"),
+        "When emissions embodied in trade are assigned to consumers instead of producers, only 6 of 17 comparable countries keep a break within 5 years of their production-based date; the median shift is ~12 years. Some 'domestic' transitions partly reflect offshoring — a main result, not a footnote."),
        ("Carbon pricing & policy stringency",
-        "Pricing is negatively associated with C/E in country-and-year fixed-effects models (contemporaneous strongest); C/GDP and E/GDP estimates are imprecise. OECD EPS covers only 15 of 28 focal countries. Associational, not causal."),
+        "Carbon pricing is associated with a cleaner fuel mix in panel models with country and year controls; effects on the other components are imprecise. Policy-stringency data cover only 15 of 28 focal countries. Associational, not causal."),
        ("Event-timing validation",
-        "45% of documented events within 2 years of the break vs ~17% by chance; 80% within 5 vs 37%; 70% inside the episode vs 33% — far beyond retrospective storytelling."),
+        "45% of documented events fall within 2 years of the estimated break versus ~17% if dates were drawn at random; 80% vs 37% within 5 years; 70% vs 33% inside the episode. The historical classifications carry real temporal information — far beyond retrospective storytelling."),
        ("What breakpoints can't tell you",
-        "Break timing identifies change, not cause. Attribution and outcome classification each leave 22 cases open — restraint that makes the resolved 75% credible. No counterfactual: a treaty that prevents backsliding produces no break at all.")]
+        "Break timing identifies change, not cause. Attribution and outcome classification each leave 22 cases open — restraint that makes the resolved 75% credible. And there is no counterfactual: a treaty that prevents backsliding produces no break at all.")]
 xs, ys = [0.55, 7.0, 0.55, 7.0], [1.55, 1.55, 4.35, 4.35]
 for (t, d), x, y in zip(col, xs, ys):
     tf = box(s, x, y, 5.9, 2.7)
@@ -319,11 +339,12 @@ notes(s, "The credibility slide. If asked about causality: the design lock is ex
 figure_slide("THE VERDICT",
              "Curves bend everywhere; decarbonization is rare",
              M("image12.png"),
-             note="97 eligible breaks classified by realized transition quality — and none of this heterogeneity aligns on a treaty date. The treaty question dissolves into 97 national stories; nine end in unambiguous decarbonization.")
+             guide="All 97 breaks looked statistically favorable. The colors show what they turned out to be once persistence, mechanism, and absolute emissions are checked — only the dark green block on the right is unambiguous decarbonization.",
+             note="None of this heterogeneity aligns on a treaty date. The treaty question dissolves into 97 national stories; nine end in unambiguous decarbonization.")
 
 # ---------------------------------------------------------------- 22 · close
 s = slide()
-tf = box(s, 0.9, 1.15, 11.5, 1.8)
+tf = box(s, 0.9, 1.15, 11.5, 1.9)
 para(tf, "Global agreements can organize climate action —", size=27, bold=True, first=True, space_after=2)
 para(tf, "durable national transformations bend the curve.", size=27, bold=True, color=GREEN, space_after=0)
 tf = box(s, 0.9, 3.15, 11.5, 3.3)
@@ -335,7 +356,7 @@ for t in ["Global curves bent in the 1970s; since ~2013 they bend faster — a r
 tf = box(s, 0.9, 6.55, 11.5, 0.7)
 para(tf, "Structural breaks say when · Kaya says through which pathway · historical validation says what plausibly happened · transition quality says whether it mattered",
      size=13, italic=True, color=LGRAY, first=True, align=PP_ALIGN.CENTER)
-notes(s, "End on the closing line and the four-part method signature. If one sentence survives the talk, it is this one.")
+notes(s, "End on the closing line and the four-part method signature.")
 
 prs.save(OUT)
-print("saved", OUT, "slides:", len(prs.slides.__iter__.__self__._sldIdLst))
+print("saved", OUT, "slides:", len(prs.slides._sldIdLst))
