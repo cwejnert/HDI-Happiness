@@ -19,9 +19,9 @@ SUBTITLE = (
 )
 DATELINE = "Working synthesis for the co-author team · August 2026"
 SCOPE = (
-    "SDG: 42 countries, 661 series · HDI &amp; SHDI × World Happiness Report: "
-    "148–151 countries, 2011–2023 · European Social Survey: 36 countries, "
-    "351,023 respondents, rounds 5–11 (2010–2023)"
+    "SDG: 42 countries, 661 series · HDI × World Happiness Report: 151 "
+    "countries, 2011–2023 · Subnational HDI: 239 regions · European Social "
+    "Survey: 36 countries, 351,023 respondents, rounds 5–11 (2010–2023)"
 )
 
 # --------------------------------------------------------------------------
@@ -46,8 +46,8 @@ HOOK = {
     ],
     "acts": [
         ("I", "We replicate the SDG result outside the SDGs.",
-         "The same design on the HDI, on the subnational HDI, and against a "
-         "second wellbeing survey. It collapses every time."),
+         "The same design on the HDI, against a second wellbeing survey, and "
+         "one spatial scale down. It collapses every time."),
         ("II", "So what is it about education?",
          "It is the one construct that holds at every level of aggregation — "
          "but only measured as attainment and access, not parity or measured "
@@ -68,13 +68,14 @@ ACTS = [
         "key_numbers": [
             ("71% → 5%", "of countries significant, SDG levels → differences"),
             ("42% → 2%", "the same collapse under the HDI composite"),
-            ("45% → 4%", "and under the subnational HDI"),
+            ("15% → 9%", "of cells, against a second wellbeing survey (ESS)"),
         ],
         "thesis": (
-            "Run the original design on three unrelated development "
-            "frameworks, at two spatial scales, against two independent "
-            "wellbeing instruments. The levels-to-differences collapse "
-            "appears in all of them."
+            "Run the original design on a second development framework, "
+            "against a second wellbeing instrument, and one spatial scale "
+            "down. The levels-to-differences collapse appears every time. The "
+            "subnational HDI plays a different role: it asks whether the "
+            "national pattern survives disaggregation."
         ),
         "beats": [
             {
@@ -99,9 +100,8 @@ ACTS = [
                 ],
                 "figure": "collapse_hdi_shdi_whr.png",
                 "caption": "Countries with an FDR-significant development–happiness "
-                           "association, levels versus first differences, for the HDI "
-                           "and for the Global Data Lab's subnational HDI aggregated "
-                           "to the national level. One test per country per index.",
+                           "association, levels versus first differences, under the SDG "
+                           "framework and under the HDI composite.",
             },
             {
                 "label": "The structure underneath",
@@ -132,15 +132,24 @@ ACTS = [
                            "five indicators within each country.",
             },
             {
-                "label": "Replication 2 · a second producer",
-                "heading": "A different institution's index, built differently, gives the same numbers",
+                "label": "What the subnational HDI is for",
+                "heading": "Not a second producer — a test of whether the national pattern holds inside countries",
                 "body": [
-                    "The Global Data Lab constructs its subnational HDI from "
-                    "household surveys rather than from the national accounts "
-                    "and administrative series the UNDP uses. Aggregated back to "
-                    "the national level it gives 66 of 148 in levels and 6 of 148 "
-                    "in differences — 45% down to 4%, statistically "
-                    "indistinguishable from the HDI's 42% down to 2%.",
+                    "The Global Data Lab's SHDI cannot serve as an independent "
+                    "replication, and the commentary should not present it as "
+                    "one. At national level it is numerically identical to the "
+                    "UNDP HDI: all 1,696 overlapping country-years agree exactly, "
+                    "because GDL derives the national figure from the UNDP "
+                    "series. Running the collapse design on it reproduces the "
+                    "HDI result by construction rather than by corroboration.",
+                    "Its actual value is disaggregation. GDL's region-level "
+                    "values are its own — only 655 of 58,224 region-years "
+                    "coincide with their country's national figure — so the SHDI "
+                    "is what lets us ask whether the national development–"
+                    "wellbeing relationship holds at subnational level, and "
+                    "where it does not. That question is the subject of Act III, "
+                    "and the answer turns out to be the most policy-relevant "
+                    "result in the commentary.",
                 ],
             },
             {
@@ -180,6 +189,7 @@ ACTS = [
             },
         ],
         "close": (
+            "Two independent replications and one scale test. "
             "The commentary can therefore state the asymmetry as a property of "
             "the development–wellbeing relationship rather than of any "
             "particular index, and move on to the question that actually "
@@ -207,14 +217,14 @@ ACTS = [
                 "label": "The autopsy",
                 "heading": "What survives in levels is the raw development gradient",
                 "body": [
-                    "Ranking the 632 SDG series with usable coverage by the share of countries in "
+                    "Ranking the 609 SDG series measured in at least 8 countries by the share of countries in "
                     "which they are FDR-significant puts child mortality, "
                     "stunting, water and sanitation, and access to financial "
                     "services at the top. These are survival and basic "
                     "infrastructure — the steep part of the development curve, "
                     "not the 2030 Agenda's institutional superstructure.",
                     "The best-performing education indicator ranks about "
-                    "101st of 632 — and it is participation in organized learning before "
+                    "100th of 609 — and it is participation in organized learning before "
                     "primary entry, an access measure, which is the same "
                     "construct Act II turns on. In first differences, only 9 of "
                     "the 661 series have "
@@ -222,7 +232,7 @@ ACTS = [
                     "differences ranking to report at all.",
                 ],
                 "figure": "sdg_indicator_top20.png",
-                "caption": "The 20 highest-ranking SDG series of 632, by share of "
+                "caption": "The 20 highest-ranking SDG series of 609, by share of "
                            "countries FDR-significant in levels.",
             },
             {
@@ -291,10 +301,17 @@ ACTS = [
                 "body": [
                     "Aggregating ESS respondents' reported years of schooling to "
                     "the country level and regressing World Happiness Report "
-                    "happiness on it gives R² = 0.308, against 0.326 for the "
-                    "HDI's own mean-years-of-schooling series. Changing both the "
-                    "education source and the wellbeing outcome leaves the "
-                    "relationship essentially where it was.",
+                    "happiness on it gives R² = 0.308 across 189 country-rounds. "
+                    "The HDI's own mean-years-of-schooling series, on exactly the "
+                    "same cells and the same outcome, gives 0.161. An "
+                    "independently measured schooling variable does not merely "
+                    "reproduce the HDI's — it roughly doubles it.",
+                    "An earlier draft compared 0.308 against 0.326 and called "
+                    "them near-identical. That was an error: 0.326 is the median "
+                    "<em>within</em>-country time-series R² from HappinessHDI.R, "
+                    "not a cross-country figure, so the two were never "
+                    "comparable. The corrected comparison is stronger, not "
+                    "weaker.",
                 ],
                 "figure": "ess_triangulation.png",
                 "caption": "Country-aggregated ESS schooling against WHR happiness, "
@@ -518,9 +535,11 @@ APPENDIX = [
     ("sdg_by_goal.png", "SDG significance by goal, pooled",
      "The leading goal (Energy, 16.0%) clears FDR significance in barely one "
      "country-test in six; pooled Education ranks 12th of 17."),
-    ("shdi_vs_hdi_validation.png", "Subnational HDI validated against the UNDP HDI",
-     "National aggregates agree closely, which is what licenses the "
-     "region-level analysis."),
+    ("shdi_vs_hdi_validation.png", "GDL national SHDI against the UNDP HDI",
+     "The two are the same series — R² = 1.000, every country-year identical, "
+     "because GDL derives the national figure from the UNDP index. Retained to "
+     "document the check, not as validation: agreement here says nothing about "
+     "the subnational disaggregation, which is where GDL's own data begins."),
     ("shdi_whr_levels_scatter.png", "Subnational HDI against WHR happiness, levels",
      "The familiar development-tier gradient with SHDI in place of HDI."),
     ("ess_year_coverage.png", "ESS coverage by country and year",

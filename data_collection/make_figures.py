@@ -868,9 +868,10 @@ def section_f():
         ax.set_ylabel("WHR Cantril Ladder")
         ax.set_title(label, fontsize=11, loc="left")
     suptitle(fig, "F5. ESS-Measured Education (Aggregated) vs. WHR Happiness")
-    note = ("eduyrs (R²=0.308) tracks WHR happiness almost as well as HDI's own mean-years-of-schooling "
-            "component does against the same outcome (R²=0.326) -- independent survey, independent outcome, "
-            f"same conclusion for the schooling-years construct specifically. {SOURCE_WHR}")
+    note = ("ESS-measured mean years of schooling (R²=0.308) OUT-predicts HDI's own mean-years-of-schooling "
+            "component against the same outcome on the same country-round cells (R²=0.161) -- independent "
+            "survey, independent outcome, same construct. NB an earlier draft compared 0.308 against 0.326, "
+            f"which is the median WITHIN-country time-series R² and not a comparable quantity. {SOURCE_WHR}")
     fig.subplots_adjust(bottom=0.18)
     savefig(fig, "F5_ess_agg_education_vs_whr.png", note, top=0.87)
 

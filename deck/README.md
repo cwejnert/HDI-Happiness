@@ -58,9 +58,42 @@ collapse ratio is the comparable quantity.
 
 ## Verification status
 
+The ESS extract, the SDG results file, the HDI panel and the GDL export were
+all restored, and `make_figures.py` now runs end to end again. Every headline
+number has been checked against source.
+
 | Result | Status |
 |---|---|
-| SDG goal percentages, SDG4 construct split, top-20 ranking | verified against `robust_all_for_figures.csv` |
-| HDI composite and sub-components, both specs | verified against `HDI_indicator_summary.csv`, reproduced independently |
-| SHDI national collapse (66/148 → 6/148) | reproduced from the GDL export |
-| **Everything ESS** — Act I replication 3–4, Act II individual level and triangulation, Act III priorities | **unverified.** Rests on a pipeline run whose inputs were lost; needs the ESS extract re-exported and the merges re-run. |
+| SDG goal percentages, SDG4 construct split, top-20 ranking, rank 100/609 | reproduced exactly |
+| HDI composite and sub-components, both specs | matches `HDI_indicator_summary.csv`; independent recomputation differs by at most one country in the denominator |
+| ESS individual education, 32–34 of 36 | reproduced exactly |
+| HDI × ESS collapse, 14.8% / 8.8% | reproduced |
+| Ranking flip: +0.150 (3/16), health +0.513 (8/16), trust +0.487 (6/16) | reproduced exactly |
+| Region crosswalk, 218,893 / 351,023 | reproduced exactly |
+
+Three errors were found and corrected in the process:
+
+1. **The SDG collapse figure.** `64/151 → 3/151` is the HDI composite, not the
+   SDG result. The SDG framework gives `30/42 → 2/42`, and the two rates are
+   not directly comparable — the SDG test asks whether any of a country's
+   ~456 series is significant.
+2. **The triangulation comparator.** ESS-aggregated schooling gives R² = 0.308
+   against WHR happiness; the draft compared this to 0.326, which is a median
+   *within*-country time-series R². The comparable figure is 0.161, so the
+   finding is stronger than claimed, not equal.
+3. **The subnational HDI as a replication.** GDL's national SHDI is
+   numerically identical to the UNDP HDI (1,696/1,696 country-years, max
+   difference 0.000) because it is derived from it. It is not an independent
+   producer and is no longer counted as one. Its region-level values are
+   genuine — only 655 of 58,224 region-years match their national figure — so
+   the disaggregation test in Act III is unaffected.
+
+## Rebuilding the pipeline intermediates
+
+`make_figures.py` sections C, F and G depend on intermediates that no single
+script produced. If `processed/` is ever empty again, these must be rebuilt
+before the pipeline will run: `national_hdi_shdi_whr_panel.csv`,
+`hdi_country_indicator_significance.csv`, `sdg_goal_significance_pooled.csv`,
+`sdg_education_category_significance.csv`, `sdg_series_significance_ranking.csv`,
+`ess_individual_education_by_country.csv`, `ess_country_education_panel.csv`.
+See `../data_collection/build_intermediates.py`.

@@ -4,8 +4,8 @@ Composite Figure 1 for the commentary submission.
 Commentaries allow one or two display items, so the three results that carry
 the argument have to share a single figure:
 
-    (a) the levels-to-differences collapse, replicated across three
-        development frameworks against the World Happiness Report;
+    (a) the levels-to-differences collapse, replicated on the HDI against the
+        World Happiness Report;
     (b) SDG4 un-pooled, showing that its apparent weakness is a construct
         artifact of pooling equity/parity ratios with access measures;
     (c) education's signal as the unit of measurement changes, from pooled
@@ -48,18 +48,23 @@ PROVENANCE = """Panel a, SDG: robust_all_for_figures.csv, countries with >=1 FDR
 series (42 countries carry SDG coverage; median 456 series each).
 Panel a, HDI: HDI_indicator_summary.csv, the `hdi` composite row (HappinessHDI.R);
 independently reproduced here to 63/150 -> 3/150.
-Panel a, SHDI: GDL national aggregate vs WHR happiness, one test per country.
+Panel a: GDL's national SHDI is deliberately absent -- it reproduces the UNDP
+HDI exactly (1,696/1,696 country-years identical), being derived from it, so it
+cannot serve as an independent replication.
 Panel b: SDG4's 35 series classified by construct (make_figures.py section F).
 Panel c: as above plus ESS individual-level tests. Denominators differ by row."""
 
 # --------------------------------------------------------------------------
 # (a) The collapse: countries FDR-significant in levels vs. first-differences
 # --------------------------------------------------------------------------
+# NB the Global Data Lab's SHDI at NATIONAL level is numerically identical to
+# the UNDP HDI -- all 1,696 overlapping country-years match to 0.000 -- so it
+# is not an independent replication and is deliberately not shown here. GDL's
+# subnational values are genuine and carry the regional analysis instead.
 COLLAPSE = [
     # label,                  n_sig_levels, n_sig_diffs, n_countries
     ("SDG indicators\n(any of ~456 series)", 30, 2, 42),
     ("Human Development\nIndex (composite)", 64, 3, 151),
-    ("Subnational HDI\n(national aggregate)", 66, 6, 148),
 ]
 
 # --------------------------------------------------------------------------
@@ -129,7 +134,8 @@ def panel_a(ax):
     ax.text(0, 1.012,
             "One outcome (WHR Cantril ladder). The SDG test asks whether ANY of a country's\n"
             "series is significant, so its levels rate is higher by construction — "
-            "the collapse ratio is what compares.",
+            "the collapse ratio is what compares.\n"
+            "Also replicates against a second wellbeing survey and at regional scale (Act I).",
             transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
 
 
@@ -225,12 +231,17 @@ def main():
     plt.close(fig)
     build_c2(outdir)
     build_hdi_structure(outdir)
+    build_horse_race(outdir)
 
 
 
 
 # ==========================================================================
 # Replacement for the pipeline's C2 figure.
+#
+# Also drops the GDL SHDI bar: at national level GDL reports the UNDP HDI
+# verbatim (verified, 1,696/1,696 country-years identical), so showing it
+# beside the HDI implied an independent replication that does not exist.
 #
 # The original C2 reported the HDI composite as 67/150 -> 6/150. That does not
 # reproduce: HappinessHDI.R's own HDI_indicator_summary.csv gives 64/151 -> 3/151
@@ -239,8 +250,8 @@ def main():
 # unchanged. This rebuilds the figure on the authoritative numbers.
 # ==========================================================================
 C2 = [
+    ("SDG indicators\n(any of a country's series)", 30, 2, 42),
     ("UNDP HDI\n(composite)", 64, 3, 151),
-    ("GDL SHDI\n(national aggregate)", 66, 6, 148),
 ]
 
 
@@ -263,15 +274,17 @@ def build_c2(outdir: Path):
     ax.set_ylabel("% of countries FDR-significant (q<.05) vs. WHR happiness", fontsize=9.5)
     ax.legend(frameon=False, fontsize=9.5, loc="upper right")
     style_axes(ax)
-    ax.set_title("Does the SHDI show the same levels-to-differences collapse as the HDI?",
-                 fontsize=13, fontweight="bold", color=INK, loc="left", pad=30)
+    ax.set_title("The collapse replicates outside the SDG framework",
+                 fontsize=13, fontweight="bold", color=INK, loc="left", pad=38)
     ax.text(0, 1.015,
-            "One test per country per index, Benjamini–Hochberg corrected. "
-            "Both indices collapse by an order of magnitude.",
+            "Benjamini–Hochberg corrected within country. The SDG bar asks whether any of a "
+            "country's series is\nsignificant and the HDI bar asks about one composite, so the "
+            "levels rates are not directly comparable;\nthe order-of-magnitude collapse in both is.",
             transform=ax.transAxes, fontsize=9, color="#5A5A5A", va="bottom")
     fig.text(0.008, 0.02,
-             "Sources: UNDP HDR (HDI_indicator_summary.csv, HappinessHDI.R); "
-             "Global Data Lab SHDI; World Happiness Report.",
+             "Sources: UN SDG Global Database (HappinessSDG.R); UNDP HDR "
+             "(HDI_indicator_summary.csv, HappinessHDI.R); World Happiness Report. "
+             "GDL's national SHDI is omitted: it is numerically identical to the UNDP HDI.",
              fontsize=8, color=GREY)
     fig.tight_layout(rect=(0, 0.045, 1, 1))
     path = outdir / "collapse_hdi_shdi_whr.png"
@@ -362,6 +375,94 @@ def build_hdi_structure(outdir: Path):
     plt.close(fig)
     print(f"Saved: {path}")
 
+
+# ==========================================================================
+# The domain horse race: what actually predicts life satisfaction, at three
+# levels of aggregation, using one instrument (ESS) so the comparison is fair.
+#
+# Computed from processed/ess_with_national_hdi.csv and ess_with_shdi.csv.
+# ==========================================================================
+HORSE = {
+    # level: [(label, value, n_sig, n_tot, colour)]
+    "individual": [
+        ("Self-rated health", 0.0910, 36, 36, RED),
+        ("Household income", 0.0434, 36, 36, ORANGE),
+        ("Social trust", 0.0407, 34, 36, GREEN),
+        ("Education (ISCED)", 0.0098, 33, 36, BLUE),
+        ("Education (years)", 0.0075, 32, 36, BLUE),
+    ],
+    "country": [
+        ("HDI composite", 0.760, None, 35, PURPLE),
+        ("Social trust", 0.676, None, 36, GREEN),
+        ("Self-rated health", 0.423, None, 36, RED),
+        ("Household income", 0.379, None, 36, ORANGE),
+        ("Education (years)", 0.292, None, 36, BLUE),
+    ],
+    "within": [
+        ("Social trust", 0.565, 8, 16, GREEN),
+        ("Self-rated health", 0.502, 7, 16, RED),
+        ("Household income", 0.230, 2, 16, ORANGE),
+        ("Development (SHDI)", 0.219, 3, 16, PURPLE),
+        ("Education (years)", 0.130, 2, 16, BLUE),
+    ],
+}
+PANELS = [
+    ("individual", "a  Individual respondents",
+     "Median within-country R², own attribute vs own life satisfaction",
+     "Median R² across 36 countries", 0.10),
+    ("country", "b  Across countries",
+     "Country means, 36 ESS countries", "R² across countries", 0.85),
+    ("within", "c  Within countries, across regions",
+     "Median regional correlation, 16 countries",
+     "Median r within country", 0.65),
+]
+
+
+def build_horse_race(outdir: Path):
+    fig, axes = plt.subplots(1, 3, figsize=(15.5, 6.2))
+    fig.patch.set_facecolor(BG)
+    for ax, (key, title, sub, xlab, xmax) in zip(axes, PANELS):
+        rows = HORSE[key]
+        y = list(range(len(rows)))[::-1]
+        ax.barh(y, [r[1] for r in rows], 0.6, color=[r[4] for r in rows])
+        for yi, r in zip(y, rows):
+            txt = f"{r[1]:.3f}" if key != "individual" else f"{r[1]:.4f}"
+            if r[2] is not None:
+                txt += f"   ({r[2]}/{r[3]} sig.)"
+            ax.text(r[1] + xmax * 0.02, yi, txt, va="center", fontsize=8.5, color=INK)
+        ax.set_yticks(y)
+        ax.set_yticklabels([r[0] for r in rows], fontsize=9)
+        ax.set_xlim(0, xmax)
+        ax.set_xlabel(xlab, fontsize=8.5)
+        style_axes(ax)
+        ax.grid(axis="y", visible=False)
+        ax.grid(axis="x", color="#E6E6E6", linewidth=0.8)
+        ax.set_title(title, fontsize=11, fontweight="bold", color=INK, loc="left", pad=26)
+        ax.text(0, 1.015, sub, transform=ax.transAxes, fontsize=8.2,
+                color="#5A5A5A", va="bottom")
+
+    fig.text(0.006, 0.972,
+             "What actually predicts life satisfaction? Health and social trust — not schooling",
+             fontsize=15, fontweight="bold", color=INK, va="top")
+    fig.text(0.006, 0.930,
+             "One instrument (European Social Survey, 36 countries, 351,023 respondents, "
+             "2010–2023) at three levels of aggregation, so the domains compete on equal terms.",
+             fontsize=9, color="#5A5A5A", va="top")
+    fig.text(0.006, 0.030,
+             "Self-rated health reversed so higher = better. Education is significant almost "
+             "everywhere but carries the smallest effect of any domain tested; the HDI leads "
+             "between countries, where it proxies everything at once, and falls to 4th within them.",
+             fontsize=8, color=GREY, va="bottom")
+    fig.text(0.006, 0.008,
+             "CAVEAT: health and trust are self-reported by the same respondent in the same "
+             "survey as life satisfaction, so part of their lead is shared method variance. "
+             "The externally measured predictors (HDI, SHDI) carry no such advantage.",
+             fontsize=8, color=RED, va="bottom")
+    fig.tight_layout(rect=(0, 0.05, 1, 0.895))
+    path = outdir / "domain_horse_race.png"
+    fig.savefig(path, dpi=200, facecolor=BG)
+    plt.close(fig)
+    print(f"Saved: {path}")
 
 if __name__ == "__main__":
     main()
