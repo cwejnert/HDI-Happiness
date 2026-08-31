@@ -232,6 +232,7 @@ def main():
     build_c2(outdir)
     build_hdi_structure(outdir)
     build_horse_race(outdir)
+    build_corroboration(outdir)
 
 
 
@@ -460,6 +461,79 @@ def build_horse_race(outdir: Path):
              fontsize=8, color=RED, va="bottom")
     fig.tight_layout(rect=(0, 0.05, 1, 0.895))
     path = outdir / "domain_horse_race.png"
+    fig.savefig(path, dpi=200, facecolor=BG)
+    plt.close(fig)
+    print(f"Saved: {path}")
+
+# ==========================================================================
+# Does the SDG evidence corroborate what the ESS says?
+#
+# The ESS horse race puts self-rated health and social trust ahead of
+# everything, but both are self-reported by the same respondent in the same
+# survey as life satisfaction. The SDG database is administrative and shares
+# no method with any wellbeing measure, so it is the natural check: a domain
+# that leads in both is corroborated; one that leads only in ESS is not.
+# ==========================================================================
+CORROB = [
+    # domain,            SDG pooled %, SDG goal rank, ESS within-country r, colour, verdict
+    ("Health", 11.5, "SDG3, 4th of 17 goals; 16 of the top 25 series overall",
+     0.513, RED, "corroborated"),
+    ("Education", 3.3, "SDG4, 12th of 17; best series 100th of 609",
+     0.130, BLUE, "weak in both"),
+    ("Social trust /\ninstitutions", 1.5, "SDG16, 15th of 17; no trust indicator exists",
+     0.487, GREEN, "ESS only"),
+]
+
+
+def build_corroboration(outdir: Path):
+    fig, axes = plt.subplots(1, 2, figsize=(13.2, 5.4))
+    fig.patch.set_facecolor(BG)
+    y = list(range(len(CORROB)))[::-1]
+    labels = [c[0] for c in CORROB]
+
+    ax = axes[0]
+    ax.barh(y, [c[1] for c in CORROB], 0.55, color=[c[4] for c in CORROB])
+    for yi, c in zip(y, CORROB):
+        ax.text(c[1] + 0.3, yi + 0.16, f"{c[1]}%", va="center", fontsize=9.5,
+                color=INK, fontweight="bold")
+        ax.text(c[1] + 0.3, yi - 0.18, c[2], va="center", fontsize=7.6, color=GREY)
+    ax.set_yticks(y); ax.set_yticklabels(labels, fontsize=9.5)
+    ax.set_xlim(0, 14); ax.set_xlabel("% of country × indicator pairs significant in levels", fontsize=9)
+    style_axes(ax); ax.grid(axis="y", visible=False)
+    ax.set_title("a  Administrative evidence (UN SDG database)", fontsize=11,
+                 fontweight="bold", color=INK, loc="left", pad=24)
+    ax.text(0, 1.015, "Objective, externally measured — shares no method with any wellbeing survey.",
+            transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
+
+    ax = axes[1]
+    ax.barh(y, [c[3] for c in CORROB], 0.55, color=[c[4] for c in CORROB])
+    for yi, c in zip(y, CORROB):
+        ax.text(c[3] + 0.012, yi, f"+{c[3]:.3f}", va="center", fontsize=9.5,
+                color=INK, fontweight="bold")
+    ax.set_yticks(y); ax.set_yticklabels([])
+    ax.set_xlim(0, 0.68)
+    ax.set_xlabel("Median within-country regional correlation with life satisfaction", fontsize=9)
+    style_axes(ax); ax.grid(axis="y", visible=False)
+    ax.set_title("b  Self-reported evidence (European Social Survey)", fontsize=11,
+                 fontweight="bold", color=INK, loc="left", pad=24)
+    ax.text(0, 1.015, "Reported by the same respondent, in the same survey, as life satisfaction.",
+            transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
+
+    fig.text(0.006, 0.972,
+             "Health survives the method check. Social trust does not.",
+             fontsize=15, fontweight="bold", color=INK, va="top")
+    fig.text(0.006, 0.928,
+             "Health leads in both an administrative source and a self-report source, so its "
+             "showing is not shared-method variance.\nTrust is the strongest ESS predictor and "
+             "close to the weakest SDG domain — the framework has no trust indicator at all.",
+             fontsize=9, color="#5A5A5A", va="top", linespacing=1.4)
+    fig.text(0.006, 0.020,
+             "SDG health series in the top 25 are survival measures — infant and under-five "
+             "mortality, stunting, neonatal mortality, sanitation, drinking water — none self-reported. "
+             "Sources: UN SDG Global Database; European Social Survey rounds 5–11.",
+             fontsize=8, color=GREY, va="bottom")
+    fig.tight_layout(rect=(0, 0.055, 1, 0.855))
+    path = outdir / "health_trust_corroboration.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close(fig)
     print(f"Saved: {path}")
