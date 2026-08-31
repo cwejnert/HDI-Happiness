@@ -139,63 +139,91 @@ def panel_a(ax):
             transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
 
 
+# --------------------------------------------------------------------------
+# (b) The inversion: which of health / education dominates, by instrument.
+# Bars are each instrument's own metric, normalised to the pair so the
+# ORDERING is readable across instruments; raw values are annotated.
+# --------------------------------------------------------------------------
+INVERSION = [
+    # instrument,                    health, education, metric note
+    ("HDI\n(vs WHR happiness)", 19.9, 40.7, "% of countries significant\nhealth = life expectancy"),
+    ("SDG data\n(high-income only)", 11.2, 1.2, "% of country × indicator pairs\nhealth = SDG3 series"),
+    ("ESS\n(within countries)", 0.513, 0.130, "median regional correlation\nhealth = self-rated"),
+]
+
+# --------------------------------------------------------------------------
+# (c) The method check: administrative vs self-report, three domains.
+# --------------------------------------------------------------------------
+METHOD = [
+    ("Health", 11.5, 0.513, RED),
+    ("Education", 3.3, 0.130, BLUE),
+    ("Social trust", 1.5, 0.487, GREEN),
+]
+
+
 def panel_b(ax):
-    labels = [f"{s[0]}  ({s[2]})" for s in SDG4_BY_CONSTRUCT]
-    vals = [s[1] for s in SDG4_BY_CONSTRUCT]
-    cols = [s[3] for s in SDG4_BY_CONSTRUCT]
-    x = range(len(vals))
-
-    ax.bar(x, vals, 0.66, color=cols)
-    for i, v in enumerate(vals):
-        ax.text(i, v + 0.35, f"{v:.1f}%", ha="center", fontsize=9, color=INK, fontweight="bold")
-
-    ax.axhline(SDG4_POOLED_PCT, color=INK, linestyle=(0, (4, 3)), linewidth=1.1)
-    ax.text(len(vals) - 0.42, SDG4_POOLED_PCT + 0.4,
-            f"all 35 pooled: {SDG4_POOLED_PCT}%", ha="right", fontsize=8, color=INK)
+    x = range(len(INVERSION))
+    for i, (label, h, e, note) in enumerate(INVERSION):
+        tot = h + e
+        hs, es = 100 * h / tot, 100 * e / tot
+        ax.bar(i, hs, 0.55, color=RED)
+        ax.bar(i, es, 0.55, bottom=hs, color=BLUE)
+        ax.text(i, hs / 2, f"health\n{h:g}", ha="center", va="center",
+                fontsize=8.5, color="white", fontweight="bold")
+        ax.text(i, hs + es / 2, f"education\n{e:g}", ha="center", va="center",
+                fontsize=8.5, color="white", fontweight="bold")
+        ax.text(i, 103, note, ha="center", va="bottom", fontsize=7, color=GREY)
 
     ax.set_xticks(list(x))
-    ax.set_xticklabels(labels, fontsize=8, rotation=25, ha="right",
-                       rotation_mode="anchor")
-    ax.set_ylim(0, 14.5)
-    ax.set_ylabel("% of country × indicator pairs\nsignificant in levels", fontsize=9)
+    ax.set_xticklabels([r[0] for r in INVERSION], fontsize=8.5)
+    ax.set_ylim(0, 118)
+    ax.set_yticks([0, 25, 50, 75, 100])
+    ax.set_ylabel("Share of the health + education pair (%)", fontsize=9)
     style_axes(ax)
-    ax.set_title("b  SDG4's weakness is a pooling artifact",
-                 fontsize=10.5, fontweight="bold", color=INK, loc="left", pad=24)
+    ax.set_title("b  The ranking inverts with the instrument",
+                 fontsize=10.5, fontweight="bold", color=INK, loc="left", pad=34)
     ax.text(0, 1.012,
-            "Its 35 official indicators, split by what each measures "
-            "(number of series in brackets).",
+            "Each instrument uses its own metric (noted above each bar), so only the\n"
+            "ordering compares. Education leads under the HDI; health leads by an order of\n"
+            "magnitude everywhere health is measured somewhere it still varies.",
             transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
 
 
 def panel_c(ax):
-    labels = [e[0] for e in EDU_LADDER]
-    notes = [e[1] for e in EDU_LADDER]
-    vals = [e[2] for e in EDU_LADDER]
-    cols = [e[3] for e in EDU_LADDER]
-    y = list(range(len(vals)))[::-1]
+    # Each source is normalised to its own leading domain, so the two very
+    # different metrics can sit on one axis without implying comparability.
+    sdg_max = max(m[1] for m in METHOD)
+    ess_max = max(m[2] for m in METHOD)
+    y = list(range(len(METHOD)))[::-1]
+    w = 0.36
 
-    ax.barh(y, vals, 0.58, color=cols)
-    for yi, v, n in zip(y, vals, notes):
-        ax.text(v + 1.4, yi, f"{v:.1f}%", va="center", fontsize=9.5,
-                color=INK, fontweight="bold")
-        ax.text(143, yi, n, va="center", ha="right", fontsize=8, color=GREY)
+    for yi, m in zip(y, METHOD):
+        a, b = m[1] / sdg_max, m[2] / ess_max
+        ax.barh(yi + w / 2, a, w, color=m[3], alpha=0.95)
+        ax.barh(yi - w / 2, b, w, color=m[3], alpha=0.40)
+        ax.text(a + 0.015, yi + w / 2, f"{m[1]}%", va="center", fontsize=8.5, color=INK)
+        ax.text(b + 0.015, yi - w / 2, f"+{m[2]:.3f}", va="center", fontsize=8.5, color=INK)
 
+    ax.barh([], [], color="#6E6E6E", alpha=0.95, label="UN SDG database (administrative)")
+    ax.barh([], [], color="#6E6E6E", alpha=0.40, label="European Social Survey (self-reported)")
     ax.set_yticks(y)
-    ax.set_yticklabels(labels, fontsize=8.5)
-    ax.set_xlim(0, 145)
-    ax.set_xticks([0, 20, 40, 60, 80, 100])
-    ax.set_xlabel("% of tests FDR-significant in levels", fontsize=9)
+    ax.set_yticklabels([m[0] for m in METHOD], fontsize=9.5)
+    ax.set_xlim(0, 1.22)
+    ax.set_xticks([0, 0.5, 1.0])
+    ax.set_xticklabels(["0", "half the leader", "leading domain"], fontsize=8)
+    ax.set_xlabel("Position relative to the leading domain within each source", fontsize=9)
     style_axes(ax)
     ax.grid(axis="y", visible=False)
     ax.grid(axis="x", color="#E6E6E6", linewidth=0.8)
-    fig = ax.get_figure()
-    fig.text(0.085, 0.418,
-             "c  Education's signal strengthens as measurement moves toward attainment",
-             fontsize=10.5, fontweight="bold", color=INK, va="bottom")
-    fig.text(0.085, 0.382,
-             "Each row's denominator is given at right: these are not one scale, "
-             "so read the pattern rather than bar length.",
-             fontsize=8.3, color="#5A5A5A", va="bottom")
+    ax.legend(frameon=False, fontsize=8.5, loc="upper right", bbox_to_anchor=(1.0, 0.62))
+    ax.set_title("c  Only health leads in both an administrative and a self-report source",
+                 fontsize=10.5, fontweight="bold", color=INK, loc="left", pad=34)
+    ax.text(0, 1.012,
+            "Labels give the raw values: % of SDG country × indicator pairs significant, "
+            "and median within-country\nregional correlation in the ESS. Trust tops the "
+            "self-report source and sits near the bottom of the administrative one —\n"
+            "the SDG framework has no interpersonal-trust indicator at all.",
+            transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
 
 
 def main():
@@ -208,13 +236,13 @@ def main():
     # left margin than a and b do.
     gs_top = fig.add_gridspec(1, 2, left=0.085, right=0.985, top=0.855,
                               bottom=0.575, wspace=0.30)
-    gs_bot = fig.add_gridspec(1, 1, left=0.215, right=0.985, top=0.355, bottom=0.105)
+    gs_bot = fig.add_gridspec(1, 1, left=0.135, right=0.985, top=0.355, bottom=0.105)
     panel_a(fig.add_subplot(gs_top[0, 0]))
     panel_b(fig.add_subplot(gs_top[0, 1]))
     panel_c(fig.add_subplot(gs_bot[0, 0]))
 
     fig.text(0.008, 0.975,
-             "Development, wellbeing, and the education exception",
+             "Development, wellbeing, and the measurement problem",
              fontsize=16, fontweight="bold", color=INK, va="top")
     fig.text(0.008, 0.940,
              "Significance is Benjamini–Hochberg FDR-corrected within country.",

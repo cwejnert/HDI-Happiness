@@ -1,11 +1,13 @@
-# The commentary, in three acts
+# Measured Where It Varies
+
+The commentary, in three acts.
 
 Presentation and synthesis layer for the follow-on paper. `content.py` holds
 the argument; the two build scripts render it two ways.
 
 ```bash
 python build_artifact.py   # -> education_exception.html  (self-contained)
-python build_pptx.py       # -> The_Education_Exception.pptx  (16:9)
+python build_pptx.py Measured_Where_It_Varies.pptx   # 16:9 deck
 ```
 
 Both read `content.py` and `figures/`. Edit the argument in one place and
@@ -13,15 +15,28 @@ rebuild both; don't edit the HTML or the PPTX directly.
 
 ## The arc
 
-The three acts follow the agreed narrative: replicate the SDG result, ask
-what is different about education, then turn that into a policy question.
+Health-led, with education carried as a marked sub-highlight thread inside
+Act II.
 
 | | |
 |---|---|
-| **Opening** | Development rose; wellbeing didn't follow. The dismissal this commentary has to close. |
-| **Act I** | Replication. The levels-to-differences collapse holds on the HDI, on the subnational HDI, against ESS, and at the regional scale — so it is not an SDG artifact. The ESS and subnational work lives here. |
-| **Act II** | So what is it about education? It is the one construct significant at every level of aggregation down to the individual — but only measured as attainment and access. |
-| **Act III** | Priorities (where the lever is, which turns on scale) and what kind of education, ending on the policy question. |
+| **Opening** | Development rose; wellbeing didn't follow. Which of its parts tracks wellbeing at all? |
+| **Act I** | Replication. The levels-to-differences collapse holds on the HDI, against ESS, and at regional scale — not an SDG artifact. The subnational HDI is a disaggregation test, not a replication. |
+| **Act II** | What matters is decided by how you measure it. Health is the HDI's weakest component and the strongest thing in both the SDG ranking and the ESS; education runs the same problem in reverse. Social trust cannot be checked. |
+| **Act III** | Priorities (where the lever is, which turns on scale), what kind of health and education, and the policy question. |
+
+**Why health leads.** It is the only domain that leads in both an
+administrative source and a self-report source. Restricted to high-income
+countries — the ESS's own stratum — the SDG data puts health at 11.2% against
+education's 1.2%, the same ordering the ESS gives from entirely different
+measurement. Social trust tops the ESS and has no SDG indicator at all, so it
+enters as an open question rather than a result.
+
+**Why the HDI disagrees.** Life expectancy is close to saturated across the
+countries where it is tested, so the HDI's only health input has no variance
+left to predict with. The SDG series carrying health's signal are survival
+measures that still vary; self-rated health captures morbidity life expectancy
+cannot see.
 
 `DECISIONS` carries the open questions for the co-author team; `APPENDIX`
 carries the supporting figures not used in the acts.
