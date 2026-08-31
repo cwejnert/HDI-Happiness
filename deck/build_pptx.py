@@ -126,7 +126,7 @@ def slide_hook(prs):
     for i, p in enumerate(C.HOOK["body"]):
         para(tf, p, size=13, color=INK_SOFT, spacing=1.34, space_after=12, first=(i == 0))
 
-    # the four acts, right column
+    # the three acts, right column
     x = Inches(7.35)
     tf = textbox(s, x, Inches(0.62), Inches(5.3), Inches(0.3))
     para(tf, "The argument", size=11, color=ACCENT, font=MONO, caps=True, first=True)
@@ -251,7 +251,7 @@ def slide_appendix_divider(prs):
     tf = textbox(s, MARGIN, Inches(3.0), Inches(9), Inches(1.5))
     para(tf, "Evidence appendix", size=40, color=SURFACE, font=SERIF,
          space_after=10, first=True)
-    para(tf, "Everything the four acts rest on but do not carry. "
+    para(tf, "Everything the three acts rest on but do not carry. "
              "In submission these become supplementary material.",
          size=14, color=RGBColor(0x9A, 0xA4, 0xB0), spacing=1.35)
 

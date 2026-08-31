@@ -1,5 +1,5 @@
 """
-The commentary, structured in four acts.
+The commentary, structured in three acts.
 
 Single source of truth for both outputs: build_artifact.py renders it as a
 self-contained HTML page for the co-author team, build_pptx.py renders the
@@ -13,7 +13,7 @@ from __future__ import annotations
 
 TITLE = "The Education Exception"
 SUBTITLE = (
-    "A commentary in four acts, on why development predicts where wellbeing "
+    "A commentary in three acts, on why development predicts where wellbeing "
     "is high but not when it rises — and on the one construct that behaves "
     "differently"
 )
@@ -45,18 +45,16 @@ HOOK = {
         "that does not behave the way everything else does.",
     ],
     "acts": [
-        ("I", "The collapse is not about the SDGs.",
-         "Same design, three development frameworks, two spatial scales, two "
-         "wellbeing instruments. It replicates every time."),
-        ("II", "Something is different about education.",
-         "But only when education is measured as attainment and access — not "
-         "as parity, and not as measured learning."),
-        ("III", "The lever changes when the scale changes.",
-         "Between countries, development leads. Inside them, health and trust "
-         "do the work and development flattens."),
-        ("IV", "So we put a question to the field.",
-         "The global education architecture is built around learning "
-         "outcomes. The wellbeing evidence points at attainment."),
+        ("I", "We replicate the SDG result outside the SDGs.",
+         "The same design on the HDI, on the subnational HDI, and against a "
+         "second wellbeing survey. It collapses every time."),
+        ("II", "So what is it about education?",
+         "It is the one construct that holds at every level of aggregation — "
+         "but only measured as attainment and access, not parity or measured "
+         "learning."),
+        ("III", "Which makes the policy question unavoidable.",
+         "What this means for priorities, what kind of education it points "
+         "at, and the question we are putting to the field."),
     ],
 }
 
@@ -66,7 +64,7 @@ HOOK = {
 ACTS = [
     {
         "numeral": "I",
-        "title": "The collapse is a property, not an artifact",
+        "title": "Replicating the collapse beyond the SDGs",
         "key_numbers": [
             ("71% → 5%", "of countries significant, SDG levels → differences"),
             ("42% → 2%", "the same collapse under the HDI composite"),
@@ -191,7 +189,7 @@ ACTS = [
     },
     {
         "numeral": "II",
-        "title": "Education is the odd one out — under one specific measurement",
+        "title": "So what is it about education?",
         "key_numbers": [
             ("12.7%", "SDG4 access &amp; participation, un-pooled from 3.3%"),
             ("40.9%", "of countries, HDI mean years of schooling"),
@@ -335,43 +333,37 @@ ACTS = [
     },
     {
         "numeral": "III",
-        "title": "Scale changes which lever matters",
+        "title": "Priorities, and what kind of education",
         "key_numbers": [
             ("+0.89 → +0.15", "development, between countries → within them"),
-            ("+0.51", "self-rated health, within countries"),
-            ("3 / 16", "countries with a significant regional gradient"),
+            ("12.7%", "access &amp; participation"),
+            ("0.9%", "measured learning outcomes"),
         ],
         "thesis": (
-            "Everything above compares countries. Inside countries the "
-            "ordering of predictors is different — which matters, because "
-            "most education and health policy is made at the subnational "
-            "scale."
+            "Two questions follow. Where should the lever be pulled — which "
+            "turns on scale, because the ordering of predictors inverts "
+            "inside countries. And what kind of education, because the "
+            "wellbeing signal sits with attainment and access rather than "
+            "with the measured learning the post-2030 architecture is built "
+            "around."
         ),
         "beats": [
             {
-                "label": "Dispersion",
-                "heading": "Below the top tier, countries contain multitudes",
+                "label": "Where the lever is",
+                "heading": "Development inequality inside countries mostly does not become wellbeing inequality",
                 "body": [
-                    "Germany's regions span 0.05 of subnational HDI. China's "
+                    "Below the Very High tier, countries contain multitudes. "
+                    "Germany's regions span 0.05 of subnational HDI; China's "
                     "span 0.30 and India's 0.19 — several development tiers' "
-                    "worth of variation inside single countries. National "
-                    "averages hide most of the development story precisely where "
-                    "development varies most.",
-                ],
-                "figure": "shdi_within_country_spread.png",
-                "caption": "Every region a dot, two countries per UNDP development "
-                           "tier, 2022.",
-            },
-            {
-                "label": "The non-result",
-                "heading": "Development inequality mostly does not become wellbeing inequality",
-                "body": [
-                    "Holding country fixed and regressing region-mean life "
-                    "satisfaction on regional subnational HDI gives a "
-                    "significantly positive gradient in only 3 of 16 ESS "
-                    "countries — France, Belgium, and Germany — and the gradient "
-                    "is not steeper in countries with larger internal "
-                    "inequality. Which country's ladder you are on matters more "
+                    "worth of variation inside single countries. If regional "
+                    "development drove regional wellbeing, this is where it "
+                    "would show.",
+                    "It mostly doesn't. Holding country fixed and regressing "
+                    "region-mean life satisfaction on regional subnational HDI "
+                    "gives a significantly positive gradient in only 3 of 16 "
+                    "ESS countries — France, Belgium, and Germany — and the "
+                    "gradient is not steeper where internal inequality is "
+                    "larger. Which country's ladder you are on matters more "
                     "than which rung you occupy within it.",
                 ],
                 "figure": "within_country_gradient.png",
@@ -400,45 +392,6 @@ ACTS = [
                            "health, and trust.",
                 "feature": True,
             },
-            {
-                "label": "The limitation",
-                "heading": "This part of the argument is Europe-only, and has to say so",
-                "body": [
-                    "The ESS is the only regional wellbeing source with the "
-                    "coverage this design needs; Gallup's subnational files are "
-                    "paywalled. Act III therefore generalises across 16 European "
-                    "countries and not beyond them. It should be stated as a "
-                    "scope condition in the text rather than buried in a "
-                    "limitations paragraph, because the flip is the most "
-                    "policy-relevant result in the commentary and will be the "
-                    "most contested.",
-                ],
-            },
-        ],
-        "close": (
-            "Two different policy readings follow depending on scale, and the "
-            "commentary should say both. Between countries, raising human "
-            "development is where wellbeing differences live. Inside a "
-            "country, equalising regional development is not obviously a "
-            "wellbeing lever, while health and social connection are."
-        ),
-    },
-    {
-        "numeral": "IV",
-        "title": "The question we are putting to the field",
-        "key_numbers": [
-            ("12.7%", "access &amp; participation"),
-            ("2.5%", "equity / parity ratios"),
-            ("0.9%", "measured learning outcomes"),
-        ],
-        "thesis": (
-            "If the wellbeing return to education runs through attainment and "
-            "access rather than through measured learning, then either the "
-            "post-2030 education architecture is optimising for the wrong "
-            "outcome, or wellbeing is the wrong outcome to hold it to. The "
-            "field should have to say which."
-        ),
-        "beats": [
             {
                 "label": "On priorities",
                 "heading": "Indicator dashboards are not wellbeing instruments",
@@ -486,6 +439,14 @@ ACTS = [
                     "economic security, autonomy, and social standing, and this "
                     "design cannot pull them apart. Individual effects are "
                     "small: a median R² near 0.01.",
+                    "The within-country results are Europe-only. The ESS is "
+                    "the only regional wellbeing source with the coverage this "
+                    "design needs — Gallup's subnational files are paywalled — "
+                    "so the priorities argument generalises across 16 European "
+                    "countries and not beyond them. That belongs in the text as "
+                    "a scope condition, not buried in a limitations paragraph, "
+                    "because the ranking flip is the most policy-relevant "
+                    "result here and will be the most contested.",
                     "Some of the parity and learning indicators' weakness is "
                     "coverage rather than construct — they are the youngest and "
                     "thinnest series in the SDG database, and thin series fail "
@@ -506,7 +467,7 @@ ACTS = [
                     "system is being optimised for.",
                     "A commentary cannot settle that. It can put the "
                     "disagreement on the record with the evidence attached, "
-                    "which is what the four acts are for.",
+                    "which is what the three acts are for.",
                 ],
             },
         ],
@@ -532,10 +493,10 @@ DECISIONS = [
      "Commentaries allow one or two. Proposed: the three-panel composite as "
      "Figure 1, the ranking flip as Figure 2. Everything else moves to "
      "supplementary."),
-    ("Scope of Act III",
-     "Does the within-country material belong in this commentary or in a "
-     "third paper? It is the most policy-relevant and the most contested, "
-     "and it is Europe-only."),
+    ("Scope of the within-country work",
+     "It now sits inside Act III as the evidence on priorities. Does it "
+     "belong there, or in a third paper? It is the most policy-relevant and "
+     "the most contested result we have, and it is Europe-only."),
     ("Data investment",
      "The Global Data Lab's separate Education &amp; Work dataset carries 43 "
      "subnational schooling indicators by cohort and sex. Pulling it would "
@@ -551,6 +512,9 @@ DECISIONS = [
 # Evidence appendix — everything not carried in the acts
 # --------------------------------------------------------------------------
 APPENDIX = [
+    ("shdi_within_country_spread.png", "Regional development spread within countries",
+     "Every region a dot, two countries per UNDP development tier, 2022. "
+     "Germany's regions span 0.05 of SHDI; China's span 0.30, India's 0.19."),
     ("sdg_by_goal.png", "SDG significance by goal, pooled",
      "The leading goal (Energy, 16.0%) clears FDR significance in barely one "
      "country-test in six; pooled Education ranks 12th of 17."),

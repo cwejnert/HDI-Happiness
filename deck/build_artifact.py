@@ -471,7 +471,7 @@ html {{ scroll-behavior: smooth; }}
 
   <section class="appendix">
     <h2>Evidence appendix</h2>
-    <p>Everything the four acts rest on but do not carry. In submission these
+    <p>Everything the three acts rest on but do not carry. In submission these
       become supplementary material.</p>
     <div class="ap-grid">
 {appendix}
