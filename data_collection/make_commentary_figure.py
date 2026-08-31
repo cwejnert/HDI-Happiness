@@ -224,6 +224,7 @@ def main():
         print(f"Saved: {path}")
     plt.close(fig)
     build_c2(outdir)
+    build_hdi_structure(outdir)
 
 
 
@@ -277,6 +278,90 @@ def build_c2(outdir: Path):
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close(fig)
     print(f"Saved: {path}")
+
+# ==========================================================================
+# The HDI's full structure: composite + 4 sub-components, both specifications.
+#
+# HappinessHDI.R reports all five indicators in levels AND first differences;
+# the acts were carrying the composite in one place and the sub-components'
+# levels in another, which loses the two results below.
+#
+# Transcribed from HDI_indicator_summary.csv (reproduced independently from
+# HDI_with_happiness.csv to within one country on every row).
+# ==========================================================================
+HDI_STRUCTURE = [
+    # label,                    n,   sig_lev, sig_dif, r2_lev, r2_dif, is_education
+    ("HDI\n(composite)",         151, 64, 3, 0.322, 0.063, False),
+    ("Mean years\nof schooling", 150, 61, 2, 0.326, 0.069, True),
+    ("Expected years\nof schooling", 150, 51, 7, 0.269, 0.056, True),
+    ("GNI\nper capita",          151, 61, 2, 0.318, 0.051, False),
+    ("Life\nexpectancy",         151, 30, 4, 0.160, 0.056, False),
+]
+
+
+def build_hdi_structure(outdir: Path):
+    fig, axes = plt.subplots(1, 2, figsize=(13.5, 5.8))
+    fig.patch.set_facecolor(BG)
+    x, w = range(len(HDI_STRUCTURE)), 0.36
+    labels = [r[0] for r in HDI_STRUCTURE]
+
+    # (a) share of countries significant
+    ax = axes[0]
+    lev = [100 * r[2] / r[1] for r in HDI_STRUCTURE]
+    dif = [100 * r[3] / r[1] for r in HDI_STRUCTURE]
+    ax.bar([i - w / 2 for i in x], lev, w, color=BLUE, label="Levels")
+    ax.bar([i + w / 2 for i in x], dif, w, color=RED, label="First differences")
+    for i, r in enumerate(HDI_STRUCTURE):
+        ax.text(i - w / 2, lev[i] + 0.9, f"{r[2]}", ha="center", fontsize=8.5, color=INK)
+        ax.text(i + w / 2, dif[i] + 0.9, f"{r[3]}", ha="center", fontsize=8.5, color=INK)
+    ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylim(0, 52)
+    ax.set_ylabel("% of countries FDR-significant", fontsize=9)
+    ax.legend(frameon=False, fontsize=8.5, loc="upper right")
+    style_axes(ax)
+    ax.set_title("a  Countries significant, by indicator", fontsize=10.5,
+                 fontweight="bold", color=INK, loc="left", pad=24)
+    ax.text(0, 1.012, "Bar labels are country counts. Expected years of schooling "
+                      "leads in differences (7).",
+            transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
+
+    # (b) median R-squared
+    ax = axes[1]
+    rl = [r[4] for r in HDI_STRUCTURE]
+    rd = [r[5] for r in HDI_STRUCTURE]
+    ax.bar([i - w / 2 for i in x], rl, w, color=BLUE)
+    ax.bar([i + w / 2 for i in x], rd, w, color=RED)
+    for i in x:
+        ax.text(i - w / 2, rl[i] + .008, f"{rl[i]:.3f}", ha="center", fontsize=8, color=INK)
+        ax.text(i + w / 2, rd[i] + .008, f"{rd[i]:.3f}", ha="center", fontsize=8, color=INK)
+    ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylim(0, 0.40)
+    ax.set_ylabel("Median R² across countries", fontsize=9)
+    style_axes(ax)
+    ax.set_title("b  Median explanatory power, by indicator", fontsize=10.5,
+                 fontweight="bold", color=INK, loc="left", pad=24)
+    ax.text(0, 1.012, "Mean years of schooling is the highest of the five in both "
+                      "specifications — above the composite.",
+            transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
+
+    # mark the education pair on both panels
+    for ax in axes:
+        ax.axvspan(0.55, 2.45, color=GREEN, alpha=0.07, zorder=0)
+        ax.text(1.5, ax.get_ylim()[1] * 0.955, "education", ha="center",
+                fontsize=8, color="#0E7A55", style="italic")
+
+    fig.text(0.007, 0.972, "The HDI in full: composite and sub-components, both specifications",
+             fontsize=13.5, fontweight="bold", color=INK, va="top")
+    fig.text(0.007, 0.022,
+             "Source: HDI_indicator_summary.csv (HappinessHDI.R); World Happiness Report. "
+             "Benjamini–Hochberg corrected across the five indicators within each country.",
+             fontsize=8, color=GREY, va="bottom")
+    fig.tight_layout(rect=(0, 0.05, 1, 0.925))
+    path = outdir / "hdi_full_structure.png"
+    fig.savefig(path, dpi=200, facecolor=BG)
+    plt.close(fig)
+    print(f"Saved: {path}")
+
 
 if __name__ == "__main__":
     main()

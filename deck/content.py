@@ -106,6 +106,34 @@ ACTS = [
                            "to the national level. One test per country per index.",
             },
             {
+                "label": "The structure underneath",
+                "heading": "The composite is not the whole result — the five indicators behave differently",
+                "body": [
+                    "HappinessHDI.R reports the composite alongside its four "
+                    "sub-components in both specifications, and the "
+                    "sub-components do not simply track the composite. Mean "
+                    "years of schooling has the highest median R² of the five "
+                    "in levels (0.326) and in differences (0.069) — above the "
+                    "composite HDI itself (0.322 and 0.063). Income is level "
+                    "with it in levels and below it in differences; life "
+                    "expectancy is clearly weakest in levels (0.160, 30 of 151 "
+                    "countries).",
+                    "The result worth carrying forward is in the differences "
+                    "column. Expected years of schooling is significant in 7 of "
+                    "150 countries — more than the composite's 3, and more than "
+                    "any other indicator. Seven countries is a small number and "
+                    "the collapse is still severe, so this is not a survival "
+                    "story. But it does mean the education pair leads under "
+                    "both specifications rather than only in the "
+                    "cross-section, which is the strongest form the Act II "
+                    "argument can take.",
+                ],
+                "figure": "hdi_full_structure.png",
+                "caption": "The HDI composite and its four sub-components, levels and "
+                           "first differences. Benjamini–Hochberg corrected across the "
+                           "five indicators within each country.",
+            },
+            {
                 "label": "Replication 2 · a second producer",
                 "heading": "A different institution's index, built differently, gives the same numbers",
                 "body": [
@@ -211,6 +239,11 @@ ACTS = [
                     "supplies two of the HDI's three strongest components; "
                     "pooled SDG4 sits at 3.3%. This is the sharpest disagreement "
                     "between the two frameworks anywhere in the project.",
+                    "The education pair also leads in first differences, where "
+                    "expected years of schooling is significant in 7 of 150 "
+                    "countries against the composite's 3 (Act I). Education is "
+                    "ahead under both specifications, not only in the "
+                    "cross-section.",
                 ],
                 "figure": "hdi_vs_sdg_frameworks.png",
                 "caption": "The same domains under both frameworks. Absolute levels "
@@ -290,8 +323,10 @@ ACTS = [
         ],
         "close": (
             "The precise claim, and the one the commentary must not overstate: "
-            "education is not an exception to the differences collapse. Almost "
-            "nothing is. Education is the exception in consistency — the one "
+            "education does not escape the differences collapse. Nothing does — "
+            "expected years of schooling leads that column with 7 of 150 "
+            "countries, which is a lead over the composite and still a "
+            "collapse. Education is the exception in consistency — the one "
             "construct whose level signal holds across frameworks, producers, "
             "wellbeing instruments, and units of observation all the way down "
             "to the individual, and it holds only when education is measured "
