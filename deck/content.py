@@ -352,7 +352,7 @@ ACTS = [
         "numeral": "III",
         "title": "Priorities, and what kind of education",
         "key_numbers": [
-            ("+0.89 → +0.15", "development, between countries → within them"),
+            ("+0.87 → +0.12", "development, between countries → within them"),
             ("12.7%", "access &amp; participation"),
             ("0.9%", "measured learning outcomes"),
         ],
@@ -397,11 +397,21 @@ ACTS = [
                     "with ESS life satisfaction, with trust and health close "
                     "behind and all three positive.",
                     "Within countries the ranking inverts. Development falls to "
-                    "a median regional correlation of +0.15, significant in 3 of "
+                    "a median regional correlation of +0.12, significant in 3 of "
                     "16 countries, while self-rated health holds at +0.51 "
                     "(8 of 16) and social trust at +0.49 (6 of 16). The World "
                     "Happiness Report cannot see this at all — it has no "
                     "subnational values. It is the specific thing the ESS adds.",
+                    "Two cautions on the detail. The health-versus-trust "
+                    "ordering is not stable: aggregating region means across "
+                    "waves rather than within them reverses it, putting trust "
+                    "at +0.57 and health at +0.50. What is stable, under every "
+                    "specification we tried, is that both sit near +0.5 while "
+                    "development sits near zero. And per-country coverage "
+                    "varies sharply — Italy matches only 30% of respondents to "
+                    "a region, Sweden 57%, Croatia 69%, against 91–100% "
+                    "elsewhere. Dropping those three, or dropping regions built "
+                    "on fewer than 200 respondents, leaves the flip intact.",
                 ],
                 "figure": "ranking_flip.png",
                 "caption": "Candidate Figure 2. National correlations beside "
@@ -572,6 +582,7 @@ APPENDIX = [
      "share, 37% against 19%."),
     ("mechanisms_percountry_detail.png", "Per-country detail behind the ranking flip",
      "Signed within-country regional correlations for all 16 countries; "
-     "filled markers are p &lt; .05. Sweden is the odd one out, negative on "
-     "all three."),
+     "filled markers are p &lt; .05. Sweden reads negative on all three, but "
+     "only 57% of Swedish respondents carry a usable region code, so that "
+     "result should not be interpreted."),
 ]

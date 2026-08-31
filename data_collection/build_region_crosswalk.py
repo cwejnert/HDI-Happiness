@@ -44,6 +44,19 @@ from io_utils import read_ess_extract, read_shdi_extract
 # rather than trusted automatically.
 MATCH_SCORE_THRESHOLD = 0.6
 
+# Matches that clear the threshold on spelling but are the wrong region.
+# Reviewed by hand from the low-score tail; most low scores are merely
+# cross-language (Croatian "Zagrebacka zupanija" -> "County of Zagreb" is
+# right, and so is "Pohjois-Savo" -> "Pohjois-ja Ita-Suomi", where GDL uses
+# a coarser macro-region). These three are genuine mismatches and are dropped
+# rather than carried: a wrong region is worse than a missing one.
+BAD_MATCHES = {
+    # (cntry, ess_region_name, gdl_region_name)
+    ("SI", "Notranjsko-kraška", "Obalno-kraska"),   # inland vs. coastal region
+    ("SK", "Trnavský kraj", "Bratislavsky kraj"),   # Trnava is not Bratislava
+    ("FI", "Etelä-Pohjanmaa", "Etela-Suomi"),       # Ostrobothnia is not Southern Finland
+}
+
 NUTS_LOOKUP_PATH = Path(__file__).parent / "reference" / "nuts_all_vintages_names.csv"
 
 
@@ -127,6 +140,15 @@ def build_crosswalk(ess_df: pd.DataFrame, shdi_df: pd.DataFrame) -> tuple[pd.Dat
         matches = match_region_names(resolved["ess_region_name"].tolist(), gdl_regions_for_country["region_name"].unique().tolist())
         matches["cntry"] = cntry_code
         matches["ess_region_code"] = resolved["ess_region_code"].tolist()
+        bad = matches.apply(
+            lambda r: (cntry_code, r["ess_region_name"], r["gdl_region_name"]) in BAD_MATCHES,
+            axis=1)
+        if bad.any():
+            rejected = matches[bad].copy()
+            rejected["reason"] = "rejected by hand: wrong region despite passing score"
+            all_review.append(rejected)
+        matches = matches[~bad]
+
         good = matches[matches["match_score"] >= MATCH_SCORE_THRESHOLD]
         low = matches[matches["match_score"] < MATCH_SCORE_THRESHOLD]
         all_matches.append(good)

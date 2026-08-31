@@ -69,7 +69,21 @@ number has been checked against source.
 | ESS individual education, 32–34 of 36 | reproduced exactly |
 | HDI × ESS collapse, 14.8% / 8.8% | reproduced |
 | Ranking flip: +0.150 (3/16), health +0.513 (8/16), trust +0.487 (6/16) | reproduced exactly |
-| Region crosswalk, 218,893 / 351,023 | reproduced exactly |
+| Region crosswalk, 217,422 / 351,023 | reproduced; three hand-rejected mismatches now excluded |
+
+Three region matches cleared the 0.6 similarity threshold but were the wrong
+region (`SI` Notranjsko-kraška→Obalno-kraska, `SK` Trnavský→Bratislavsky,
+`FI` Etelä-Pohjanmaa→Etela-Suomi) and are now blocklisted in
+`build_region_crosswalk.py`. Only the Slovenian one touched Act III; removing
+it moved the within-country development correlation from +0.150 to +0.117 and
+left health and trust unchanged. Most other low scores are cross-language, not
+wrong — Croatian county names and Finnish macro-regions score badly and match
+correctly.
+
+Act III coverage is uneven and the text now says so: Italy matches 30% of
+respondents to a region, Sweden 57%, Croatia 69%, everywhere else 91–100%.
+The ranking flip survives dropping those three and survives dropping regions
+built on fewer than 200 respondents.
 
 Three errors were found and corrected in the process:
 
