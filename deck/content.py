@@ -20,7 +20,7 @@ SUBTITLE = (
 DATELINE = "Working synthesis for the co-author team · August 2026"
 SCOPE = (
     "SDG: 42 countries, 661 series · HDI × World Happiness Report: 151 "
-    "countries, 2011–2023 · Subnational HDI: 239 regions · European Social "
+    "countries, 2011–2023 · Subnational HDI &amp; sub-indices: 239 regions · European Social "
     "Survey: 36 countries, 351,023 respondents, rounds 5–11 (2010–2023)"
 )
 
@@ -280,6 +280,11 @@ ACTS = [
                     "609. Trust is the strongest ESS predictor and has no "
                     "independent corroboration available. It should enter the "
                     "commentary as an open question, not a result.",
+                    "Act III adds a second external check at the regional "
+                    "scale: GDL's externally measured health index leads its "
+                    "education and income indices within countries too, so the "
+                    "health result now holds under administrative measurement "
+                    "at both the national and the regional level.",
                 ],
                 "figure": "health_trust_corroboration.png",
                 "caption": "The same three domains under an administrative source and "
@@ -459,6 +464,33 @@ ACTS = [
                 "feature": True,
             },
             {
+                "label": "The flip, externally measured",
+                "heading": "It survives with no self-report at all — and it is a health flip",
+                "body": [
+                    "The strongest objection to the ranking flip is that health "
+                    "and trust are reported by the same respondents as the "
+                    "outcome. GDL's regional sub-indices remove that objection: "
+                    "health, education and income indices measured per region "
+                    "from external sources, sharing no method with the ESS.",
+                    "Within countries, the external health index correlates "
+                    "with regional life satisfaction at a median of +0.34, "
+                    "significant in 6 of 15 usable countries, against +0.12 for "
+                    "the income index and +0.06 for the education index. The "
+                    "domain ordering is the same one the self-reports give, "
+                    "from measurement the respondents never touched. Self-rated "
+                    "health still runs higher (+0.50), which is exactly what "
+                    "you expect if part — but only part — of its lead is shared "
+                    "method variance. One country drops out: Albania's regional "
+                    "health index is constant, another instance of a measure "
+                    "with no variance left to predict with.",
+                ],
+                "figure": "within_country_external.png",
+                "caption": "The within-country domain race with externally measured "
+                           "predictors (solid) beside the same-survey self-reports "
+                           "(faded). Sub-indices pooled 2010–2023.",
+                "feature": True,
+            },
+            {
                 "label": "On priorities",
                 "heading": "Indicator dashboards are not wellbeing instruments",
                 "body": [
@@ -588,11 +620,12 @@ DECISIONS = [
      "It now sits inside Act III as the evidence on priorities. Does it "
      "belong there, or in a third paper? It is the most policy-relevant and "
      "the most contested result we have, and it is Europe-only."),
-    ("Data investment",
-     "The Global Data Lab's separate Education &amp; Work dataset carries 43 "
-     "subnational schooling indicators by cohort and sex. Pulling it would "
-     "let us test the education finding subnationally. Before submission or "
-     "after review?"),
+    ("Resolved: subnational sub-indices",
+     "The per-domain GDL exports are in. Within countries the external health "
+     "index leads education and income (+0.34 vs +0.06 and +0.12), so the "
+     "flip no longer rests on self-report. GDL's DHS-based Education &amp; "
+     "Work and Health datasets were also examined: they cover only 6 ESS "
+     "countries and cannot serve the European design."),
     ("Methods note",
      "Pooled R² and significant-country share tell different stories at "
      "several points. Proposal: report both throughout and discuss the "
