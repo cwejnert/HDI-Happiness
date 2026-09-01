@@ -223,15 +223,16 @@ ACTS = [
                 "label": "Framework against framework",
                 "heading": "The SDG framework reaches more countries; the HDI does far more per indicator",
                 "body": [
-                    "The fairest head-to-head runs both frameworks on the same "
-                    "42 countries, against the same outcome, under the same "
-                    "design. On coverage the SDG framework wins: 30 of 42 "
-                    "countries have at least one FDR-significant series in "
-                    "levels (71%), against 17 of 42 for any of the HDI's five "
-                    "indicators (40%) and 14 of 42 for the composite alone "
-                    "(33%). That result should be conceded plainly — asking "
-                    "whether <em>any</em> of roughly 456 series is significant "
-                    "is a far easier bar than asking about five.",
+                    "Score each framework on its own full country set — what "
+                    "share of the countries a dataset actually covers shows a "
+                    "significant levels association? The SDG database covers 42 "
+                    "countries and 30 of them have at least one "
+                    "FDR-significant series (71%). The HDR covers 150, of which "
+                    "77 are significant on at least one of the five indicators "
+                    "(51%) and 63 on the composite alone (42%). On coverage the "
+                    "SDG framework wins, and that should be conceded plainly — "
+                    "asking whether <em>any</em> of roughly 456 series is "
+                    "significant is a far easier bar than asking about five.",
                     "Per indicator the ordering reverses completely. Across the "
                     "609 SDG series with usable coverage the median series is "
                     "significant in no country at all, and 54% never clear FDR "
@@ -243,10 +244,10 @@ ACTS = [
                     "is a vastly more efficient one.",
                 ],
                 "figure": "framework_coverage_efficiency.png",
-                "caption": "Both frameworks on the same 42 countries against WHR "
-                           "happiness. Panel b shows every SDG series with usable "
-                           "coverage and where the HDI's five components fall among "
-                           "them.",
+                "caption": "Each framework on its own full country set against WHR "
+                           "happiness — 42 countries for the SDG database, 150 for the "
+                           "HDR. Panel b shows every SDG series with usable coverage "
+                           "and where the HDI's five components fall among them.",
                 "feature": True,
             },
             {
