@@ -206,9 +206,9 @@ ACTS = [
         "numeral": "II",
         "title": "What matters is decided by how you measure it",
         "key_numbers": [
+            ("0%", "median SDG series: significant in no country"),
+            ("100th percentile", "where the HDI composite falls in that field"),
             ("11.2% vs 1.2%", "health vs education, SDG data, high-income countries"),
-            ("36 / 36", "countries where self-rated health predicts life satisfaction"),
-            ("19.9%", "life expectancy — the HDI's weakest component"),
         ],
         "thesis": (
             "Rank the domains and the answer inverts depending on the "
@@ -219,6 +219,36 @@ ACTS = [
             "was operationalised."
         ),
         "beats": [
+            {
+                "label": "Framework against framework",
+                "heading": "The SDG framework reaches more countries; the HDI does far more per indicator",
+                "body": [
+                    "The fairest head-to-head runs both frameworks on the same "
+                    "42 countries, against the same outcome, under the same "
+                    "design. On coverage the SDG framework wins: 30 of 42 "
+                    "countries have at least one FDR-significant series in "
+                    "levels (71%), against 17 of 42 for any of the HDI's five "
+                    "indicators (40%) and 14 of 42 for the composite alone "
+                    "(33%). That result should be conceded plainly — asking "
+                    "whether <em>any</em> of roughly 456 series is significant "
+                    "is a far easier bar than asking about five.",
+                    "Per indicator the ordering reverses completely. Across the "
+                    "609 SDG series with usable coverage the median series is "
+                    "significant in no country at all, and 54% never clear FDR "
+                    "anywhere. The HDI composite, mean years of schooling and "
+                    "GNI per capita each beat essentially the entire SDG field; "
+                    "expected years of schooling beats 98% of it, and even life "
+                    "expectancy — the HDI's weakest component — beats 90%. The "
+                    "HDI is not a broader instrument than the SDG framework. It "
+                    "is a vastly more efficient one.",
+                ],
+                "figure": "framework_coverage_efficiency.png",
+                "caption": "Both frameworks on the same 42 countries against WHR "
+                           "happiness. Panel b shows every SDG series with usable "
+                           "coverage and where the HDI's five components fall among "
+                           "them.",
+                "feature": True,
+            },
             {
                 "label": "The autopsy",
                 "heading": "What survives in levels is survival",
