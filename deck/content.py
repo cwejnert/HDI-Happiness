@@ -206,8 +206,8 @@ ACTS = [
         "numeral": "II",
         "title": "What matters is decided by how you measure it",
         "key_numbers": [
-            ("0%", "median SDG series: significant in no country"),
-            ("100th percentile", "where the HDI composite falls in that field"),
+            ("51% vs 17%", "HDI vs SDG at a matched bar: 1 in 5 of a country's indicators"),
+            ("2.4%", "median SDG country: share of its own series significant"),
             ("11.2% vs 1.2%", "health vs education, SDG data, high-income countries"),
         ],
         "thesis": (
@@ -221,18 +221,24 @@ ACTS = [
         "beats": [
             {
                 "label": "Framework against framework",
-                "heading": "The SDG framework reaches more countries; the HDI does far more per indicator",
+                "heading": "The SDG framework wins only at the loosest bar; at a comparable one the HDI dominates",
                 "body": [
-                    "Score each framework on its own full country set — what "
-                    "share of the countries a dataset actually covers shows a "
-                    "significant levels association? The SDG database covers 42 "
-                    "countries and 30 of them have at least one "
-                    "FDR-significant series (71%). The HDR covers 150, of which "
-                    "77 are significant on at least one of the five indicators "
-                    "(51%) and 63 on the composite alone (42%). On coverage the "
-                    "SDG framework wins, and that should be conceded plainly — "
-                    "asking whether <em>any</em> of roughly 456 series is "
-                    "significant is a far easier bar than asking about five.",
+                    "Score each framework on its own full country set. At the "
+                    "loosest possible bar — at least <em>one</em> indicator "
+                    "significant in levels — the SDG framework wins: 30 of its "
+                    "42 countries qualify (71%) against 77 of the HDR's 150 "
+                    "(51%). Conceded plainly, because it is true.",
+                    "But that bar is not the same test on both sides. One of "
+                    "roughly 456 series is a far weaker requirement than one of "
+                    "five. Requiring instead a <em>share</em> of each country's "
+                    "own indicators makes the bar comparable, and the ordering "
+                    "reverses hard. At one indicator in five — the HDI's "
+                    "loosest bar expressed proportionally — the HDI reaches 51% "
+                    "of its countries and the SDG framework 17% of its own. The "
+                    "median SDG country has 2.4% of its series significant; the "
+                    "best, Canada, reaches 34.9%. Above roughly 35% no SDG "
+                    "country qualifies at all, while 44% of HDI countries still "
+                    "clear a three-of-five bar.",
                     "Per indicator the ordering reverses completely. Across the "
                     "609 SDG series with usable coverage the median series is "
                     "significant in no country at all, and 54% never clear FDR "
@@ -245,9 +251,10 @@ ACTS = [
                 ],
                 "figure": "framework_coverage_efficiency.png",
                 "caption": "Each framework on its own full country set against WHR "
-                           "happiness — 42 countries for the SDG database, 150 for the "
-                           "HDR. Panel b shows every SDG series with usable coverage "
-                           "and where the HDI's five components fall among them.",
+                           "happiness. Panel a sweeps the bar from \"any one "
+                           "indicator\" to \"all of them\"; panel b shows every SDG "
+                           "series with usable coverage and where the HDI's five "
+                           "components fall among them.",
                 "feature": True,
             },
             {

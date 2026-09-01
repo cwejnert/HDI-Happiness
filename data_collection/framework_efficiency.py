@@ -4,14 +4,16 @@ HDI versus the SDG framework, on the same countries and the same design.
 Two comparisons, because they point in opposite directions and the paper
 needs both to be honest:
 
-  (a) COVERAGE -- "what share of the countries each dataset covers has at
-      least one indicator significant in levels?" Each framework is scored on
-      its OWN full country set, not a matched subset: the SDG database carries
-      42 countries and the HDR 150-151, and the share is the quantity of
-      interest. SDG 71%, HDI 51% on any of five, 42% on the composite. The SDG
-      framework wins, because asking whether ANY of ~456 series is significant
-      is a much easier bar than asking about 5. Conceding this up front is
-      what earns the right to make comparison (b).
+  (a) COVERAGE AT A MATCHED BAR -- "what share of the countries each dataset
+      covers clears a given bar in levels?" At the loosest bar -- at least ONE
+      indicator significant -- the SDG framework wins, 71% to 51%, because one
+      of ~456 series is far easier than one of 5. But that bar is not
+      comparable across frameworks with 456 and 5 indicators. Requiring
+      instead a SHARE of each country's own indicators makes it comparable,
+      and the ordering reverses hard: at 1-in-5 of a country's own indicators
+      the HDI reaches 51% of its countries and the SDG framework only 17%.
+      Above ~35% no SDG country qualifies at all, while 44% of HDI countries
+      still clear a 3-of-5 bar.
 
   (b) EFFICIENCY -- what does a single indicator buy you? The median SDG
       series is significant in 0% of countries and 54% of them never clear
@@ -76,9 +78,11 @@ def pval(x, y):
 
 
 def compute():
-    """Score each framework on its own full country set."""
+    """Both frameworks on their own full country sets, across thresholds."""
     sdg = pd.read_csv("raw/robust_all_for_figures.csv", low_memory=False)
-    sig = sdg.assign(v=sdg.sig_levels_fdr.eq("q<.05")).groupby("GeoAreaName")["v"].any()
+    sdg["sig"] = sdg.sig_levels_fdr.eq("q<.05")
+    per_country = sdg.groupby("GeoAreaName").agg(n=("sig", "size"), k=("sig", "sum"))
+    sdg_share = (100 * per_country.k / per_country.n).to_numpy()
     n_series = sdg.groupby("GeoAreaName").SeriesCode.nunique().median()
 
     hdr = pd.read_csv("raw/HDI_with_happiness.csv")
@@ -86,60 +90,66 @@ def compute():
                            values="value").reset_index()
     happy = hdr.groupby(["country", "year"])["happiness"].mean().reset_index()
     panel = wide.merge(happy, on=["country", "year"]).sort_values(["country", "year"])
-
-    rows = []
+    counts = []
     for cty, g in panel.groupby("country"):
         g = g.sort_values("year")
         q = bh([pval(g[i].to_numpy(float), g["happiness"].to_numpy(float)) for i in HDI_INDS])
         if np.isnan(q).all():
             continue
-        rows.append({"composite": bool(q[0] == q[0] and q[0] < .05),
-                     "any5": bool(np.nansum(q < .05))})
-    hdi = pd.DataFrame(rows)
-
-    coverage = [
-        ("SDG framework", int(sig.sum()), len(sig), f"any of ~{n_series:.0f} series", ORANGE),
-        ("HDI, all five", int(hdi.any5.sum()), len(hdi), "any of 5 indicators", BLUE),
-        ("HDI composite", int(hdi.composite.sum()), len(hdi), "1 indicator", GREEN),
-    ]
+        counts.append(int(np.nansum(q < .05)))
+    hdi_counts = np.array(counts)
+    hdi_share = 100 * hdi_counts / len(HDI_INDS)
 
     rank = pd.read_csv("processed/sdg_series_significance_ranking.csv")
     rank = rank[rank.n_countries >= 8]
-    return coverage, rank.pct_sig_levels.to_numpy()
+    return sdg_share, hdi_share, n_series, rank.pct_sig_levels.to_numpy()
 
 
 def main():
-    coverage, sdg_dist = compute()
+    sdg_share, hdi_share, n_series, sdg_dist = compute()
+    n_sdg, n_hdi = len(sdg_share), len(hdi_share)
+    # where each HDI component falls in the SDG series distribution (panel b)
     hdi_pts = {"hdi": 42.4, "mys": 40.7, "gnipc": 40.4, "eys": 34.0, "le": 19.9}
 
     fig, axes = plt.subplots(1, 2, figsize=(14.5, 6.0))
     fig.patch.set_facecolor(BG)
 
-    # ---------- (a) coverage ----------
+    # ---------- (a) coverage across matched thresholds ----------
     ax = axes[0]
-    x = range(len(coverage))
-    for i, (label, k, n, note, col) in enumerate(coverage):
-        pct = 100 * k / n
-        ax.bar(i, pct, 0.58, color=col)
-        ax.text(i, pct + 1.6, f"{pct:.0f}%", ha="center", fontsize=12,
-                fontweight="bold", color=INK)
-        ax.text(i, pct + 6.0, f"{k}/{n}", ha="center", fontsize=8.5, color=GREY)
-    ax.set_xticks(list(x))
-    ax.set_xticklabels([f"{c[0]}\n{c[3]}\n{c[2]} countries covered" for c in coverage],
-                       fontsize=8.5)
-    ax.set_ylim(0, 88)
-    ax.set_ylabel("% of that dataset's countries with ≥1 indicator\nsignificant in levels", fontsize=9.5)
+    grid = np.arange(0.01, 101, 0.5)
+    ax.plot(grid, [100 * (sdg_share >= t).mean() for t in grid], color=ORANGE,
+            linewidth=2.6, label=f"SDG framework  ({n_sdg} countries, ~{n_series:.0f} series each)")
+    ax.plot(grid, [100 * (hdi_share >= t).mean() for t in grid], color=BLUE,
+            linewidth=2.6, label=f"HDI  ({n_hdi} countries, 5 indicators each)")
+
+    ax.axvline(20, color=GREY, linestyle=(0, (4, 3)), linewidth=1.1)
+    ax.annotate("a matched bar:\n1 in 5 of a country's\nown indicators",
+                xy=(20, 88), xytext=(27, 84), fontsize=8.3, color=INK,
+                arrowprops=dict(arrowstyle="->", color=GREY, lw=1))
+    for val, col, lab in [(100 * (hdi_share >= 20).mean(), BLUE, "51%"),
+                          (100 * (sdg_share >= 20).mean(), ORANGE, "17%")]:
+        ax.plot(20, val, "o", color=col, markersize=7, markeredgecolor="white", zorder=5)
+        ax.text(21.5, val, lab, fontsize=10, fontweight="bold", color=col, va="center")
+
+    ax.text(1.5, 100 * (sdg_share > 0).mean() + 3.5, "71%", fontsize=9, color=ORANGE)
+    ax.text(1.5, 100 * (hdi_share > 0).mean() - 6.5, "51%", fontsize=9, color=BLUE)
+
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 100)
+    ax.set_xlabel("Bar: % of a country's own indicators required to be significant", fontsize=9.5)
+    ax.set_ylabel("% of that dataset's countries clearing the bar", fontsize=9.5)
+    ax.legend(frameon=False, fontsize=8.5, loc="upper right")
     ax.set_facecolor(BG)
-    for s in ("top", "right"):
-        ax.spines[s].set_visible(False)
-    ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    ax.grid(color="#E6E6E6", linewidth=0.8)
     ax.set_axisbelow(True)
-    ax.set_title("a  Coverage: the SDG framework reaches a larger share of its countries",
+    ax.set_title("a  At a comparable bar, the ordering reverses",
                  fontsize=11.5, fontweight="bold", color=INK, loc="left", pad=44)
     ax.text(0, 1.015,
-            "Each framework scored on its own full country set — the SDG database covers 42\n"
-            "countries, the HDR 150. Asking whether ANY of ~456 series is significant is a far\n"
-            "easier bar than asking about five.",
+            "At the loosest bar — any ONE indicator — the SDG framework leads 71% to 51%, but one\n"
+            "of ~456 series is not the same test as one of 5. Requiring a share of each country's own\n"
+            "indicators makes it comparable. Above ~35% no SDG country qualifies at all.",
             transform=ax.transAxes, fontsize=8.5, color="#5A5A5A", va="bottom")
 
     # ---------- (b) efficiency ----------
@@ -173,7 +183,7 @@ def main():
         ax.spines[s].set_visible(False)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
     ax.set_axisbelow(True)
-    ax.set_title("b  Efficiency: but a single HDI component beats almost the whole field",
+    ax.set_title("b  Why: the median SDG series carries no signal at all",
                  fontsize=11.5, fontweight="bold", color=INK, loc="left", pad=30)
     ax.text(0, 1.015,
             "Every one of the 609 SDG series with usable coverage, and where the five HDI\n"
@@ -181,7 +191,7 @@ def main():
             transform=ax.transAxes, fontsize=8.5, color="#5A5A5A", va="bottom")
 
     fig.text(0.006, 0.972,
-             "The SDG framework covers more countries; the HDI does far more per indicator",
+             "The SDG framework wins on the loosest bar only; per indicator the HDI dominates",
              fontsize=15, fontweight="bold", color=INK, va="top")
     fig.text(0.006, 0.020,
              "Benjamini–Hochberg FDR-corrected within country against WHR happiness. "
@@ -193,10 +203,13 @@ def main():
     fig.savefig(out, dpi=200, facecolor=BG)
     print(f"Saved: {out}")
 
-    for label, k, n, note, _ in coverage:
-        print(f"  {label:16s} {k:3d}/{n}  ({100*k/n:.0f}%)   {note}")
-    print("  (HappinessHDI.R reports the composite as 64/151 = 42%; the one-country "
-          "difference is a merge edge case)")
+    print(f"  SDG {n_sdg} countries | HDI {n_hdi} countries")
+    for t in (0.01, 5, 10, 20, 40, 60, 80, 100):
+        lab = "any" if t < 1 else f">={t:.0f}%"
+        print(f"  bar {lab:>6s} of own indicators : SDG {100*(sdg_share>=t).mean():3.0f}%   "
+              f"HDI {100*(hdi_share>=t).mean():3.0f}%")
+    print(f"  median share of own series significant: SDG {np.median(sdg_share):.1f}%, "
+          f"max {sdg_share.max():.1f}%")
     print(f"  SDG series distribution: median {np.median(sdg_dist):.1f}%, "
           f"{zero_share:.0f}% at zero, max {sdg_dist.max():.1f}%")
     for k, v in hdi_pts.items():
