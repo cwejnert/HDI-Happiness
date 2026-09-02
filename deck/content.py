@@ -14,8 +14,8 @@ from __future__ import annotations
 TITLE = "Measured Where It Varies"
 SUBTITLE = (
     "A commentary in three acts, on why development predicts where wellbeing "
-    "is high but not when it rises — and why health leads once it is measured "
-    "somewhere it still moves"
+    "is high but not when it rises — and on the three domains that do track "
+    "lived experience, once each is measured somewhere it still moves"
 )
 DATELINE = "Working synthesis for the co-author team · August 2026"
 SCOPE = (
@@ -52,12 +52,13 @@ HOOK = {
         ("I", "We replicate the SDG result outside the SDGs.",
          "The same design on the HDI, against a second wellbeing survey, and "
          "one spatial scale down. It collapses every time."),
-        ("II", "Health leads — once it is measured where it still varies.",
-         "The domain rankings invert with the instrument. Education runs the "
-         "same problem in reverse, and social trust cannot yet be checked."),
+        ("II", "Health, education and social trust — and the blind spots.",
+         "Health leads wherever it varies, education's rank swings on "
+         "construct, and trust is invisible to every framework but one."),
         ("III", "Which makes the policy question unavoidable.",
          "What this means for priorities, what kind of health and education "
-         "it points at, and the question we are putting to the field."),
+         "it points at, what to do about the trust gap, and the question we "
+         "are putting to the field."),
     ],
 }
 
@@ -204,19 +205,18 @@ ACTS = [
     },
     {
         "numeral": "II",
-        "title": "What matters is decided by how you measure it",
+        "title": "Three domains, and which frameworks can see them",
         "key_numbers": [
-            ("40% vs 30%", "HDI's five vs five random SDG series, same countries"),
-            ("0%", "median SDG series: significant in no country"),
-            ("11.2% vs 1.2%", "health vs education, SDG data, high-income countries"),
+            ("5 of 5", "instruments where health tracks wellbeing"),
+            ("1 of 163", "SDG trust tests significant — on 1 year of data each"),
+            ("40.7% vs 3.3%", "education under the HDI vs pooled SDG4"),
         ],
         "thesis": (
-            "Rank the domains and the answer inverts depending on the "
-            "instrument. Health is the HDI's weakest component and the "
-            "strongest thing in both the SDG ranking and the ESS. Education is "
-            "the HDI's strongest and the SDG framework's weakest. Neither "
-            "disagreement is about the world; both are about how the domain "
-            "was operationalised."
+            "Three domains carry individual lived experience: health, "
+            "education and social trust. Each is visible to a different subset "
+            "of the instruments, and where a framework says a domain does not "
+            "matter, the reason is almost always in how it measured that "
+            "domain — or whether it managed to measure it at all."
         ),
         "beats": [
             {
@@ -408,6 +408,64 @@ ACTS = [
                            "their own life satisfaction, 36 ESS countries.",
             },
             {
+                "label": "Social trust",
+                "heading": "Near the top wherever it is measured, and invisible almost everywhere else",
+                "body": [
+                    "Social trust is the third domain and the one the "
+                    "measurement apparatus handles worst. In the ESS, where it "
+                    "is asked of every respondent in every round, it is "
+                    "significant in 34 of 36 countries individually and reaches "
+                    "+0.49 within countries across regions — above education on "
+                    "both. Neither the HDI nor the subnational HDI measures it "
+                    "at all.",
+                    "The SDG framework appears to: it carries 13 trust- and "
+                    "satisfaction-adjacent series, mostly under Goal 16 — "
+                    "satisfaction with public services, belief that "
+                    "decision-making is inclusive, bribery prevalence. But their "
+                    "median coverage is <em>one year</em> per country-series, "
+                    "against six for the database as a whole, so almost none can "
+                    "support a time-series test. Exactly 1 of 163 country-tests "
+                    "is significant. An earlier draft of this deck read that as "
+                    "evidence that trust does not matter; it is nothing of the "
+                    "kind. It is a measurement gap, and reporting it as a null "
+                    "would be the same error the commentary accuses the "
+                    "frameworks of making.",
+                    "That leaves trust the weakest-evidenced of the three — one "
+                    "instrument, no external corroboration, and the "
+                    "shared-method caveat still live. It should be presented as "
+                    "the most interesting open question rather than a finding, "
+                    "and it points at a concrete recommendation: a repeated "
+                    "trust item costs almost nothing to field and would make "
+                    "the domain testable.",
+                ],
+            },
+            {
+                "label": "The synthesis",
+                "heading": "The pattern of blind spots is the result",
+                "body": [
+                    "Laid out side by side, the three domains have different "
+                    "signatures. Health is testable in all five instruments and "
+                    "leads in four of them — weak only inside the HDI, whose "
+                    "single health input has run out of variance. Education is "
+                    "testable in all five and its rank swings from first to "
+                    "near-last depending purely on whether the instrument "
+                    "measures attainment or parity. Trust is at or near the top "
+                    "of the only instrument that can test it, and invisible to "
+                    "the rest.",
+                    "None of these disagreements is about the world. Every one "
+                    "is about an operationalisation choice made by the framework "
+                    "— which is why the commentary's contribution is not a "
+                    "ranking of domains but an account of why the rankings "
+                    "differ.",
+                ],
+                "figure": "domain_scorecard.png",
+                "caption": "The three domains against the five instruments. Metrics "
+                           "differ by column and are given under each heading; the "
+                           "colours encode whether the domain tracks wellbeing there, "
+                           "shows little signal, or cannot be tested at all.",
+                "feature": True,
+            },
+            {
                 "label": "The composite",
                 "heading": "The three panels the commentary needs",
                 "body": [
@@ -431,14 +489,15 @@ ACTS = [
             },
         ],
         "close": (
-            "Two domains, two frameworks, two opposite verdicts, and in both "
-            "cases the disagreement is about measurement rather than about the "
-            "world. Health leads once it is measured somewhere it still varies; "
-            "education leads once it is measured as attainment rather than "
-            "parity. The commentary's contribution is not a ranking of domains "
-            "but the demonstration that the ranking is an artefact of "
-            "operationalisation — and that both domains survive when measured "
-            "properly, while trust cannot yet be checked at all."
+            "Three domains, five instruments, and a different verdict from "
+            "almost every pairing. Health leads once it is measured somewhere "
+            "it still varies; education leads once it is measured as "
+            "attainment rather than parity; trust leads wherever it is "
+            "measured at all, which is almost nowhere. The commentary's "
+            "contribution is not a ranking of domains but the demonstration "
+            "that the ranking is an artefact of operationalisation — and that "
+            "one of the three is missing from the development measurement "
+            "apparatus entirely."
         ),
     },
     {
@@ -592,6 +651,25 @@ ACTS = [
                     "while measured learning outcomes sit at 0.9% and parity "
                     "ratios at 2.5%. The caution from Act II applies: education "
                     "is the most consistent signal and the smallest one.",
+                ],
+            },
+            {
+                "label": "On the trust gap",
+                "heading": "The cheapest fix in the paper: field a repeated trust item",
+                "body": [
+                    "Social trust is at or near the top of every test the ESS "
+                    "can run, and no development framework can currently check "
+                    "it. The SDG framework's 13 satisfaction and integrity "
+                    "series average one observation per country, which is not "
+                    "enough for any longitudinal design; the HDI and subnational "
+                    "HDI do not measure the construct at all.",
+                    "This is the one recommendation in the commentary that costs "
+                    "almost nothing. A single generalised-trust item, asked "
+                    "repeatedly, is already standard in the ESS, the World "
+                    "Values Survey and several national statistical series. "
+                    "Adding one to a development monitoring instrument would "
+                    "move trust from untestable to testable — and on the "
+                    "evidence available it would then rank alongside health.",
                 ],
             },
             {

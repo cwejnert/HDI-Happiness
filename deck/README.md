@@ -15,28 +15,40 @@ rebuild both; don't edit the HTML or the PPTX directly.
 
 ## The arc
 
-Health-led, with education carried as a marked sub-highlight thread inside
-Act II.
+Three domains — health, education, social trust — carried through Act II and
+into the policy act.
 
 | | |
 |---|---|
 | **Opening** | Development rose; wellbeing didn't follow. Which of its parts tracks wellbeing at all? |
 | **Act I** | Replication. The levels-to-differences collapse holds on the HDI, against ESS, and at regional scale — not an SDG artifact. The subnational HDI is a disaggregation test, not a replication. |
-| **Act II** | What matters is decided by how you measure it. Health is the HDI's weakest component and the strongest thing in both the SDG ranking and the ESS; education runs the same problem in reverse. Social trust cannot be checked. |
-| **Act III** | Priorities (where the lever is, which turns on scale), what kind of health and education, and the policy question. |
+| **Act II** | Three domains, and which frameworks can see them. Health, education and social trust each have a different signature across the five instruments, and every disagreement is about operationalisation. |
+| **Act III** | Priorities, what kind of health and education, the trust gap, and the policy question. |
 
-**Why health leads.** It is the only domain that leads in both an
-administrative source and a self-report source. Restricted to high-income
-countries — the ESS's own stratum — the SDG data puts health at 11.2% against
-education's 1.2%, the same ordering the ESS gives from entirely different
-measurement. Social trust tops the ESS and has no SDG indicator at all, so it
-enters as an open question rather than a result.
+**The three signatures.**
 
-**Why the HDI disagrees.** Life expectancy is close to saturated across the
-countries where it is tested, so the HDI's only health input has no variance
-left to predict with. The SDG series carrying health's signal are survival
-measures that still vary; self-rated health captures morbidity life expectancy
-cannot see.
+- **Health** — testable in all five instruments, leads in four. Weak only
+  inside the HDI, whose single health input (life expectancy) is close to
+  saturated. Corroborated across an administrative source and a self-report
+  source, and at national and regional scale.
+- **Education** — testable in all five; its rank swings from first (HDI, 40.7%)
+  to near-last (pooled SDG4, 3.3%) purely on whether the instrument measures
+  attainment or parity. Near-universal at the individual level but the smallest
+  effect of any domain (median R² 0.0098).
+- **Social trust** — at or near the top of the one instrument that measures it
+  repeatedly (34 of 36 countries; +0.49 within countries), and invisible to
+  every development framework.
+
+**The trust correction.** An earlier draft recorded "no SDG trust indicator
+exists". That is wrong. The SDG database carries 13 trust- and
+satisfaction-adjacent series (Goal 16: satisfaction with public services,
+inclusive decision-making, bribery prevalence). But their median coverage is
+**one observation per country-series** against six for the database as a
+whole, so almost none can support a time-series test; 1 of 163 country-tests
+is significant. That is a measurement gap, not a substantive null, and
+reporting it as a null would repeat exactly the error the commentary accuses
+the frameworks of making. `domain_scorecard.py` recomputes this rather than
+trusting a transcribed note.
 
 `DECISIONS` carries the open questions for the co-author team; `APPENDIX`
 carries the supporting figures not used in the acts.
