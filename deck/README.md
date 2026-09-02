@@ -66,10 +66,18 @@ of schooling leads that column with 7 of 150 countries — a lead over the
 composite's 3, and still a collapse. It is the exception in *consistency*
 across frameworks, producers, instruments, and units of observation.
 
-The SDG and HDI collapse rates are **not directly comparable**. The SDG test
-asks whether any of a country's ~456 series is significant; the HDI test asks
-about one composite. That is why SDG levels sit at 71% and HDI at 42%. The
-collapse ratio is the comparable quantity.
+The SDG and HDI **detection** rates (71% vs 51% of each dataset's countries
+with any indicator significant) are a fair comparison, not an artifact:
+Benjamini–Hochberg under the complete null controls the error rate at the same
+α whatever the family size, so the SDG lead is genuine power bought with
+breadth. An earlier draft claimed the opposite and normalised by the share of
+each country's own indicators; that was dropped, because it penalises breadth
+for its own sake. `framework_efficiency.py` now reports three comparisons —
+detection, budget-matched (5 vs 5 random), and per-indicator — and nominates
+none as the headline.
+
+For **collapse** the comparable quantity is still the levels-to-differences
+ratio, not the level, since the two frameworks differ in indicator count.
 
 ## Verification status
 

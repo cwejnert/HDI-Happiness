@@ -206,8 +206,8 @@ ACTS = [
         "numeral": "II",
         "title": "What matters is decided by how you measure it",
         "key_numbers": [
-            ("51% vs 17%", "HDI vs SDG at a matched bar: 1 in 5 of a country's indicators"),
-            ("2.4%", "median SDG country: share of its own series significant"),
+            ("40% vs 30%", "HDI's five vs five random SDG series, same countries"),
+            ("0%", "median SDG series: significant in no country"),
             ("11.2% vs 1.2%", "health vs education, SDG data, high-income countries"),
         ],
         "thesis": (
@@ -221,40 +221,50 @@ ACTS = [
         "beats": [
             {
                 "label": "Framework against framework",
-                "heading": "The SDG framework wins only at the loosest bar; at a comparable one the HDI dominates",
+                "heading": "Three comparisons, and they do not all point the same way",
                 "body": [
-                    "Score each framework on its own full country set. At the "
-                    "loosest possible bar — at least <em>one</em> indicator "
-                    "significant in levels — the SDG framework wins: 30 of its "
-                    "42 countries qualify (71%) against 77 of the HDR's 150 "
-                    "(51%). Conceded plainly, because it is true.",
-                    "But that bar is not the same test on both sides. One of "
-                    "roughly 456 series is a far weaker requirement than one of "
-                    "five. Requiring instead a <em>share</em> of each country's "
-                    "own indicators makes the bar comparable, and the ordering "
-                    "reverses hard. At one indicator in five — the HDI's "
-                    "loosest bar expressed proportionally — the HDI reaches 51% "
-                    "of its countries and the SDG framework 17% of its own. The "
-                    "median SDG country has 2.4% of its series significant; the "
-                    "best, Canada, reaches 34.9%. Above roughly 35% no SDG "
-                    "country qualifies at all, while 44% of HDI countries still "
-                    "clear a three-of-five bar.",
-                    "Per indicator the ordering reverses completely. Across the "
-                    "609 SDG series with usable coverage the median series is "
-                    "significant in no country at all, and 54% never clear FDR "
-                    "anywhere. The HDI composite, mean years of schooling and "
-                    "GNI per capita each beat essentially the entire SDG field; "
-                    "expected years of schooling beats 98% of it, and even life "
-                    "expectancy — the HDI's weakest component — beats 90%. The "
-                    "HDI is not a broader instrument than the SDG framework. It "
-                    "is a vastly more efficient one.",
+                    "No single statistic settles which framework tracks "
+                    "wellbeing better, so the commentary should report three "
+                    "and nominate none. <strong>Detection</strong>: does any "
+                    "indicator show a significant levels association in a given "
+                    "country? The SDG framework reaches 30 of its 42 countries "
+                    "(71%), the HDI 77 of its 150 (51%). This is a fair "
+                    "comparison rather than an artifact — Benjamini–Hochberg "
+                    "under the complete null controls the error rate at the "
+                    "same α whatever the family size — so the SDG lead is "
+                    "genuine statistical power bought with breadth, and should "
+                    "be conceded as such.",
+                    "<strong>Budget-matched</strong>: give the SDG framework "
+                    "the same five-indicator budget the HDI gets, drawn at "
+                    "random, 4,000 times. Five random SDG series reach 30% of "
+                    "countries (95% range 19–40%); the HDI's chosen five reach "
+                    "40% on the same countries. The HDI's selection beats a "
+                    "random five — but lands at the top <em>edge</em> of the "
+                    "random range, not outside it. Most of the SDG framework's "
+                    "advantage in the first comparison is explained by "
+                    "indicator count, and the HDI's advantage at matched budget "
+                    "is real but modest.",
+                    "<strong>Per indicator</strong>: across the 609 SDG series "
+                    "with usable coverage the median series is significant in "
+                    "no country at all, and 54% never clear FDR anywhere. The "
+                    "HDI composite, mean schooling and GNI per capita each beat "
+                    "essentially the whole field; even life expectancy, the "
+                    "HDI's weakest component, beats 90% of it. This is the "
+                    "strongest claim because it requires no cross-framework "
+                    "normalisation — though it does set the HDI's best against "
+                    "the SDG median, and the budget-matched test shows that is "
+                    "a generous framing.",
+                    "An earlier draft normalised by the share of each country's "
+                    "own indicators. That was dropped: it penalises breadth for "
+                    "its own sake — bolt a hundred irrelevant series onto the "
+                    "HDI and its score collapses without any loss of "
+                    "information — and the error-rate argument above shows the "
+                    "detection comparison never needed rescuing.",
                 ],
-                "figure": "framework_coverage_efficiency.png",
+                "figure": "framework_three_comparisons.png",
                 "caption": "Each framework on its own full country set against WHR "
-                           "happiness. Panel a sweeps the bar from \"any one "
-                           "indicator\" to \"all of them\"; panel b shows every SDG "
-                           "series with usable coverage and where the HDI's five "
-                           "components fall among them.",
+                           "happiness, except panel b which restricts the HDI to the "
+                           "42 SDG countries so the budgets are comparable.",
                 "feature": True,
             },
             {
