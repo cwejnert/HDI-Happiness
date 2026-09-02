@@ -143,8 +143,9 @@ def slide_hook(prs):
     para(tf, C.HOOK["heading"], size=30, color=INK, font=SERIF, spacing=1.06, first=True)
 
     tf = textbox(s, MARGIN, Inches(3.15), Inches(5.7), Inches(3.6))
+    size = fit_size(C.HOOK["body"], 5.7, 3.6, 13, 1.34, 12, floor=10.5)
     for i, p in enumerate(C.HOOK["body"]):
-        para(tf, p, size=13, color=INK_SOFT, spacing=1.34, space_after=12, first=(i == 0))
+        para(tf, p, size=size, color=INK_SOFT, spacing=1.34, space_after=12, first=(i == 0))
 
     # the three acts, right column
     x = Inches(7.35)
@@ -180,7 +181,8 @@ def slide_act_open(prs, act):
     para(tf, act["title"], size=40, color=SURFACE, font=SERIF, spacing=1.02, first=True)
 
     tf = textbox(s, MARGIN, Inches(4.25), Inches(7.4), Inches(1.6))
-    para(tf, act["thesis"], size=16, color=RGBColor(0x9A, 0xA4, 0xB0), font=SERIF,
+    para(tf, act["thesis"], size=fit_size([act["thesis"]], 7.4, 1.6, 16, 1.35, 0, floor=11),
+         color=RGBColor(0x9A, 0xA4, 0xB0), font=SERIF,
          italic=True, spacing=1.35, first=True)
 
     # key numbers along the foot
@@ -256,7 +258,7 @@ def slide_decisions(prs):
     tf = textbox(s, MARGIN, Inches(0.55), Inches(9), Inches(0.9))
     para(tf, "Decisions for the team", size=32, color=INK, font=SERIF,
          space_after=6, first=True)
-    para(tf, "Five things the acts do not settle, in the order they block drafting.",
+    para(tf, f"{len(C.DECISIONS)} things the acts do not settle, in the order they block drafting.",
          size=13, color=INK_SOFT)
 
     cols, x0, y0 = 3, MARGIN, Inches(2.0)

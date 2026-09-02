@@ -24,7 +24,7 @@ specifications at once.
 | **Opening** | Development rose; wellbeing didn't follow. Which of its parts tracks wellbeing at all? |
 | **Act I** | Replication. The levels-to-differences collapse holds on the HDI, against ESS, and at regional scale — not an SDG artifact. The subnational HDI is a disaggregation test, not a replication. |
 | **Act II** | Result 1 education, Result 2 health, then the three-specification synthesis, then social trust in discussion. Every disagreement between frameworks is about operationalisation. |
-| **Act III** | Priorities, what kind of education and health, the trust gap, and the policy question. |
+| **Act III** | The disconnect, then one implication per result, then an exploratory conclusion. |
 
 **The three signatures.**
 
@@ -71,6 +71,38 @@ in that script computes the one cell the pipeline never produced — G3 in
 `make_figures.py` runs development, trust and self-rated health within
 countries but not education, so the deck had been quoting +0.13 against a
 number nothing generated. It reproduces exactly.
+
+## Act III's altitude: implications, not recommendations
+
+The act was rewritten to sit where the evidence sits. The claim is a
+**disconnect**, not an indictment:
+
+- **Not** that development frameworks should be kept away from wellbeing, or
+  that they have failed. The HDI and the SDGs were built to track development
+  and on those terms they work. The text says this explicitly, in the act
+  thesis and again in "The disconnect".
+- **The claim** is that what these frameworks currently capture and what tracks
+  individual lived experience are assumed to move together, and that
+  assumption holds between countries and weakens sharply everywhere else.
+- **The conclusion** is deliberately exploratory: development frameworks may
+  need to work harder at capturing the components that shape lived experience.
+  Education is pooled with constructs pointing the other way; health is read
+  through a variable that has largely stopped moving; social trust is not
+  measured with the coverage any longitudinal design needs.
+- **The ask is a question**, not a prescription — what would a development
+  framework look like if these components were among the things it was built
+  to capture? The commentary shows the question isn't rhetorical; it doesn't
+  answer it.
+
+Each of the three implication beats keeps its own caveat rather than deferring
+them all to a limitations paragraph: education's signal is between-country
+only, health's turns on saturation and on scale running the other way, trust's
+rests on one instrument in Europe with a live shared-method objection.
+
+`DECISIONS` carries the open question of whether this is the right altitude for
+the venue, or whether the health and education implications should be sharpened
+into named recommendations. The evidence supports either — the framing does not
+change the analysis.
 
 **The trust correction.** An earlier draft recorded "no SDG trust indicator
 exists". That is wrong. The SDG database carries 13 trust- and

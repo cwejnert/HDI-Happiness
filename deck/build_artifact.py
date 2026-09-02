@@ -94,6 +94,9 @@ def render() -> str:
         </div>"""
         for h, b in C.DECISIONS
     )
+    # the count is in the prose, so derive it rather than let it drift
+    n_decisions = {3: "Three", 4: "Four", 5: "Five", 6: "Six", 7: "Seven",
+                   8: "Eight"}.get(len(C.DECISIONS), str(len(C.DECISIONS)))
     appendix = "\n".join(
         f"""        <figure class="ap">
           <div class="plate__stock"><img src="{embed(f)}" alt="{t}"></div>
@@ -462,7 +465,7 @@ html {{ scroll-behavior: smooth; }}
 
   <section class="closing">
     <h2>Decisions for the team</h2>
-    <p class="closing__note">Five things the acts above do not settle, in the
+    <p class="closing__note">{n_decisions} things the acts above do not settle, in the
       order they block drafting.</p>
     <div class="decisions">
 {decisions}

@@ -35,19 +35,19 @@ HOOK = {
         "The SDG paper now under review makes a narrow, awkward claim: the "
         "association between development indicators and happiness is strong "
         "when countries are compared with one another, and close to absent "
-        "when each country is compared with its own past. Thirty of the 42 "
-        "countries with usable SDG coverage show a significant SDG–happiness "
-        "association in levels. Two do in year-to-year changes.",
-        "There is an obvious way to dismiss that result. The SDG framework is "
-        "a sprawling, politically negotiated instrument of more than two "
-        "hundred indicators with uneven coverage; a null finding inside it "
-        "says as much about the framework as about the world. This commentary "
-        "closes that escape route, and then asks the question the result "
-        "actually raises: if development in the aggregate does not track "
-        "wellbeing over time, which of its parts tracks wellbeing at all? "
-        "Health, education, income, social connection — the frameworks "
-        "disagree sharply about the answer, and the disagreement turns out to "
-        "be about measurement rather than about the world.",
+        "when each is compared with its own past. Thirty of 42 countries are "
+        "significant in levels. Two are in year-to-year changes.",
+        "There is an obvious way to dismiss that. The SDG framework is a "
+        "sprawling, negotiated instrument with uneven coverage; a null inside "
+        "it says as much about the framework as about the world. This "
+        "commentary closes that escape route, then asks what the result "
+        "actually raises: which parts of development track lived experience "
+        "at all?",
+        "Where it lands is a disconnect rather than an indictment. These "
+        "frameworks were built to track development and they do. But the "
+        "components that look most consequential for how individuals "
+        "experience their lives are the ones development measurement is "
+        "currently least arranged to see.",
     ],
     "acts": [
         ("I", "We replicate the SDG result outside the SDGs.",
@@ -57,10 +57,10 @@ HOOK = {
          "Education's rank swings on construct, health's on saturation, and "
          "the whole ranking turns over again once the question moves from "
          "between countries to inside them."),
-        ("III", "Which makes the policy question unavoidable.",
-         "What this means for priorities, what kind of health and education "
-         "it points at, what to do about the trust gap, and the question we "
-         "are putting to the field."),
+        ("III", "Which points to a disconnect worth naming.",
+         "Not that these frameworks should stay away from wellbeing, but that "
+         "the components that track lived experience are ones they are not "
+         "currently arranged to see."),
     ],
 }
 
@@ -625,31 +625,31 @@ ACTS = [
             "parity; health leads once it is measured somewhere it still "
             "varies; trust leads wherever it is measured at all, which is "
             "almost nowhere. And the ranking turns over a second time when the "
-            "question moves inside countries: the structural domains that "
-            "predict where wellbeing is high stop predicting it once the "
-            "structure is held fixed, and the experiential ones take over. The "
-            "contribution is not a ranking of domains but the demonstration "
-            "that the ranking is an artefact of construct, of variable, and of "
-            "specification — three ways of getting the same answer wrong."
+            "question moves inside countries. The contribution is not a ranking "
+            "of domains but the demonstration that the ranking depends on "
+            "construct, on variable, and on specification — none of which the "
+            "frameworks chose with wellbeing in mind, because that is not what "
+            "they were built for. Which is what makes the third act a question "
+            "about fit rather than a charge of failure."
         ),
     },
     {
         "numeral": "III",
-        "title": "Priorities, and what kind of education and health",
+        "title": "What this may imply for how development is measured",
         "key_numbers": [
             ("+0.87 → +0.12", "development, between countries → within them"),
             ("+0.13 vs +0.51", "education vs health inside countries, across regions"),
             ("11.2% vs 1.2%", "health vs education, SDG data, high-income countries"),
         ],
         "thesis": (
-            "Two questions follow. Where should the lever be pulled — which "
-            "turns on scale, because the ordering of predictors inverts inside "
-            "countries. And what kind of education and health, because in both "
-            "domains the wellbeing signal sits with one operationalisation and "
-            "vanishes under another. Education comes first here for the same "
-            "reason it comes first in Act II: it is where the frameworks "
-            "disagree most and where the policy consensus is furthest from the "
-            "evidence."
+            "These are implications, not recommendations. The frameworks were "
+            "not built to track wellbeing and it is no criticism of them that "
+            "they do not; measured against their own purposes they work. What "
+            "the three results describe is a <em>disconnect</em> — between what "
+            "development measurement currently captures and what turns out to "
+            "track individual lived experience. If wellbeing is to be part of "
+            "what these frameworks are for, education, health and social trust "
+            "each say something specific about what capturing it would take."
         ),
         "beats": [
             {
@@ -741,97 +741,117 @@ ACTS = [
                 "feature": True,
             },
             {
-                "label": "On priorities",
-                "heading": "Indicator dashboards are not wellbeing instruments",
+                "label": "The disconnect",
+                "heading": "Stating it precisely, and stating what it is not",
                 "body": [
                     "Development indicators tell you reliably where wellbeing is "
                     "high. They tell you almost nothing about when it will rise. "
                     "Across every framework tested here, year-on-year indicator "
                     "movement carries essentially no wellbeing information within "
-                    "the measurement window — a decade or so.",
-                    "The implication is about horizon and instrument, not about "
-                    "whether development matters. A monitoring architecture "
-                    "designed to reward annual indicator movement should not be "
-                    "read as tracking wellbeing, and a government that improves "
-                    "its dashboard position in a given year should not expect a "
-                    "wellbeing dividend inside the same electoral cycle.",
+                    "the measurement window — a decade or so — and inside "
+                    "countries the domains that lead between them stop leading.",
+                    "It is worth being explicit about what that is not. It is "
+                    "not an argument that development frameworks should be kept "
+                    "away from wellbeing, or that they have failed. The HDI and "
+                    "the SDGs were built to track development — capability, "
+                    "deprivation, the 2030 Agenda's negotiated priorities — and "
+                    "on those terms they work. Nothing here says otherwise.",
+                    "What the results describe is a disconnect between two "
+                    "things that are often assumed to move together: what these "
+                    "frameworks currently capture, and what tracks how "
+                    "individuals experience their lives. That assumption is "
+                    "reasonable and mostly untested. Tested, it holds between "
+                    "countries and weakens sharply everywhere else.",
+                    "So the useful question is not whether development matters. "
+                    "It is which components of it track lived experience, and "
+                    "whether the frameworks are currently in a position to see "
+                    "them. The next three beats take the three results in turn.",
                 ],
             },
             {
-                "label": "On what kind of education",
-                "heading": "The consensus moved to learning; the wellbeing evidence points at attainment",
+                "label": "Implication 1 · Education",
+                "heading": "Which education construct a framework counts turns out to matter",
                 "body": [
                     "Global education policy has shifted decisively over the "
-                    "past decade from schooling to learning — the learning-crisis "
-                    "framing, learning-poverty targets, and an indicator "
-                    "architecture built around measured proficiency. The premise "
-                    "is that years in school without demonstrated learning are "
-                    "an empty metric.",
-                    "Every level of aggregation we can test points the other "
-                    "way. Attainment and access carry the signal — 12.7% for "
-                    "SDG4 access, 40.7% and 34.0% for the HDI's schooling "
-                    "components, 32 of 36 countries at the individual level — "
-                    "while measured learning outcomes sit at 0.9% and parity "
-                    "ratios at 2.5%.",
-                    "Two cautions from Act II travel with this, and the "
-                    "recommendation is weaker without them. Education is the "
-                    "most consistent signal and the smallest one. And it is a "
-                    "<em>between</em>-country signal: inside countries, across "
-                    "regions, it falls to +0.13 with 2 of 16 countries "
-                    "significant. So this is an argument about what a global "
-                    "monitoring framework should count, not a claim that "
-                    "moving one region's schooling will move its wellbeing.",
+                    "past decade from schooling to learning — the "
+                    "learning-crisis framing, learning-poverty targets, an "
+                    "indicator architecture built around measured proficiency. "
+                    "That shift has good reasons behind it that have nothing to "
+                    "do with wellbeing, and this commentary does not dispute "
+                    "them.",
+                    "It does observe that the wellbeing signal sits elsewhere. "
+                    "Attainment and access carry it — 12.7% for SDG4 access, "
+                    "40.7% and 34.0% for the HDI's schooling components, 32 of "
+                    "36 countries at the individual level — while measured "
+                    "learning outcomes sit at 0.9% and parity ratios at 2.5%. A "
+                    "framework that reads SDG4 pooled will conclude education "
+                    "barely matters for wellbeing; one that reads the access "
+                    "series will rank it third of seventeen goals. Same data, "
+                    "same countries.",
+                    "Two cautions travel with this and it is weaker without "
+                    "them. Education is the most consistent signal and the "
+                    "smallest one. And it is a <em>between</em>-country signal: "
+                    "inside countries it falls to +0.13 with 2 of 16 "
+                    "significant. So the implication is about what a global "
+                    "monitoring framework counts, not a claim that moving one "
+                    "region's schooling moves its wellbeing.",
                 ],
             },
             {
-                "label": "On what kind of health",
-                "heading": "Monitor health where it still varies, not where it has already converged",
+                "label": "Implication 2 · Health",
+                "heading": "A domain can disappear from a framework by being measured where it has stopped moving",
                 "body": [
                     "Life expectancy is the standard summary of population "
                     "health and the HDI's only health input, and it is the "
-                    "weakest of the HDI's five indicators against wellbeing. "
-                    "That is a measurement failure rather than a substantive "
-                    "one. What carries health's signal is survival at the "
+                    "weakest of the five against wellbeing. Health is "
+                    "simultaneously the strongest domain in the SDG database "
+                    "and in the individual data. The gap between those two "
+                    "facts is not substantive; it is that life expectancy has "
+                    "largely stopped varying across the countries where it is "
+                    "tested.",
+                    "What still carries health's signal is survival at the "
                     "margin — child, infant and neonatal mortality, stunting, "
-                    "sanitation and safe water — and, in rich countries, "
-                    "self-rated health, which picks up morbidity and "
-                    "functional limitation that life expectancy cannot see.",
-                    "For monitoring, that argues for retiring life expectancy "
-                    "as the headline wellbeing-relevant health measure in "
-                    "high-income settings and pairing survival indicators with "
-                    "a subjective health item. The ESS already fields one; most "
-                    "national statistical systems do too. It is close to free.",
-                    "Health is also the domain where the scale caution runs the "
-                    "other way. It is weak between countries and strong inside "
-                    "them, so a subnational health measure is doing work a "
-                    "national one cannot — which is an argument for regional "
-                    "disaggregation, not just for a different indicator.",
+                    "sanitation, safe water — and, in richer countries, "
+                    "self-rated health, which picks up morbidity and functional "
+                    "limitation that life expectancy cannot see. Both are "
+                    "already collected. The implication is about which of them "
+                    "a framework reads as its health signal in a high-income "
+                    "setting, not about adding a new instrument.",
+                    "Health is also where the scale point runs the other way "
+                    "from education's: weak between countries and strong inside "
+                    "them. A subnational health measure is doing work a national "
+                    "one cannot, which suggests disaggregation matters here as "
+                    "much as indicator choice.",
                 ],
             },
             {
-                "label": "On the trust gap",
-                "heading": "The cheapest fix in the paper: field a repeated trust item",
+                "label": "Implication 3 · Social trust",
+                "heading": "A component that looks important, and that no framework is currently positioned to check",
                 "body": [
                     "Social trust is at or near the top of every test the ESS "
-                    "can run, and no development framework can currently check "
-                    "it. The SDG framework's 13 satisfaction and integrity "
-                    "series average one observation per country, which is not "
-                    "enough for any longitudinal design; the HDI and subnational "
-                    "HDI do not measure the construct at all.",
-                    "We did not stop at asserting that. Act II runs those 13 "
-                    "series the only way their coverage permits — across "
-                    "countries rather than across years — and the answer is that "
-                    "9 are testable, 4 are significant, and all four land below "
-                    "the HDI and its own components on the same countries. The "
-                    "existing series are not a substitute, and now we can say so "
-                    "with a number rather than an argument.",
-                    "This is the one recommendation in the commentary that costs "
-                    "almost nothing. A single generalised-trust item, asked "
-                    "repeatedly, is already standard in the ESS, the World "
-                    "Values Survey and several national statistical series. "
-                    "Adding one to a development monitoring instrument would "
-                    "move trust from untestable to testable — and on the "
-                    "evidence available it would then rank alongside health.",
+                    "can run — 34 of 36 countries, +0.49 within countries — and "
+                    "no development framework can currently check it. The HDI "
+                    "and subnational HDI do not measure the construct. The SDG "
+                    "framework's 13 satisfaction and integrity series average "
+                    "one observation per country, which supports no "
+                    "longitudinal design.",
+                    "We did not stop at asserting that. Act II runs those series "
+                    "the only way their coverage permits, across countries "
+                    "rather than years: 9 are testable, 4 significant, and all "
+                    "four land below the HDI's own components on the same "
+                    "countries. So the gap is a real gap, established rather "
+                    "than assumed.",
+                    "The implication is the most tentative of the three, and "
+                    "should be presented that way. Trust rests on one "
+                    "instrument, in Europe, with a live shared-method caveat. "
+                    "What can be said is narrow and still useful: a component "
+                    "that performs this well wherever it is measured is "
+                    "currently invisible to development measurement, and it is "
+                    "invisible for reasons of coverage rather than because it "
+                    "was weighed and found wanting. A repeated generalised-trust "
+                    "item — already standard in the ESS, the World Values Survey "
+                    "and several national statistical series — would be enough "
+                    "to find out.",
                 ],
             },
             {
@@ -863,31 +883,45 @@ ACTS = [
                 ],
             },
             {
-                "label": "The ask",
-                "heading": "Should wellbeing be a criterion for how we measure development after 2030?",
+                "label": "Where this leaves it",
+                "heading": "Development frameworks may need to work harder at capturing what shapes lived experience",
                 "body": [
-                    "That is the question the commentary exists to pose, and it "
-                    "has a sharp form. Two of the most consequential domains in "
-                    "development are monitored through variables that have "
-                    "either run out of variance or measure a different "
-                    "construct from the one the policy debate is about: health "
-                    "through life expectancy, education through parity and "
-                    "proficiency. If wellbeing is to be a criterion for the "
-                    "post-2030 architecture at all, the first question is not "
-                    "which domain to prioritise but whether each domain is "
-                    "being measured somewhere it can still move.",
-                    "A commentary cannot settle that. It can put the "
-                    "disagreement on the record with the evidence attached, "
-                    "which is what the three acts are for.",
+                    "That is the conclusion, and it is deliberately exploratory. "
+                    "Three components look consequential for how individuals "
+                    "experience their lives — education, health, social trust — "
+                    "and each is currently captured in a way that makes it hard "
+                    "for a development framework to see. Education is pooled "
+                    "with constructs that point the other way. Health is read "
+                    "through a variable that has largely stopped moving. Social "
+                    "trust is not measured with the coverage any longitudinal "
+                    "design requires.",
+                    "None of that is a demand that these frameworks become "
+                    "wellbeing instruments. It is the narrower observation that "
+                    "if wellbeing is to inform what development measurement "
+                    "counts — and the post-2030 conversation suggests it may — "
+                    "then the first question is not which domain to prioritise "
+                    "but whether each is being measured somewhere it can still "
+                    "move. On the evidence here, for at least two of the three, "
+                    "it is not.",
+                    "The honest form of the ask is a question rather than a "
+                    "prescription: what would a development framework look like "
+                    "if the components that track individual lived experience "
+                    "were among the things it was built to capture? A "
+                    "commentary cannot answer that. It can show that the "
+                    "question is not rhetorical, and put the evidence on the "
+                    "record so the field can take it up.",
                 ],
             },
         ],
         "close": (
-            "The recommended framing for submission: lead with the education "
-            "exception as the positive finding, use the generalised collapse "
-            "as the backdrop that makes it surprising, and close on the "
-            "target-setting question. That ordering makes Act I load-bearing "
-            "without making it the story."
+            "The recommended framing for submission: lead with education as "
+            "the positive finding, use the generalised collapse as the backdrop "
+            "that makes it surprising, and close on the disconnect rather than "
+            "on a list of fixes. That ordering makes Act I load-bearing without "
+            "making it the story, and it keeps the paper on the ground it can "
+            "actually defend — that these components look like they matter for "
+            "lived experience, and that development measurement is not "
+            "currently arranged to see them."
         ),
     },
 ]
@@ -897,9 +931,17 @@ ACTS = [
 # --------------------------------------------------------------------------
 DECISIONS = [
     ("Framing",
-     "Lead with the education exception and use the generalised collapse as "
-     "Act I backdrop — recommended — or lead with the robustness result and "
-     "treat education as the coda. This decides title, abstract, and venue."),
+     "Lead with education and use the generalised collapse as Act I backdrop "
+     "— recommended — or lead with the robustness result and treat education "
+     "as the coda. This decides title, abstract, and venue."),
+    ("How hard to push the conclusion",
+     "Act III now lands on a disconnect and an exploratory ask rather than a "
+     "list of fixes: these components look like they matter for lived "
+     "experience, and development measurement is not currently arranged to "
+     "see them. Is that the right altitude for the venue, or should the "
+     "health and education implications be sharpened into named "
+     "recommendations? The evidence supports either; the framing does not "
+     "change the analysis."),
     ("Display items",
      "Commentaries allow one or two. Proposed: the three-panel composite as "
      "Figure 1, the ranking flip as Figure 2. Everything else moves to "
