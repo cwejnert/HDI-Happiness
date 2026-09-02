@@ -136,7 +136,7 @@ def main():
     ax.legend(handles, ["Tracks wellbeing here",
                         "Measurable, but little signal",
                         "Framework cannot test it"],
-              loc="lower center", bbox_to_anchor=(0.5, -0.10), ncol=3,
+              loc="lower center", bbox_to_anchor=(0.5, 0.04), ncol=3,
               frameon=False, fontsize=9)
 
     fig.text(0.005, 0.972,
@@ -156,7 +156,7 @@ def main():
              "all and 16 can; 1 of those 16 is significant.\nThat is a coverage gap, not evidence "
              "that trust does not matter.",
              fontsize=7.8, color=GREY, va="bottom", linespacing=1.5)
-    fig.tight_layout(rect=(0, 0.06, 1, 0.885))
+    fig.tight_layout(rect=(0, 0.10, 1, 0.885))
     out = "figures_out/J1_domain_framework_scorecard.png"
     fig.savefig(out, dpi=200, facecolor=BG)
     print(f"Saved: {out}")
