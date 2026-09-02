@@ -209,6 +209,7 @@ ACTS = [
         "key_numbers": [
             ("5 of 5", "instruments where health tracks wellbeing"),
             ("16 of 163", "SDG trust country-series with enough years to test at all"),
+            ("0.55 vs 0.82", "best SDG trust series against the HDI, same 134 countries"),
             ("40.7% vs 3.3%", "education under the HDI vs pooled SDG4"),
         ],
         "thesis": (
@@ -434,6 +435,47 @@ ACTS = [
                     "made exactly that slip, and reporting a coverage gap as a "
                     "null would repeat the error the commentary accuses the "
                     "frameworks of making.",
+                    "Untestable <em>in this design</em> is not untestable in "
+                    "principle, though, and the next beat runs the test the "
+                    "coverage does allow.",
+                ],
+            },
+            {
+                "label": "Social trust · the test the coverage allows",
+                "heading": "Tested across countries instead of across years — and it still does not rescue the domain",
+                "body": [
+                    "One year per country is useless longitudinally and "
+                    "perfectly usable cross-sectionally. So we pulled the raw "
+                    "values from the UN SDG database and ran the series against "
+                    "the ladder across countries. Nine of the 13 clear a "
+                    "12-country minimum, and four are significant: bribery paid "
+                    "by individuals (−0.55) and firms (−0.51), inclusive "
+                    "decision-making (−0.42), satisfaction with healthcare "
+                    "(+0.33).",
+                    "Three things stop that being a rescue. Every one of the "
+                    "four is weaker than what the frameworks already carry — on "
+                    "the same 134 countries the HDI and its components sit at "
+                    "|r| 0.71–0.83. The broadest series, satisfaction with "
+                    "healthcare, is Gallup World Poll, the same survey that "
+                    "produces the ladder, so it falls to exactly the "
+                    "shared-instrument objection we raise against the ESS. And "
+                    "none of the 13 measures interpersonal trust: they measure "
+                    "institutional confidence, a different construct.",
+                    "Income control kills all nine — but it also kills the HDI "
+                    "(+0.82 raw, +0.09 net). No cross-section of countries "
+                    "separates anything from income, which is why the "
+                    "levels-and-differences design exists, and the panel says so "
+                    "to stop the null being read as trust-specific.",
+                ],
+                "figure": "K1_sdg_trust_cross_section.png",
+                "caption": "Nine of the 13 SDG trust- and satisfaction-adjacent series, "
+                           "one observation per country, against the WHR Cantril ladder. "
+                           "Raw values pulled from the UN SDG Global Database API.",
+            },
+            {
+                "label": "Social trust · where it leaves the domain",
+                "heading": "The weakest-evidenced of the three, and the cheapest to fix",
+                "body": [
                     "That leaves trust the weakest-evidenced of the three — one "
                     "instrument, no external corroboration, and the "
                     "shared-method caveat still live. It should be presented as "
@@ -441,6 +483,10 @@ ACTS = [
                     "and it points at a concrete recommendation: a repeated "
                     "trust item costs almost nothing to field and would make "
                     "the domain testable.",
+                    "The cross-sectional test is what makes that recommendation "
+                    "defensible rather than rhetorical. We did not assert that "
+                    "the existing series are inadequate; we ran them the only "
+                    "way their coverage permits and showed where they land.",
                 ],
             },
             {
@@ -667,6 +713,13 @@ ACTS = [
                     "series average one observation per country, which is not "
                     "enough for any longitudinal design; the HDI and subnational "
                     "HDI do not measure the construct at all.",
+                    "We did not stop at asserting that. Act II runs those 13 "
+                    "series the only way their coverage permits — across "
+                    "countries rather than across years — and the answer is that "
+                    "9 are testable, 4 are significant, and all four land below "
+                    "the HDI and its own components on the same countries. The "
+                    "existing series are not a substitute, and now we can say so "
+                    "with a number rather than an argument.",
                     "This is the one recommendation in the commentary that costs "
                     "almost nothing. A single generalised-trust item, asked "
                     "repeatedly, is already standard in the ESS, the World "

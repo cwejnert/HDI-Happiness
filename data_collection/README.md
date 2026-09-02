@@ -125,6 +125,32 @@ Both scripts print a match-rate summary; anything with widespread
 `hdi`/`shdi` == NaN points to a country-code mismatch worth checking before
 moving on to modeling.
 
+## Step 6 — the SDG trust series (the one source that *is* an open API)
+
+Unlike ESS and GDL, the UN SDG Global Database is unauthenticated, so this
+part is scripted end to end:
+
+```bash
+python pull_sdg_trust_series.py      # -> raw/sdg_trust_series_values.csv
+python sdg_trust_cross_section.py    # -> processed/sdg_trust_cross_section.csv
+```
+
+`robust_all_for_figures.csv` carries fitted statistics only, which is enough to
+say that 147 of 163 trust/satisfaction country-series have too few years for
+the levels-and-differences design but not enough to run any other design on
+them. The pull fetches the underlying values so the cross-sectional test is
+possible; the API's coverage is much wider than the analysis file implies (156
+countries for `SP_PSR_OSATIS_HLTH`, against 30 in the filtered results).
+
+Two things the puller has to get right, both handled from the API's own
+metadata rather than hardcoded: every series is returned broken out by sex,
+age, location, quantile and more, and only the all-dimensions-total cell is the
+national figure — each dimension declares its own total code, sdmx-tagged
+`_T`, and series differ in which dimensions they carry (`VC_VOV_GDSD` adds
+grounds of discrimination and education level). Regional and global aggregates
+come back in the same response and are dropped by `Reporting Type`, then by
+whether the M49 `geoAreaCode` resolves to an ISO3 country at all.
+
 ## Notes / known rough edges
 
 - `merge_national_hdi_ess.py`'s `HDR_NAME_TO_ISO2` only covers HDR country

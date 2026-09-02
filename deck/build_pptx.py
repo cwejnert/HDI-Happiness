@@ -77,6 +77,26 @@ def para(tf, text, *, size, color, font=SANS, bold=False, italic=False,
     return p
 
 
+def fit_size(paras, width_in, height_in, size, spacing, space_after, floor=8.5):
+    """Largest size <= `size` at which the paragraphs still fit the box.
+
+    PowerPoint text boxes do not clip -- an overlong body silently runs off
+    the bottom of the slide, and the PPTX cannot be rendered in this container
+    to catch it by eye. So estimate the wrapped height instead. The 1.95
+    divisor is the average glyph advance of the sans face as a fraction of the
+    point size; it is deliberately a little pessimistic, because overflowing is
+    a much worse failure than a body set half a point small.
+    """
+    while size > floor:
+        chars_per_line = width_in * 72 / (size / 1.95)
+        lines = sum(max(1, -(-len(plain(p)) // int(chars_per_line))) for p in paras)
+        h = (lines * size * spacing + (len(paras) - 1) * space_after) / 72
+        if h <= height_in:
+            break
+        size -= 0.25
+    return size
+
+
 def rule(slide, left, top, width, color=INK, thickness=Pt(1.5)):
     ln = slide.shapes.add_shape(1, left, top, width, thickness)  # rectangle
     ln.fill.solid()
@@ -164,13 +184,18 @@ def slide_act_open(prs, act):
          italic=True, spacing=1.35, first=True)
 
     # key numbers along the foot
+    # acts carry three or four of these, so size the columns to the count
+    nums = act["key_numbers"]
+    gap = Inches(0.3)
+    colw = (W - 2 * MARGIN - gap * (len(nums) - 1)) / len(nums)
+    value_size = 22 if len(nums) <= 3 else 18
     x = MARGIN
-    colw = (W - 2 * MARGIN - Inches(0.6)) / 3
-    for value, key in act["key_numbers"]:
+    for value, key in nums:
         tf = textbox(s, x, Inches(6.15), colw, Inches(1.0))
-        para(tf, value, size=22, color=SURFACE, font=MONO, space_after=4, first=True)
+        para(tf, value, size=value_size, color=SURFACE, font=MONO, space_after=4,
+             first=True)
         para(tf, key, size=10, color=RGBColor(0x8A, 0x94, 0xA0), spacing=1.2)
-        x += colw + Inches(0.3)
+        x += colw + gap
 
 
 def slide_beat(prs, beat, numeral):
@@ -188,8 +213,10 @@ def slide_beat(prs, beat, numeral):
 
     body_top = Inches(2.55) if has_fig else Inches(2.5)
     tf = textbox(s, MARGIN, body_top, textw, Inches(4.2))
+    size = fit_size(beat["body"], textw / Inches(1), 4.2,
+                    11.5 if has_fig else 14, 1.32, 11)
     for i, p in enumerate(beat["body"]):
-        para(tf, p, size=11.5 if has_fig else 14, color=INK_SOFT,
+        para(tf, p, size=size, color=INK_SOFT,
              spacing=1.32, space_after=11, first=(i == 0))
 
     tf = textbox(s, Inches(12.4), Inches(6.85), Inches(0.6), Inches(0.3))

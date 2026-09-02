@@ -21,11 +21,15 @@ the pattern of visibility is itself the finding:
                mostly -- satisfaction with public services, belief that
                decision-making is inclusive, bribery prevalence). But their
                median coverage is ONE observation per country-series against 6
-               for the database as a whole, so almost none can support a
-               time-series test at all. Of 163 country-tests across those
-               series exactly 1 is significant. That is a measurement gap, not
-               a substantive null, and the deck must not report it as evidence
-               that trust does not matter.
+               for the database as a whole, so 147 of 163 country-series
+               cannot support a time-series test at all; of the 16 that can,
+               1 is significant. That is a measurement gap, not a substantive
+               null, and the deck must not report it as evidence that trust
+               does not matter. sdg_trust_cross_section.py runs the test the
+               coverage does allow -- across countries rather than years --
+               where 9 series are usable and 4 significant, all of them below
+               the HDI's own components on the same countries, and none of
+               them a measure of interpersonal trust.
 
 Inputs:  raw/robust_all_for_figures.csv (trust-series coverage check)
          plus results transcribed from the other pipeline scripts
@@ -70,7 +74,7 @@ ROWS = [
         ("+0.130\n2 of 16 countries", WEAK),
     ]),
     ("Social trust", [
-        ("13 series exist, but only 16 of\n163 country-series have enough\nyears to test — 1 significant", BLIND),
+        ("16 of 163 country-series testable\nover time, 1 significant; across\ncountries 4 of 9, all below the HDI", BLIND),
         ("not measured", BLIND),
         ("not measured", BLIND),
         ("34 of 36\nR² = 0.041", STRONG),
@@ -153,8 +157,10 @@ def main():
              "satisfaction with public services, inclusive decision-making, bribery), but their "
              "median coverage is ONE year per country-series\nagainst six for the database as a "
              "whole. The design needs ≥4 years, so 147 of 163 country-series cannot be computed at "
-             "all and 16 can; 1 of those 16 is significant.\nThat is a coverage gap, not evidence "
-             "that trust does not matter.",
+             "all and 16 can; 1 of those 16 is significant. Tested the way that coverage does "
+             "allow —\nacross countries rather than across years — 9 series are usable and 4 are "
+             "significant, but all four fall below the HDI and its components on the same "
+             "countries, and none of the 13 measures interpersonal trust.",
              fontsize=7.8, color=GREY, va="bottom", linespacing=1.5)
     fig.tight_layout(rect=(0, 0.10, 1, 0.885))
     out = "figures_out/J1_domain_framework_scorecard.png"

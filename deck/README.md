@@ -51,11 +51,42 @@ overwhelmingly a coverage gap, and would repeat exactly the error the
 commentary accuses the frameworks of making. `domain_scorecard.py` recomputes
 this rather than trusting a transcribed note.
 
-Untestable *in this design* is not untestable in principle. Four of the series
-have decent cross-sectional breadth even at one year each — `SP_PSR_OSATIS_HLTH`
-(30 countries), `IU_COR_BRIB` (28), `IC_FRM_BRIB` (28), `IU_DMK_INCL` (22) — so
-a cross-country levels test is feasible. It needs the raw series from the UN SDG
-API; `robust_all_for_figures.csv` holds only fitted statistics, not values.
+**The cross-sectional test.** Untestable *in this design* is not untestable in
+principle, so the raw values were pulled from the UN SDG Global Database API
+(`../data_collection/pull_sdg_trust_series.py` → `raw/sdg_trust_series_values.csv`)
+and the series run against the Cantril ladder across countries
+(`sdg_trust_cross_section.py`). The API coverage is far wider than the analysis
+file implied — 156 countries for `SP_PSR_OSATIS_HLTH`, not 30.
+
+| | |
+|---|---|
+| Testable (≥12 countries with a matched ladder value) | **9 of 13** |
+| Significant after BH across the nine | **4** — `IU_COR_BRIB` −0.55, `IC_FRM_BRIB` −0.51, `IU_DMK_INCL` −0.42, `SP_PSR_OSATIS_HLTH` +0.33 |
+| HDI and components, same 134 countries | \|r\| **0.71–0.83** — every trust series is below the band |
+| Net of log GNI per capita | **0 of 9** survive — and neither does the HDI (+0.82 → +0.09) |
+
+Three cautions travel with this result and are stated in the figure, the deck
+and the docstring:
+
+1. **The income null is not trust-specific.** Net of log GNI nothing survives a
+   cross-section of countries, the HDI included. Reporting "0 of 9" without the
+   comparator would be the same category of error as "1 of 163".
+2. **The broadest series shares its instrument with the outcome.**
+   `SP_PSR_OSATIS_HLTH` is Gallup World Poll, which is where the WHR ladder
+   comes from. It is a same-instrument comparison, not corroboration — exactly
+   the objection the deck raises against the ESS self-reports.
+3. **None of the 13 measures interpersonal trust.** They measure satisfaction
+   with public services and experience of bribery: institutional confidence, a
+   different construct. The commentary must not silently promote them.
+
+`IU_DMK_INCL` correlates *negatively* (−0.42): countries where more people say
+decision-making is inclusive are less happy. That is a known artefact of
+subjective institutional scales compared across very unequal income levels, and
+is footnoted rather than interpreted.
+
+Net effect on the argument: the Act III recommendation to field a repeated trust
+item is now supported rather than asserted — the alternative was tried and it
+lands below every development indicator the frameworks already carry.
 
 `DECISIONS` carries the open questions for the co-author team; `APPENDIX`
 carries the supporting figures not used in the acts.
@@ -112,6 +143,7 @@ number has been checked against source.
 | HDI × ESS collapse, 14.8% / 8.8% | reproduced |
 | Ranking flip: +0.150 (3/16), health +0.513 (8/16), trust +0.487 (6/16) | reproduced exactly |
 | Region crosswalk, 217,422 / 351,023 | reproduced; three hand-rejected mismatches now excluded |
+| SDG trust cross-section, 9 of 13 testable, 4 significant | computed fresh from the UN SDG API; comparators on each series' own country set |
 
 Three region matches cleared the 0.6 similarity threshold but were the wrong
 region (`SI` Notranjsko-kraška→Obalno-kraska, `SK` Trnavský→Bratislavsky,

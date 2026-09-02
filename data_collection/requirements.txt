@@ -2,3 +2,4 @@ pandas>=2.0
 openpyxl>=3.1
 pyreadstat>=1.2
 requests>=2.31
+pycountry>=23.12          # M49 -> ISO3 for the UN SDG API's geoAreaCode
