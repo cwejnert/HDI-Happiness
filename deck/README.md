@@ -15,29 +15,62 @@ rebuild both; don't edit the HTML or the PPTX directly.
 
 ## The arc
 
-Three domains — health, education, social trust — carried through Act II and
-into the policy act.
+Two results and a discussion, in that order: **education**, then **health**,
+then **social trust**. Act II closes by putting all three under three
+specifications at once.
 
 | | |
 |---|---|
 | **Opening** | Development rose; wellbeing didn't follow. Which of its parts tracks wellbeing at all? |
 | **Act I** | Replication. The levels-to-differences collapse holds on the HDI, against ESS, and at regional scale — not an SDG artifact. The subnational HDI is a disaggregation test, not a replication. |
-| **Act II** | Three domains, and which frameworks can see them. Health, education and social trust each have a different signature across the five instruments, and every disagreement is about operationalisation. |
-| **Act III** | Priorities, what kind of health and education, the trust gap, and the policy question. |
+| **Act II** | Result 1 education, Result 2 health, then the three-specification synthesis, then social trust in discussion. Every disagreement between frameworks is about operationalisation. |
+| **Act III** | Priorities, what kind of education and health, the trust gap, and the policy question. |
 
 **The three signatures.**
 
-- **Health** — testable in all five instruments, leads in four. Weak only
-  inside the HDI, whose single health input (life expectancy) is close to
-  saturated. Corroborated across an administrative source and a self-report
-  source, and at national and regional scale.
-- **Education** — testable in all five; its rank swings from first (HDI, 40.7%)
-  to near-last (pooled SDG4, 3.3%) purely on whether the instrument measures
-  attainment or parity. Near-universal at the individual level but the smallest
-  effect of any domain (median R² 0.0098).
-- **Social trust** — at or near the top of the one instrument that measures it
-  repeatedly (34 of 36 countries; +0.49 within countries), and invisible to
-  every development framework.
+- **Education** (Result 1) — leads the HDI: highest median R² of the five
+  indicators (0.326, just above the composite's 0.322) and 40.7% of countries.
+  In the SDGs its rank is entirely a construct artefact: pooled SDG4 is 3.3%
+  and twelfth of 17 goals, but the two access-and-participation series alone
+  reach **12.7%**, which would rank third of 17 — above SDG3 health. Learning
+  outcomes sit at 0.9%, parity ratios at 2.5%, and parity ratios are half the
+  goal by series count. Near-universal at the individual level (32–34 of 36)
+  and the smallest effect of any domain (median R² 0.0098).
+- **Health** (Result 2) — leads the SDG framework (Goal 3, 11.5%, 4th of 17;
+  16 of the top 25 series), leads the ESS (36 of 36, median R² 0.091, the
+  largest effect anywhere here), and is weak in exactly one place: the HDI,
+  whose single health input is close to saturated. The only domain that passes
+  the administrative-source method check, at national and regional scale both.
+- **Social trust** (discussion, not a headline) — at or near the top of the one
+  instrument that measures it repeatedly (34 of 36 countries; +0.49 within
+  countries), and invisible to every development framework. It is in the paper
+  because the reason it can't be a headline is the paper's subject.
+
+**The three-specification synthesis.** The deck used to report the collapse and
+the within-country analysis in different acts and leave the reader to connect
+them. `specification_synthesis.py` now puts them side by side:
+
+| | Between countries, levels | Same countries, differences | Inside countries, across regions |
+|---|---|---|---|
+| Education | 40.7% (61/150) | 1.3% (2/150) | +0.06 external, +0.13 self-report (2/16) |
+| Health | 19.9% (30/151) | 2.6% (4/151) | +0.34 external (6/15), +0.51 self-report (8/16) |
+| Social trust | not measured | not measured | +0.49 (6/16) |
+| Development | 42.4% (64/151) | 2.0% (3/151) | +0.12 (2/16), +0.12 (3/16) |
+
+The ranking changes twice, in a consistent direction: what predicts *where*
+wellbeing is high is structural (schooling, income, which between countries
+proxy the whole development bundle); what predicts it *inside* a country is
+experiential (health, trust). Education's odd combination of near-universal
+significance and tiny effect is what a structural variable looks like once the
+structure is held fixed.
+
+Panels (a) and (b) are the same instrument on the same countries, so that
+collapse is exact. Panel (c) is a different instrument at a different scale and
+is read alongside them, never subtracted from them. `ess_regional_education()`
+in that script computes the one cell the pipeline never produced — G3 in
+`make_figures.py` runs development, trust and self-rated health within
+countries but not education, so the deck had been quoting +0.13 against a
+number nothing generated. It reproduces exactly.
 
 **The trust correction.** An earlier draft recorded "no SDG trust indicator
 exists". That is wrong. The SDG database carries 13 trust- and
@@ -93,7 +126,9 @@ carries the supporting figures not used in the acts.
 
 ## Figures
 
-`figures/` holds the PNGs produced by `../data_collection/make_figures.py`
+`figures/` holds the PNGs produced by `../data_collection/make_figures.py`,
+three standalone builders — `domain_scorecard.py` (`J1_`),
+`sdg_trust_cross_section.py` (`K1_`), `specification_synthesis.py` (`L1_`) —
 plus three built by `../data_collection/make_commentary_figure.py`:
 
 - `Figure1_commentary.png` / `.pdf` — the proposed submission figure
@@ -109,12 +144,18 @@ These are aggregate results, not microdata, so unlike `data_collection/raw/`
 and `processed/` they are committed — the deck must be rebuildable without
 re-running the merges.
 
-## Two wording cautions carried in the text
+## Three wording cautions carried in the text
 
 Education is **not** an exception to the differences collapse. Expected years
 of schooling leads that column with 7 of 150 countries — a lead over the
 composite's 3, and still a collapse. It is the exception in *consistency*
 across frameworks, producers, instruments, and units of observation.
+
+Education leading is a **between-country** claim. Inside countries it falls to
++0.13 with 2 of 16 significant, below health and trust and level with
+development. Act III's education recommendation says what a global monitoring
+framework should count; it is not a claim that moving one region's schooling
+moves its wellbeing, and the text now says so explicitly.
 
 The SDG and HDI **detection** rates (71% vs 51% of each dataset's countries
 with any indicator significant) are a fair comparison, not an artifact:
@@ -144,6 +185,8 @@ number has been checked against source.
 | Ranking flip: +0.150 (3/16), health +0.513 (8/16), trust +0.487 (6/16) | reproduced exactly |
 | Region crosswalk, 217,422 / 351,023 | reproduced; three hand-rejected mismatches now excluded |
 | SDG trust cross-section, 9 of 13 testable, 4 significant | computed fresh from the UN SDG API; comparators on each series' own country set |
+| SDG4 access 12.7% = 3rd of 17 goals if it were one | checked against `sdg_education_category_significance.csv` and the goal table; 2 series / 63 pairs, and the text says so |
+| Three-specification synthesis, all 11 cells | recomputed by `specification_synthesis.py`; ESS regional education (+0.130, 2/16) reproduces the figure the deck had been quoting |
 
 Three region matches cleared the 0.6 similarity threshold but were the wrong
 region (`SI` Notranjsko-kraška→Obalno-kraska, `SK` Trnavský→Bratislavsky,

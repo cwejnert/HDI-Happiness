@@ -151,6 +151,24 @@ grounds of discrimination and education level). Regional and global aggregates
 come back in the same response and are dropped by `Reporting Type`, then by
 whether the M49 `geoAreaCode` resolves to an ISO3 country at all.
 
+## Step 7 — the synthesis figures
+
+Three builders sit outside `make_figures.py` because each answers one question
+the deck asks and each reads a different mix of its outputs:
+
+```bash
+python domain_scorecard.py         # J1  three domains x five instruments
+python specification_synthesis.py  # L1  the same domains under three specifications
+```
+
+`specification_synthesis.py` also computes the one cell the pipeline never
+produced. G3 in `make_figures.py` runs development, social trust and self-rated
+health within countries across regions, but not education — so the deck had
+been quoting education's regional standing against a number no script
+generated. `ess_regional_education()` computes it the same way G3 does (region
+means, Pearson within each country with ≥6 matched regions) and it reproduces
+the quoted +0.130 with 2 of 16 countries significant.
+
 ## Notes / known rough edges
 
 - `merge_national_hdi_ess.py`'s `HDR_NAME_TO_ISO2` only covers HDR country

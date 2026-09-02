@@ -1,17 +1,18 @@
 """
 Which framework can see which domain?
 
-The paper's three takeaway domains are health, education and social trust.
-They are not equally visible to the instruments that measure development, and
-the pattern of visibility is itself the finding:
-
-    HEALTH     testable everywhere, and leads almost everywhere it is measured
-               with variance. Weak ONLY inside the HDI, whose single health
-               input (life expectancy) is close to saturated.
+The paper's takeaways are education and health, with social trust carried in
+the discussion. They are not equally visible to the instruments that measure
+development, and the pattern of visibility is itself the finding. Row order
+follows the acts:
 
     EDUCATION  testable everywhere. Leads the HDI, trails badly in the SDG
                framework (pooling parity ratios with access), near-universal
                but tiny at the individual level.
+
+    HEALTH     testable everywhere, and leads almost everywhere it is measured
+               with variance. Weak ONLY inside the HDI, whose single health
+               input (life expectancy) is close to saturated.
 
     TRUST      near the top of the one instrument that measures it repeatedly,
                and effectively INVISIBLE to every development framework. This
@@ -59,19 +60,19 @@ COLUMNS = [
 
 # value, status, optional footnote marker
 ROWS = [
-    ("Health", [
-        ("11.5%\nSDG3, 4th of 17 goals", STRONG),
-        ("19.9%\nlife expectancy — last of 5", WEAK),
-        ("+0.344\n6 of 15 countries", STRONG),
-        ("36 of 36\nR² = 0.091", STRONG),
-        ("+0.513\n8 of 16 countries", STRONG),
-    ]),
     ("Education", [
         ("3.3% pooled · 12.7% access\nbest series 100th of 609", WEAK),
         ("40.7% / 34.0%\nmean / expected schooling", STRONG),
         ("+0.057\n2 of 16 countries", WEAK),
         ("33 of 36\nR² = 0.0098", STRONG),
         ("+0.130\n2 of 16 countries", WEAK),
+    ]),
+    ("Health", [
+        ("11.5%\nSDG3, 4th of 17 goals", STRONG),
+        ("19.9%\nlife expectancy — last of 5", WEAK),
+        ("+0.344\n6 of 15 countries", STRONG),
+        ("36 of 36\nR² = 0.091", STRONG),
+        ("+0.513\n8 of 16 countries", STRONG),
     ]),
     ("Social trust", [
         ("16 of 163 country-series testable\nover time, 1 significant; across\ncountries 4 of 9, all below the HDI", BLIND),
@@ -144,12 +145,12 @@ def main():
               frameon=False, fontsize=9)
 
     fig.text(0.005, 0.972,
-             "Health, education and social trust — and which frameworks can see them",
+             "Education, health and social trust — and which frameworks can see them",
              fontsize=15.5, fontweight="bold", color=INK, va="top")
     fig.text(0.005, 0.928,
-             "The pattern of blind spots is the finding. Health is testable everywhere and leads "
-             "almost everywhere it varies. Education is testable everywhere and its rank depends "
-             "entirely on construct.\nTrust is near the top of the one instrument that measures it "
+             "The pattern of blind spots is the finding. Education is testable everywhere and its rank "
+             "depends entirely on construct. Health is testable everywhere and leads almost "
+             "everywhere it varies.\nTrust is near the top of the one instrument that measures it "
              "repeatedly — and effectively invisible to every development framework.",
              fontsize=9, color="#5A5A5A", va="top", linespacing=1.5)
     fig.text(0.005, 0.028,

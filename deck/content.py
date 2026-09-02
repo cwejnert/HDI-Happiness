@@ -14,8 +14,9 @@ from __future__ import annotations
 TITLE = "Measured Where It Varies"
 SUBTITLE = (
     "A commentary in three acts, on why development predicts where wellbeing "
-    "is high but not when it rises — and on the three domains that do track "
-    "lived experience, once each is measured somewhere it still moves"
+    "is high but not when it rises — on education and health, which each "
+    "track lived experience once measured somewhere they still move, and on "
+    "what changes when the question moves inside countries"
 )
 DATELINE = "Working synthesis for the co-author team · August 2026"
 SCOPE = (
@@ -52,9 +53,10 @@ HOOK = {
         ("I", "We replicate the SDG result outside the SDGs.",
          "The same design on the HDI, against a second wellbeing survey, and "
          "one spatial scale down. It collapses every time."),
-        ("II", "Health, education and social trust — and the blind spots.",
-         "Health leads wherever it varies, education's rank swings on "
-         "construct, and trust is invisible to every framework but one."),
+        ("II", "Education, health, and the blind spots.",
+         "Education's rank swings on construct, health's on saturation, and "
+         "the whole ranking turns over again once the question moves from "
+         "between countries to inside them."),
         ("III", "Which makes the policy question unavoidable.",
          "What this means for priorities, what kind of health and education "
          "it points at, what to do about the trust gap, and the question we "
@@ -205,19 +207,23 @@ ACTS = [
     },
     {
         "numeral": "II",
-        "title": "Three domains, and which frameworks can see them",
+        "title": "Education, health, and what changes when you change the question",
         "key_numbers": [
-            ("5 of 5", "instruments where health tracks wellbeing"),
-            ("16 of 163", "SDG trust country-series with enough years to test at all"),
-            ("0.55 vs 0.82", "best SDG trust series against the HDI, same 134 countries"),
-            ("40.7% vs 3.3%", "education under the HDI vs pooled SDG4"),
+            ("40.7% → +0.13", "education: leads the HDI between countries, near zero inside them"),
+            ("12.7%", "SDG4 access alone — third of 17 goals if it were one"),
+            ("19.9% → +0.51", "health: last of the HDI's five, first inside countries"),
+            ("1 of 16", "SDG trust country-series testable at all, not 1 of 163"),
         ],
         "thesis": (
-            "Three domains carry individual lived experience: health, "
-            "education and social trust. Each is visible to a different subset "
-            "of the instruments, and where a framework says a domain does not "
-            "matter, the reason is almost always in how it measured that "
-            "domain — or whether it managed to measure it at all."
+            "Two results and a discussion. Education leads the HDI and the "
+            "access construct of SDG4 and is the smallest effect anywhere. "
+            "Health leads the SDG framework and the individual data and is "
+            "weak in exactly one place, for a reason we can name. Social trust "
+            "leads wherever it is measured, which is almost nowhere. Every "
+            "disagreement between the frameworks turns out to be about "
+            "operationalisation — and the ranking changes again, in a "
+            "consistent direction, when the question moves from between "
+            "countries to inside them."
         ),
         "beats": [
             {
@@ -229,38 +235,30 @@ ACTS = [
                     "and nominate none. <strong>Detection</strong>: does any "
                     "indicator show a significant levels association in a given "
                     "country? The SDG framework reaches 30 of its 42 countries "
-                    "(71%), the HDI 77 of its 150 (51%). This is a fair "
-                    "comparison rather than an artifact — Benjamini–Hochberg "
+                    "(71%), the HDI 77 of its 150 (51%). Benjamini–Hochberg "
                     "under the complete null controls the error rate at the "
-                    "same α whatever the family size — so the SDG lead is "
-                    "genuine statistical power bought with breadth, and should "
-                    "be conceded as such.",
+                    "same α whatever the family size, so the SDG lead is "
+                    "genuine power bought with breadth and should be conceded "
+                    "as such.",
                     "<strong>Budget-matched</strong>: give the SDG framework "
                     "the same five-indicator budget the HDI gets, drawn at "
                     "random, 4,000 times. Five random SDG series reach 30% of "
-                    "countries (95% range 19–40%); the HDI's chosen five reach "
-                    "40% on the same countries. The HDI's selection beats a "
-                    "random five — but lands at the top <em>edge</em> of the "
-                    "random range, not outside it. Most of the SDG framework's "
-                    "advantage in the first comparison is explained by "
-                    "indicator count, and the HDI's advantage at matched budget "
-                    "is real but modest.",
+                    "countries (95% range 19–40%); the HDI’s chosen five reach "
+                    "40% on the same countries — better than a random five, "
+                    "but at the top <em>edge</em> of the random range rather "
+                    "than outside it.",
                     "<strong>Per indicator</strong>: across the 609 SDG series "
                     "with usable coverage the median series is significant in "
                     "no country at all, and 54% never clear FDR anywhere. The "
                     "HDI composite, mean schooling and GNI per capita each beat "
                     "essentially the whole field; even life expectancy, the "
-                    "HDI's weakest component, beats 90% of it. This is the "
-                    "strongest claim because it requires no cross-framework "
-                    "normalisation — though it does set the HDI's best against "
-                    "the SDG median, and the budget-matched test shows that is "
-                    "a generous framing.",
-                    "An earlier draft normalised by the share of each country's "
-                    "own indicators. That was dropped: it penalises breadth for "
-                    "its own sake — bolt a hundred irrelevant series onto the "
-                    "HDI and its score collapses without any loss of "
-                    "information — and the error-rate argument above shows the "
-                    "detection comparison never needed rescuing.",
+                    "HDI’s weakest component, beats 90% of it.",
+                    "That is the frame for what follows. The three results come "
+                    "in the order of how much the frameworks disagree about "
+                    "them: education, where the disagreement is total and "
+                    "entirely about construct; health, where it is large and "
+                    "entirely about saturation; and social trust, where one "
+                    "framework cannot see the domain at all.",
                 ],
                 "figure": "framework_three_comparisons.png",
                 "caption": "Each framework on its own full country set against WHR "
@@ -279,176 +277,275 @@ ACTS = [
                     "drinking water. Sixteen of the top 25 series are "
                     "health-domain, and none of them is self-reported.",
                     "This is the steep part of the development curve — staying "
-                    "alive and not being sick — rather than the 2030 Agenda's "
-                    "institutional superstructure. Goal 3 ranks 4th of 17 goals "
-                    "at 11.5%. Goal 16, the closest thing the framework has to "
-                    "social trust, ranks 15th at 1.5%.",
+                    "alive and not being sick — rather than the 2030 Agenda’s "
+                    "institutional superstructure. It also sets up the puzzle "
+                    "the next three beats resolve: the instrument that ranks "
+                    "health first ranks education twelfth, and the instrument "
+                    "that ranks education first ranks health last.",
                 ],
                 "figure": "sdg_indicator_top20.png",
                 "caption": "The 20 highest-ranking SDG series of 609, by share of "
                            "countries FDR-significant in levels.",
             },
+
+            # ---------------- Result 1: education ----------------
             {
-                "label": "The horse race",
-                "heading": "Run the domains against each other in one survey and health wins at every level",
+                "label": "Result 1 · Education",
+                "heading": "The strongest thing the HDI measures",
                 "body": [
-                    "The ESS measures health, education, income and trust on the "
-                    "same respondents as life satisfaction, so the domains can "
-                    "compete on equal terms. Self-rated health is significant in "
-                    "36 of 36 countries with a median R² of 0.091 — roughly nine "
-                    "times education's 0.0098, which is the smallest effect of "
-                    "any domain tested. Within countries, across regions, health "
-                    "holds at +0.51 while development falls to +0.12.",
-                    "The HDI leads between countries, at R² = 0.760, but that is "
-                    "the one comparison where a composite index is expected to "
-                    "win: it proxies every domain at once. It falls to fourth "
-                    "once you look inside countries.",
-                ],
-                "figure": "domain_horse_race.png",
-                "caption": "Domains competing within one instrument, at three levels "
-                           "of aggregation. Health and trust are self-reported "
-                           "alongside the outcome — see the next beat.",
-            },
-            {
-                "label": "The method check",
-                "heading": "Health survives the obvious objection; social trust does not",
-                "body": [
-                    "Self-rated health and social trust are reported by the same "
-                    "respondent, in the same survey, as life satisfaction, so "
-                    "shared method variance is the first thing a reader will "
-                    "raise. The UN SDG database is administrative and shares no "
-                    "method with any wellbeing instrument, which makes it the "
-                    "natural check.",
-                    "Health passes it. Restricted to high-income countries — the "
-                    "same development stratum the ESS covers — the SDG data puts "
-                    "health at 11.2% of country-indicator pairs against "
-                    "education's 1.2%, the same ordering the ESS gives from "
-                    "entirely different measurement. Social trust fails it: "
-                    "there is no interpersonal-trust indicator anywhere in the "
-                    "SDG framework, and Goal 16's best series ranks 125th of "
-                    "609. Trust is the strongest ESS predictor and has no "
-                    "independent corroboration available. It should enter the "
-                    "commentary as an open question, not a result.",
-                    "Act III adds a second external check at the regional "
-                    "scale: GDL's externally measured health index leads its "
-                    "education and income indices within countries too, so the "
-                    "health result now holds under administrative measurement "
-                    "at both the national and the regional level.",
-                ],
-                "figure": "health_trust_corroboration.png",
-                "caption": "The same three domains under an administrative source and "
-                           "a self-report source.",
-                "feature": True,
-            },
-            {
-                "label": "The saturation problem",
-                "heading": "Why the HDI says health barely matters",
-                "body": [
-                    "Inside the HDI, life expectancy is the weakest of the five "
-                    "indicators by a wide margin — significant in 30 of 151 "
-                    "countries (19.9%), against 40.7% for mean schooling. Read "
-                    "naively, the HDI says health is the least important thing "
-                    "about development.",
-                    "It says nothing of the kind. Life expectancy is close to "
-                    "saturated across the countries where it is tested: the "
-                    "variance that would let it predict anything has largely "
-                    "gone. The SDG series that do carry health's signal are "
-                    "survival measures — child and neonatal mortality, stunting "
-                    "— which still vary enormously, and self-rated health "
-                    "captures morbidity that life expectancy cannot see at all. "
-                    "A domain disappears from a framework when that framework "
-                    "measures it with a variable that has run out of room.",
+                    "Mean years of schooling has the highest median R² of the "
+                    "HDI’s five indicators — 0.326, fractionally above the "
+                    "composite’s own 0.322 — and is FDR-significant in 61 of "
+                    "150 countries, 40.7%, the highest of the four "
+                    "sub-components. Expected years of schooling follows at "
+                    "34.0%. Income is level with schooling at 40.4%; life "
+                    "expectancy is far behind at 19.9%.",
+                    "A sub-component beating the composite it belongs to is "
+                    "worth pausing on. The HDI aggregates health, education and "
+                    "income into one number on the assumption that development "
+                    "is a bundle. On this test the bundle adds nothing over its "
+                    "education leg alone — which is the first hint that the "
+                    "index is carried by one of its three domains rather than "
+                    "by their combination.",
                 ],
             },
             {
-                "label": "Sub-highlight · education",
-                "heading": "Education is the same problem running in the opposite direction",
+                "label": "Result 1 · Education",
+                "heading": "In the SDG framework its rank depends entirely on which construct you read",
                 "body": [
-                    "Education inverts the health story exactly. It is the HDI's "
-                    "strongest domain — mean years of schooling has the highest "
-                    "median R² of all five indicators, 0.326, above the "
-                    "composite itself — and the SDG framework's weakest, at 3.3% "
-                    "pooled, with its best series ranking 100th of 609.",
-                    "The disagreement is again construct choice. Eighteen of "
-                    "SDG4's 35 official series are equity or parity ratios, six "
-                    "measure learning outcomes, seven measure school "
-                    "infrastructure, and only two measure access and "
-                    "participation directly. Split apart, access reaches 12.7% "
-                    "— comparable to health's 11.5% — while learning outcomes "
-                    "sit at 0.9% and parity ratios at 2.5%. The pooled 3.3% is "
-                    "an average across constructs pointing in different "
-                    "directions and describes none of them. Pooling within a "
-                    "goal can manufacture a null.",
+                    "Pooled, SDG4 is close to the bottom: 3.3% of "
+                    "country-indicator pairs significant, twelfth of the "
+                    "seventeen goals, with its best single series ranking 100th "
+                    "of 609. Read naively the two frameworks flatly contradict "
+                    "each other about education.",
+                    "They do not, because SDG4 is not one construct. Eighteen of "
+                    "its 35 official series are equity or parity ratios, seven "
+                    "measure school infrastructure, six measure learning "
+                    "outcomes, one measures financing, one attainment — and "
+                    "only two measure access and participation directly. Split "
+                    "apart, those two reach <strong>12.7%</strong>. Placed among "
+                    "the seventeen goals that would rank third, above SDG3 "
+                    "health at 11.5%. Meanwhile learning outcomes sit at 0.9% "
+                    "and parity ratios at 2.5%, and it is the parity ratios — "
+                    "half the goal by series count — that drag the pooled "
+                    "figure down.",
+                    "So the SDG framework does not disagree with the HDI about "
+                    "education. It agrees with it, on the two series that "
+                    "measure the same thing the HDI measures, and the "
+                    "disagreement is manufactured by pooling six constructs "
+                    "that point in different directions. State the caveat "
+                    "plainly: access and participation is 2 series and 63 "
+                    "country-indicator pairs, a small family, and the 12.7% "
+                    "carries correspondingly wide uncertainty.",
                 ],
                 "figure": "sdg4_unpooled.png",
                 "caption": "SDG4 split by what each indicator actually measures, with "
                            "the pooled figure marked.",
+                "feature": True,
             },
             {
-                "label": "Sub-highlight · education",
-                "heading": "And it is the one domain that is significant almost everywhere, if barely",
+                "label": "Result 1 · Education",
+                "heading": "And at the individual level it is significant almost everywhere, if barely",
                 "body": [
-                    "Respondents' own attainment predicts their own life "
+                    "Respondents’ own attainment predicts their own life "
                     "satisfaction in 32 to 34 of 36 ESS countries — more "
-                    "consistent across countries than anything except health "
-                    "itself. Aggregated to the country level, ESS-measured years "
-                    "of schooling predicts World Happiness Report happiness at "
-                    "R² = 0.308, against 0.161 for the HDI's own schooling "
-                    "series on the same cells: an independently measured "
-                    "education variable roughly doubles the HDI's.",
+                    "consistent across countries than anything except health. "
+                    "Aggregated to the country level, ESS-measured years of "
+                    "schooling predicts WHR happiness at R² = 0.308 against "
+                    "0.161 for the HDI’s own schooling series on the same "
+                    "cells, so an independently measured education variable "
+                    "roughly doubles the HDI’s.",
                     "What it does not have is size. The median individual R² is "
-                    "0.0098, the smallest of any domain in the horse race, and "
-                    "within countries education sits at +0.13 with 2 of 16 "
-                    "countries significant. Education is the most universal "
-                    "signal and the smallest one, which is a genuinely odd "
-                    "combination and worth stating as such rather than "
-                    "resolving prematurely.",
+                    "0.0098, the smallest of any domain tested. Education is "
+                    "the most universal signal and the smallest one — an odd "
+                    "combination, and one the third result explains.",
                 ],
                 "figure": "ess_individual_education.png",
-                "caption": "Per-country tests of respondents' own attainment against "
+                "caption": "Per-country tests of respondents’ own attainment against "
                            "their own life satisfaction, 36 ESS countries.",
             },
+
+            # ---------------- Result 2: health ----------------
             {
-                "label": "Social trust",
-                "heading": "Near the top wherever it is measured, and invisible almost everywhere else",
+                "label": "Result 2 · Health",
+                "heading": "The strongest thing the SDG framework measures",
                 "body": [
-                    "Social trust is the third domain and the one the "
-                    "measurement apparatus handles worst. In the ESS, where it "
-                    "is asked of every respondent in every round, it is "
-                    "significant in 34 of 36 countries individually and reaches "
-                    "+0.49 within countries across regions — above education on "
-                    "both. Neither the HDI nor the subnational HDI measures it "
-                    "at all.",
-                    "The SDG framework appears to: it carries 13 trust- and "
-                    "satisfaction-adjacent series, mostly under Goal 16 — "
-                    "satisfaction with public services, belief that "
-                    "decision-making is inclusive, bribery prevalence. But their "
-                    "median coverage is <em>one year</em> per country-series, "
-                    "against six for the database as a whole, so almost none can "
-                    "support a time-series test. The design needs at least four "
-                    "years per country-series; 147 of the 163 fall short and are "
-                    "never computed at all. Of the 16 that can be run, 1 is "
-                    "significant.",
-                    "The distinction matters and the commentary must keep it. "
-                    "\"1 of 163\" reads as a null result; the truth is 1 of 16 "
-                    "tested and 147 untestable. An earlier draft of this deck "
-                    "made exactly that slip, and reporting a coverage gap as a "
-                    "null would repeat the error the commentary accuses the "
-                    "frameworks of making.",
-                    "Untestable <em>in this design</em> is not untestable in "
-                    "principle, though, and the next beat runs the test the "
-                    "coverage does allow.",
+                    "Goal 3 reaches 11.5% of country-indicator pairs, fourth of "
+                    "the seventeen goals and first among the goals with broad "
+                    "coverage — the three above it are energy (5 series), "
+                    "industry and infrastructure (23), and hunger and nutrition "
+                    "(53), against Goal 3’s 45. Sixteen of the top 25 series in "
+                    "the whole database are health.",
+                    "The health series that carry the signal are survival "
+                    "measures: child and neonatal mortality, stunting, safely "
+                    "managed water and sanitation. None is self-reported, which "
+                    "matters for the method check two beats on — this is the "
+                    "one domain where an administrative source and a "
+                    "self-report source can be set against each other.",
+                ],
+                "figure": "sdg_by_goal.png",
+                "caption": "All 17 goals by share of country-indicator pairs "
+                           "FDR-significant in levels.",
+            },
+            {
+                "label": "Result 2 · Health",
+                "heading": "Why the HDI says the opposite, and why the HDI is wrong about it",
+                "body": [
+                    "Inside the HDI, life expectancy is the weakest of the five "
+                    "indicators by a wide margin — 30 of 151 countries, 19.9%, "
+                    "against 40.7% for mean schooling. Read naively the HDI says "
+                    "health is the least important thing about development, and "
+                    "the SDG framework says it is the most important.",
+                    "The reconciliation is saturation, and it is checkable "
+                    "rather than rhetorical. Life expectancy has run out of "
+                    "variance across the countries where it is tested; the "
+                    "variance that would let it predict anything has largely "
+                    "gone. The SDG series that do carry health’s signal are the "
+                    "ones that still vary enormously — child mortality, "
+                    "stunting — and self-rated health captures morbidity that "
+                    "life expectancy cannot see at all.",
+                    "This is the same failure mode as education’s, running in "
+                    "the opposite direction. Education’s rank collapses when a "
+                    "framework measures it as parity rather than attainment; "
+                    "health’s collapses when a framework measures it with a "
+                    "variable that has no room left to move. Neither is a fact "
+                    "about the world.",
                 ],
             },
             {
-                "label": "Social trust · the test the coverage allows",
-                "heading": "Tested across countries instead of across years — and it still does not rescue the domain",
+                "label": "Result 2 · Health",
+                "heading": "It leads the individual data too, and it is the one domain that passes the method check",
+                "body": [
+                    "In the ESS, self-rated health is significant in 36 of 36 "
+                    "countries with a median R² of 0.091 — roughly nine times "
+                    "education’s 0.0098, and the largest effect of any domain "
+                    "tested anywhere in this commentary.",
+                    "Self-rated health is reported by the same respondent, in "
+                    "the same survey, as life satisfaction, so shared method "
+                    "variance is the first objection a reader will raise. "
+                    "Health is the one domain that can answer it: the UN SDG "
+                    "database is administrative and shares no method with any "
+                    "wellbeing instrument. Restricted to high-income countries "
+                    "— the same development stratum the ESS covers — the SDG "
+                    "data puts health at 11.2% of pairs against education’s "
+                    "1.2%, the same ordering the ESS gives from entirely "
+                    "different measurement.",
+                    "The regional test in the next beat adds a second external "
+                    "check: GDL’s externally measured health index leads its "
+                    "education and income indices within countries too. Health "
+                    "therefore holds under administrative measurement at both "
+                    "the national and the regional scale, which is more than "
+                    "can be said for either of the other two domains.",
+                ],
+                "figure": "health_trust_corroboration.png",
+                "caption": "The same domains under an administrative source and a "
+                           "self-report source.",
+                "feature": True,
+            },
+
+            # ---------------- The synthesis across specifications ----------------
+            {
+                "label": "The horse race",
+                "heading": "Run the domains against each other inside one instrument",
+                "body": [
+                    "The ESS measures health, education, income and trust on the "
+                    "same respondents as life satisfaction, so the domains can "
+                    "compete on equal terms rather than through four separate "
+                    "literatures. Health leads at every level of aggregation; "
+                    "education is significant nearly everywhere and small "
+                    "everywhere; trust sits between them.",
+                    "The HDI leads between countries at R² = 0.760, but that is "
+                    "the one comparison a composite index is expected to win — "
+                    "it proxies every domain at once. It falls to fourth once "
+                    "you look inside countries, and that fall is the subject of "
+                    "the next beat.",
+                ],
+                "figure": "domain_horse_race.png",
+                "caption": "Domains competing within one instrument, at three levels "
+                           "of aggregation.",
+            },
+            {
+                "label": "Levels, differences, and inside countries",
+                "heading": "Three specifications, and the ranking changes twice",
+                "body": [
+                    "Three tests run through this commentary and the reader has "
+                    "been left to join them up. They are not three attempts at "
+                    "one question. <strong>Levels</strong> asks whether a "
+                    "country with more of something is happier. "
+                    "<strong>Differences</strong> asks whether a country that "
+                    "gains it gets happier — the collapse of Act I. "
+                    "<strong>Inside one country, across its regions</strong> "
+                    "asks whether the places with more of it are the better "
+                    "places to live, holding national institutions, history and "
+                    "policy fixed.",
+                    "Education leads the first and all but vanishes in the "
+                    "third: 40.7% of countries, then +0.13 with 2 of 16 "
+                    "significant. Health and trust do the reverse — health "
+                    "last of the HDI’s five between countries, first inside "
+                    "them at +0.51; trust unmeasured between, second inside at "
+                    "+0.49. The middle panel flattens everything: nothing "
+                    "clears 3%.",
+                    "The direction of that shift is the finding. What predicts "
+                    "<em>where</em> wellbeing is high is structural — schooling "
+                    "and income, which between countries proxy the whole "
+                    "development bundle at once. What predicts it "
+                    "<em>inside</em> a country is experiential: health and "
+                    "trust. Education’s combination of near-universal "
+                    "significance and tiny effect is exactly what a structural "
+                    "variable looks like once the structure is held fixed.",
+                ],
+                "figure": "L1_three_specifications.png",
+                "caption": "Panels (a) and (b) are the same HDI indicators on the same "
+                           "150–151 countries, so the collapse between them is exact. "
+                           "Panel (c) is a different instrument at a different scale — "
+                           "16 ESS countries with ≥6 matched regions — so it is read "
+                           "alongside (a) and (b), not subtracted from them. Within it, "
+                           "external GDL sub-indices are drawn separately from "
+                           "same-survey self-reports, since the shared-method objection "
+                           "applies only to the latter; health leads on both.",
+                "feature": True,
+            },
+
+            # ---------------- Result 3: social trust, in discussion ----------------
+            {
+                "label": "Discussion · Social trust",
+                "heading": "The interesting case, and the one the measurement apparatus handles worst",
+                "body": [
+                    "Trust is not a headline result here and should not be "
+                    "presented as one — it rests on a single instrument with a "
+                    "live shared-method caveat. It is in the paper because the "
+                    "reason it cannot be a headline is itself the "
+                    "commentary’s subject.",
+                    "Where it is measured it performs: significant in 34 of 36 "
+                    "ESS countries individually, +0.49 within countries across "
+                    "regions, second only to health on both and above education "
+                    "on both. Neither the HDI nor the subnational HDI measures "
+                    "it at all.",
+                    "The SDG framework appears to: 13 trust- and "
+                    "satisfaction-adjacent series, mostly Goal 16 — "
+                    "satisfaction with public services, belief that "
+                    "decision-making is inclusive, bribery prevalence. But their "
+                    "median coverage is <em>one year</em> per country-series "
+                    "against six database-wide. The design needs at least four "
+                    "years; 147 of the 163 country-series fall short and are "
+                    "never computed at all. Of the 16 that can be run, 1 is "
+                    "significant.",
+                    "Report that as “1 of 16 testable”, never “1 of 163”. The "
+                    "latter reads as a null when it is overwhelmingly a "
+                    "coverage gap — and reporting a coverage gap as a null "
+                    "would repeat the exact error this commentary accuses the "
+                    "frameworks of making.",
+                ],
+            },
+            {
+                "label": "Discussion · Social trust",
+                "heading": "Tested the only way its coverage allows, and it still does not become a result",
                 "body": [
                     "One year per country is useless longitudinally and "
-                    "perfectly usable cross-sectionally. So we pulled the raw "
+                    "perfectly usable cross-sectionally, so we pulled the raw "
                     "values from the UN SDG database and ran the series against "
                     "the ladder across countries. Nine of the 13 clear a "
-                    "12-country minimum, and four are significant: bribery paid "
+                    "12-country minimum and four are significant: bribery paid "
                     "by individuals (−0.55) and firms (−0.51), inclusive "
                     "decision-making (−0.42), satisfaction with healthcare "
                     "(+0.33).",
@@ -457,10 +554,9 @@ ACTS = [
                     "the same 134 countries the HDI and its components sit at "
                     "|r| 0.71–0.83. The broadest series, satisfaction with "
                     "healthcare, is Gallup World Poll, the same survey that "
-                    "produces the ladder, so it falls to exactly the "
-                    "shared-instrument objection we raise against the ESS. And "
-                    "none of the 13 measures interpersonal trust: they measure "
-                    "institutional confidence, a different construct.",
+                    "produces the ladder. And none of the 13 measures "
+                    "interpersonal trust: they measure institutional "
+                    "confidence, a different construct.",
                     "Income control kills all nine — but it also kills the HDI "
                     "(+0.82 raw, +0.09 net). No cross-section of countries "
                     "separates anything from income, which is why the "
@@ -472,41 +568,27 @@ ACTS = [
                            "one observation per country, against the WHR Cantril ladder. "
                            "Raw values pulled from the UN SDG Global Database API.",
             },
-            {
-                "label": "Social trust · where it leaves the domain",
-                "heading": "The weakest-evidenced of the three, and the cheapest to fix",
-                "body": [
-                    "That leaves trust the weakest-evidenced of the three — one "
-                    "instrument, no external corroboration, and the "
-                    "shared-method caveat still live. It should be presented as "
-                    "the most interesting open question rather than a finding, "
-                    "and it points at a concrete recommendation: a repeated "
-                    "trust item costs almost nothing to field and would make "
-                    "the domain testable.",
-                    "The cross-sectional test is what makes that recommendation "
-                    "defensible rather than rhetorical. We did not assert that "
-                    "the existing series are inadequate; we ran them the only "
-                    "way their coverage permits and showed where they land.",
-                ],
-            },
+
+            # ---------------- Pulling it together ----------------
             {
                 "label": "The synthesis",
                 "heading": "The pattern of blind spots is the result",
                 "body": [
-                    "Laid out side by side, the three domains have different "
-                    "signatures. Health is testable in all five instruments and "
-                    "leads in four of them — weak only inside the HDI, whose "
-                    "single health input has run out of variance. Education is "
-                    "testable in all five and its rank swings from first to "
-                    "near-last depending purely on whether the instrument "
-                    "measures attainment or parity. Trust is at or near the top "
-                    "of the only instrument that can test it, and invisible to "
-                    "the rest.",
+                    "Laid out side by side, the three domains have three "
+                    "signatures. Education leads the HDI and the access "
+                    "construct of SDG4, is near-universal at the individual "
+                    "level, and is the smallest effect anywhere — a structural "
+                    "variable behaving exactly as one should. Health leads the "
+                    "SDG framework, the individual data and the regional data, "
+                    "and is weak in precisely one place, the HDI, for a reason "
+                    "we can name. Trust leads nothing it is not the only "
+                    "candidate for, and is invisible to every development "
+                    "framework.",
                     "None of these disagreements is about the world. Every one "
-                    "is about an operationalisation choice made by the framework "
-                    "— which is why the commentary's contribution is not a "
-                    "ranking of domains but an account of why the rankings "
-                    "differ.",
+                    "is about an operationalisation choice — which construct, "
+                    "which variable, which specification — which is why the "
+                    "contribution is not a ranking of domains but an account of "
+                    "why the rankings differ.",
                 ],
                 "figure": "domain_scorecard.png",
                 "caption": "The three domains against the five instruments. Metrics "
@@ -539,31 +621,35 @@ ACTS = [
             },
         ],
         "close": (
-            "Three domains, five instruments, and a different verdict from "
-            "almost every pairing. Health leads once it is measured somewhere "
-            "it still varies; education leads once it is measured as "
-            "attainment rather than parity; trust leads wherever it is "
-            "measured at all, which is almost nowhere. The commentary's "
+            "Education leads once it is measured as attainment rather than "
+            "parity; health leads once it is measured somewhere it still "
+            "varies; trust leads wherever it is measured at all, which is "
+            "almost nowhere. And the ranking turns over a second time when the "
+            "question moves inside countries: the structural domains that "
+            "predict where wellbeing is high stop predicting it once the "
+            "structure is held fixed, and the experiential ones take over. The "
             "contribution is not a ranking of domains but the demonstration "
-            "that the ranking is an artefact of operationalisation — and that "
-            "one of the three is missing from the development measurement "
-            "apparatus entirely."
+            "that the ranking is an artefact of construct, of variable, and of "
+            "specification — three ways of getting the same answer wrong."
         ),
     },
     {
         "numeral": "III",
-        "title": "Priorities, and what kind of health and education",
+        "title": "Priorities, and what kind of education and health",
         "key_numbers": [
             ("+0.87 → +0.12", "development, between countries → within them"),
-            ("+0.51", "self-rated health, within countries"),
+            ("+0.13 vs +0.51", "education vs health inside countries, across regions"),
             ("11.2% vs 1.2%", "health vs education, SDG data, high-income countries"),
         ],
         "thesis": (
             "Two questions follow. Where should the lever be pulled — which "
-            "turns on scale, because the ordering of predictors inverts "
-            "inside countries. And what kind of health and education, because "
-            "in both domains the wellbeing signal sits with one "
-            "operationalisation and vanishes under another."
+            "turns on scale, because the ordering of predictors inverts inside "
+            "countries. And what kind of education and health, because in both "
+            "domains the wellbeing signal sits with one operationalisation and "
+            "vanishes under another. Education comes first here for the same "
+            "reason it comes first in Act II: it is where the frameworks "
+            "disagree most and where the policy consensus is furthest from the "
+            "evidence."
         ),
         "beats": [
             {
@@ -600,9 +686,16 @@ ACTS = [
                     "Within countries the ranking inverts. Development falls to "
                     "a median regional correlation of +0.12, significant in 3 of "
                     "16 countries, while self-rated health holds at +0.51 "
-                    "(8 of 16) and social trust at +0.49 (6 of 16). The World "
-                    "Happiness Report cannot see this at all — it has no "
-                    "subnational values. It is the specific thing the ESS adds.",
+                    "(8 of 16) and social trust at +0.49 (6 of 16). Education "
+                    "falls with development, not with health and trust: +0.13, "
+                    "2 of 16. The World Happiness Report cannot see any of this "
+                    "— it has no subnational values. It is the specific thing "
+                    "the ESS adds.",
+                    "This is the third panel of Act II's specification figure, "
+                    "at full detail. The point that figure makes and this beat "
+                    "supplies the evidence for: the domains that lead between "
+                    "countries are the structural ones, and they are not the "
+                    "domains that lead inside them.",
                     "Two cautions on the detail. The health-versus-trust "
                     "ordering is not stable: aggregating region means across "
                     "waves rather than within them reverses it, putting trust "
@@ -665,6 +758,32 @@ ACTS = [
                 ],
             },
             {
+                "label": "On what kind of education",
+                "heading": "The consensus moved to learning; the wellbeing evidence points at attainment",
+                "body": [
+                    "Global education policy has shifted decisively over the "
+                    "past decade from schooling to learning — the learning-crisis "
+                    "framing, learning-poverty targets, and an indicator "
+                    "architecture built around measured proficiency. The premise "
+                    "is that years in school without demonstrated learning are "
+                    "an empty metric.",
+                    "Every level of aggregation we can test points the other "
+                    "way. Attainment and access carry the signal — 12.7% for "
+                    "SDG4 access, 40.7% and 34.0% for the HDI's schooling "
+                    "components, 32 of 36 countries at the individual level — "
+                    "while measured learning outcomes sit at 0.9% and parity "
+                    "ratios at 2.5%.",
+                    "Two cautions from Act II travel with this, and the "
+                    "recommendation is weaker without them. Education is the "
+                    "most consistent signal and the smallest one. And it is a "
+                    "<em>between</em>-country signal: inside countries, across "
+                    "regions, it falls to +0.13 with 2 of 16 countries "
+                    "significant. So this is an argument about what a global "
+                    "monitoring framework should count, not a claim that "
+                    "moving one region's schooling will move its wellbeing.",
+                ],
+            },
+            {
                 "label": "On what kind of health",
                 "heading": "Monitor health where it still varies, not where it has already converged",
                 "body": [
@@ -682,25 +801,11 @@ ACTS = [
                     "high-income settings and pairing survival indicators with "
                     "a subjective health item. The ESS already fields one; most "
                     "national statistical systems do too. It is close to free.",
-                ],
-            },
-            {
-                "label": "On what kind of education",
-                "heading": "The consensus moved to learning; the wellbeing evidence points at attainment",
-                "body": [
-                    "Global education policy has shifted decisively over the "
-                    "past decade from schooling to learning — the learning-crisis "
-                    "framing, learning-poverty targets, and an indicator "
-                    "architecture built around measured proficiency. The premise "
-                    "is that years in school without demonstrated learning are "
-                    "an empty metric.",
-                    "Every level of aggregation we can test points the other "
-                    "way. Attainment and access carry the signal — 12.7% for "
-                    "SDG4 access, 40.7% and 34.0% for the HDI's schooling "
-                    "components, 32 of 36 countries at the individual level — "
-                    "while measured learning outcomes sit at 0.9% and parity "
-                    "ratios at 2.5%. The caution from Act II applies: education "
-                    "is the most consistent signal and the smallest one.",
+                    "Health is also the domain where the scale caution runs the "
+                    "other way. It is weak between countries and strong inside "
+                    "them, so a subnational health measure is doing work a "
+                    "national one cannot — which is an argument for regional "
+                    "disaggregation, not just for a different indicator.",
                 ],
             },
             {
