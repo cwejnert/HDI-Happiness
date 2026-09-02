@@ -1,0 +1,4 @@
+"component","n_obs","supWald","break_year","crit95_bootstrap","p_bootstrap","bic_n_breaks","bic_break_years"
+"C/GDP",59,67.28,1972,31.43,0.002,3,"1973, 2001, 2012"
+"C/E",59,21.48,1988,35.86,0.1383,3,"1971, 1996, 2013"
+"E/GDP",59,310.17,1974,45.41,0,3,"1976, 2002, 2011"

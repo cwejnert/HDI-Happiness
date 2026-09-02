@@ -1,0 +1,42 @@
+WORLD-LEVEL MASTER ANALYSIS
+===========================
+
+PRIMARY SERIES: true world aggregate
+  CO2 and energy: OWID 'World' row, 1965-2023 (contiguous)
+  GDP: World Bank world total, constant 2015 USD
+  No panel construction, no interpolation, no composition drift. 8 post-Paris years.
+
+(4) UNKNOWN-BREAK-DATE TEST (supWald, moving-block bootstrap critical values)
+ component n_obs supWald break_year crit95_bootstrap p_bootstrap bic_n_breaks
+     C/GDP    59   67.28       1972            31.43      0.0020            3
+       C/E    59   21.48       1988            35.86      0.1383            3
+     E/GDP    59  310.17       1974            45.41      0.0000            3
+  bic_break_years
+ 1973, 2001, 2012
+ 1971, 1996, 2013
+ 1976, 2002, 2011
+
+(1) SPECIFICATION GRID: 132 estimates across 44 specifications
+ component n_specs pct_significant delta_median delta_min delta_max
+       C/E      44              82        -0.64     -0.89      0.02
+     C/GDP      44              68        -0.74     -1.84     -0.30
+     E/GDP      44              41        -0.25     -1.21      0.17
+ best_year_median best_year_range pct_best_before_2015 paris_pctile_median
+             1987       1984-2015                   93                  96
+             2011       1972-2017                   89                  74
+             2006       1974-2017                   64                  58
+ rio_pctile_median
+                71
+                27
+                54
+
+(2) PROVENANCE: break year, true world aggregate vs constructed panel
+ component world_break world_n panel1980_break panel_n
+     C/GDP        1972      59            2011      42
+       C/E        1988      59            1985      42
+     E/GDP        1974      59            1995      42
+
+Post-2015 hinge estimates on the primary series:
+  C/GDP  -0.68 pp/yr (t = -2.19) | best year 1972 | Paris 80th pctile | Rio 34th
+  C/E    -0.11 pp/yr (t = -0.47) | best year 1988 | Paris 11th pctile | Rio 86th
+  E/GDP  -0.57 pp/yr (t = -2.46) | best year 1974 | Paris 48th pctile | Rio 55th

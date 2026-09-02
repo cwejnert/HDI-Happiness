@@ -1,0 +1,4 @@
+"component","n_specs","pct_significant","delta_median","delta_min","delta_max","best_year_median","best_year_range","pct_best_before_2015","paris_pctile_median","rio_pctile_median"
+"C/E",44,82,-0.64,-0.89,0.02,1987,"1984-2015",93,96,71
+"C/GDP",44,68,-0.74,-1.84,-0.3,2011,"1972-2017",89,74,27
+"E/GDP",44,41,-0.25,-1.21,0.17,2006,"1974-2017",64,58,54
