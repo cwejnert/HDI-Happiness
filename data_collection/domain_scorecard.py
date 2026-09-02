@@ -70,7 +70,7 @@ ROWS = [
         ("+0.130\n2 of 16 countries", WEAK),
     ]),
     ("Social trust", [
-        ("13 series exist,\n1 of 163 tests significant —\nmedian 1 year of data", BLIND),
+        ("13 series exist, but only 16 of\n163 country-series have enough\nyears to test — 1 significant", BLIND),
         ("not measured", BLIND),
         ("not measured", BLIND),
         ("34 of 36\nR² = 0.041", STRONG),
@@ -88,8 +88,10 @@ def verify_trust_coverage():
              "SP_PSR_SATIS_GOV", "SP_PSR_SATIS_HLTH", "SP_PSR_OSATIS_PRM",
              "SP_PSR_SATIS_PRM", "SP_PSR_SATIS_SEC", "VC_VOV_GDSD"]
     t = s[s.SeriesCode.isin(codes)]
+    testable = (t.n_levels >= 4).sum()
     print(f"SDG trust/satisfaction series: {t.SeriesCode.nunique()} series, "
-          f"{len(t)} country-tests, {int(t.sig.sum())} significant")
+          f"{len(t)} country-series, of which {testable} have >=4 years and are "
+          f"testable; {int(t.sig.sum())} significant")
     print(f"  median years of data per country-series: {t.n_levels.median():.0f}  "
           f"(all 661 series: {s.n_levels.median():.0f})")
     return t.SeriesCode.nunique(), len(t), int(t.sig.sum())
@@ -150,8 +152,9 @@ def main():
              "The SDG framework does carry 13 trust- and satisfaction-adjacent series (SDG16: "
              "satisfaction with public services, inclusive decision-making, bribery), but their "
              "median coverage is ONE year per country-series\nagainst six for the database as a "
-             "whole — too thin for a time-series test. One of 163 country-tests is significant. "
-             "That is a measurement gap, not evidence that trust does not matter.",
+             "whole. The design needs ≥4 years, so 147 of 163 country-series cannot be computed at "
+             "all and 16 can; 1 of those 16 is significant.\nThat is a coverage gap, not evidence "
+             "that trust does not matter.",
              fontsize=7.8, color=GREY, va="bottom", linespacing=1.5)
     fig.tight_layout(rect=(0, 0.06, 1, 0.885))
     out = "figures_out/J1_domain_framework_scorecard.png"

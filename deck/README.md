@@ -44,11 +44,18 @@ exists". That is wrong. The SDG database carries 13 trust- and
 satisfaction-adjacent series (Goal 16: satisfaction with public services,
 inclusive decision-making, bribery prevalence). But their median coverage is
 **one observation per country-series** against six for the database as a
-whole, so almost none can support a time-series test; 1 of 163 country-tests
-is significant. That is a measurement gap, not a substantive null, and
-reporting it as a null would repeat exactly the error the commentary accuses
-the frameworks of making. `domain_scorecard.py` recomputes this rather than
-trusting a transcribed note.
+whole. The design needs ≥4 years, so **147 of 163 country-series cannot be
+computed at all** and 16 can; 1 of those 16 is significant. Always report it as
+"1 of 16 testable", never "1 of 163" — the latter reads as a null when it is
+overwhelmingly a coverage gap, and would repeat exactly the error the
+commentary accuses the frameworks of making. `domain_scorecard.py` recomputes
+this rather than trusting a transcribed note.
+
+Untestable *in this design* is not untestable in principle. Four of the series
+have decent cross-sectional breadth even at one year each — `SP_PSR_OSATIS_HLTH`
+(30 countries), `IU_COR_BRIB` (28), `IC_FRM_BRIB` (28), `IU_DMK_INCL` (22) — so
+a cross-country levels test is feasible. It needs the raw series from the UN SDG
+API; `robust_all_for_figures.csv` holds only fitted statistics, not values.
 
 `DECISIONS` carries the open questions for the co-author team; `APPENDIX`
 carries the supporting figures not used in the acts.

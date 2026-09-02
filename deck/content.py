@@ -208,7 +208,7 @@ ACTS = [
         "title": "Three domains, and which frameworks can see them",
         "key_numbers": [
             ("5 of 5", "instruments where health tracks wellbeing"),
-            ("1 of 163", "SDG trust tests significant — on 1 year of data each"),
+            ("16 of 163", "SDG trust country-series with enough years to test at all"),
             ("40.7% vs 3.3%", "education under the HDI vs pooled SDG4"),
         ],
         "thesis": (
@@ -424,11 +424,15 @@ ACTS = [
                     "decision-making is inclusive, bribery prevalence. But their "
                     "median coverage is <em>one year</em> per country-series, "
                     "against six for the database as a whole, so almost none can "
-                    "support a time-series test. Exactly 1 of 163 country-tests "
-                    "is significant. An earlier draft of this deck read that as "
-                    "evidence that trust does not matter; it is nothing of the "
-                    "kind. It is a measurement gap, and reporting it as a null "
-                    "would be the same error the commentary accuses the "
+                    "support a time-series test. The design needs at least four "
+                    "years per country-series; 147 of the 163 fall short and are "
+                    "never computed at all. Of the 16 that can be run, 1 is "
+                    "significant.",
+                    "The distinction matters and the commentary must keep it. "
+                    "\"1 of 163\" reads as a null result; the truth is 1 of 16 "
+                    "tested and 147 untestable. An earlier draft of this deck "
+                    "made exactly that slip, and reporting a coverage gap as a "
+                    "null would repeat the error the commentary accuses the "
                     "frameworks of making.",
                     "That leaves trust the weakest-evidenced of the three — one "
                     "instrument, no external corroboration, and the "
