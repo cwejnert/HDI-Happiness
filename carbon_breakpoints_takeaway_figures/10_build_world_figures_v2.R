@@ -3,8 +3,9 @@
 # Panel construction (one rule, applied twice):
 #   keep every country that still reports in 2021 and has at least 90% of the years
 #   in the window; linearly interpolate the few interior gaps in logs.
-#   PRIMARY  1990-2021: 182 countries, 99.8% of 2015 global CO2, 13 interpolated cells.
-#   HISTORY  1980-2021: 153 countries, 90% of 2015 global CO2 (needed to test Rio).
+#   PRIMARY   1980-2021: 155 countries, 90.6% of 2015 global CO2, 14 interpolated cells.
+#   ROBUSTNESS 1990-2021: 182 countries, 99.8% - adds the post-Soviet states, which
+#   cannot be carried back to 1980 because they did not exist as separate series.
 # 2022-23 are excluded throughout: only 78 countries have reported them yet.
 options(stringsAsFactors = FALSE)
 suppressPackageStartupMessages(library(ggplot2))
@@ -35,8 +36,8 @@ build <- function(y0, y1, minfrac = .90) {
        share = 100 * sum(p$co2[p$Year == 2015 & p$Code %in% keep & p$ok]) /
                      sum(p$co2[p$Year == 2015 & p$ok]))
 }
-P <- build(1990, 2021)     # primary
-H <- build(1980, 2021, .95)  # history (lets us test Rio)
+P <- build(1980, 2021)   # primary: one window for every result, including the Rio test
+R <- build(1990, 2021)   # robustness: adds post-Soviet states
 
 kcols <- c("C/GDP" = "#3A66A5", "C/E" = "#2E8B57", "E/GDP" = "#C77F00")
 GREY <- "#8A8A8A"; REDC <- "#B33A3A"; col_paris <- "#2E7D32"
@@ -96,8 +97,8 @@ p1 <- ggplot(d1, aes(y = part)) +
            hjust = 1, size = 3.8, color = "#333333", fontface = "bold") +
   scale_x_continuous(limits = c(-1.5, 5.5), breaks = seq(-1, 3, 1)) +
   coord_cartesian(ylim = c(0.6, 4.75), clip = "off") +
-  labs(title = "Emissions growth fell by two thirds after Paris - but only the fuel mix improved",
-       subtitle = sprintf("Average annual change (%%). CO2 growth = economic growth + fuel mix + energy efficiency. %d countries, %.1f%% of global CO2.\nEnergy efficiency improved at exactly the same rate as before. Most of the slowdown is slower growth; the rest is cleaner energy.",
+  labs(title = "Emissions growth fell by two thirds - but over half of that is slower economic growth",
+       subtitle = sprintf("Average annual change (%%). CO2 growth = economic growth + fuel mix + energy efficiency. %d countries, %.1f%% of global CO2, 1980-2021.\nOf the 1.8-point slowdown in emissions growth, 1.0 point is slower growth and 0.7 is genuine decarbonization - split between a cleaner fuel mix and efficiency.",
                           P$n, P$share),
        x = "Average annual change (%)", y = NULL) +
   theme_w + theme(panel.grid.major.x = element_line(color = "#EEEEEE"))
@@ -108,7 +109,7 @@ proj <- do.call(rbind, lapply(names(kcols), function(k) {
   d <- data.frame(Year = g$Year, y = series(g, k), component = k)
   f <- lm(y ~ Year, d[d$Year <= 2015, ])
   pr <- predict(f, newdata = d, interval = "prediction")
-  ref <- d$y[d$Year == 1990]
+  ref <- d$y[d$Year == min(d$Year)]
   d$idx <- 100 * exp(d$y - ref); d$fidx <- 100 * exp(pr[, 1] - ref)
   d$lo <- 100 * exp(pr[, 2] - ref); d$hi <- 100 * exp(pr[, 3] - ref); d
 }))
@@ -122,7 +123,7 @@ lb <- do.call(rbind, lapply(names(kcols), function(k) {
     sprintf("no change from trend:\n%+.1f pp/yr (t = %.1f)", r[1], r[2]))
 }))
 lb$panel <- factor(lb$panel, levels = nm)
-lb$Year <- 1991
+lb$Year <- min(g$Year) + 1
 lb$idx <- sapply(as.character(lb$panel), function(k) min(proj$idx[proj$panel == k]) * 1.02)
 p2 <- ggplot(proj, aes(Year, idx)) +
   geom_ribbon(data = proj[proj$Year >= 2015, ], aes(ymin = lo, ymax = hi, fill = component), alpha = .16, show.legend = FALSE) +
@@ -134,15 +135,14 @@ p2 <- ggplot(proj, aes(Year, idx)) +
   geom_text(data = lb, aes(label = txt), hjust = 0, size = 3.6, color = "#333333", lineheight = .95) +
   facet_wrap(~panel, ncol = 3, scales = "free_y") +
   scale_color_manual(values = kcols) + scale_fill_manual(values = kcols) + scale_y_log10() +
-  labs(title = "The fuel mix broke away from its old trend after Paris. Efficiency did not.",
-       subtitle = "Each panel is indexed to 1990 = 100. The line is the 1990-2015 trend, extended past Paris with a shaded band showing where\nthe following years should have landed if nothing had changed. Red points are what actually happened.",
-       x = NULL, y = "Index (1990 = 100)") + theme_w
+  labs(title = "Since Paris, the world has run ahead of its own long-run trend",
+       subtitle = sprintf("Each panel is indexed to %d = 100. The line is the %d-2015 trend, extended past Paris with a shaded band showing where the\nfollowing years should have landed if nothing had changed. Red points are what actually happened.", min(g$Year), min(g$Year)),
+       x = NULL, y = sprintf("Index (%d = 100)", min(g$Year))) + theme_w
 save_both(p2, "w2_fig2_anniversary_test", 13, 6)
 
 ## ---- FIGURE 3 · Rio versus Paris ------------------------------------------------
-gh <- H$g
 sweep <- do.call(rbind, lapply(names(kcols), function(k) {
-  d <- data.frame(Year = gh$Year, y = series(gh, k))
+  d <- data.frame(Year = g$Year, y = series(g, k))
   ks <- (min(d$Year) + 8):(max(d$Year) - 5)
   data.frame(panel = nm[k], knot = ks, t = sapply(ks, function(kk) abs(nw(d, kk)[2])))
 }))
@@ -166,7 +166,7 @@ p3 <- ggplot(sweep, aes(knot, t, color = panel)) +
   scale_x_continuous(breaks = c(1992, 2015), labels = c("Rio\n1992", "Paris\n2015")) +
   scale_y_continuous(expand = expansion(mult = c(.16, .10))) +
   labs(title = "Rio the record rejects. Paris it does not.",
-       subtitle = sprintf("We put the turning point in every possible year and record how strong the evidence is. Higher means the record prefers that year.\nRio ranks near the bottom of all candidate years; Paris ranks near the top. %d countries, 1980-2021.", H$n),
+       subtitle = sprintf("We put the turning point in every possible year and record how strong the evidence is. Higher means the record prefers that year.\nRio ranks near the bottom of all candidate years; Paris ranks near the top. %d countries, 1980-2021.", P$n),
        x = NULL, y = "Strength of evidence for a turn in this year") +
   theme_w + theme(legend.position = "none")
 save_both(p3, "w2_fig3_rio_vs_paris", 13, 6)
@@ -200,10 +200,10 @@ save_both(p4, "w2_fig4_what_we_could_see", 12.5, 6)
 ## ---- FIGURE 5 · how the panel is built (methods/appendix) ------------------------
 cnt <- aggregate(Code ~ Year, p[p$ok, ], function(v) length(unique(v))); names(cnt)[2] <- "n"
 p5 <- ggplot(cnt, aes(Year, n)) +
-  annotate("rect", xmin = 1990, xmax = 2021, ymin = -Inf, ymax = Inf, fill = "#2E8B57", alpha = .08) +
+  annotate("rect", xmin = 1980, xmax = 2021, ymin = -Inf, ymax = Inf, fill = "#2E8B57", alpha = .08) +
   annotate("rect", xmin = 2021.5, xmax = 2023.5, ymin = -Inf, ymax = Inf, fill = REDC, alpha = .12) +
   geom_line(color = "#3A66A5", linewidth = 1.2) + geom_point(color = "#3A66A5", size = 1.6) +
-  annotate("text", x = 2005, y = 55, label = sprintf("our window: %d countries,\n%.1f%% of global CO2", P$n, P$share),
+  annotate("text", x = 2000, y = 55, label = sprintf("our window: %d countries,\n%.1f%% of global CO2", P$n, P$share),
            color = "#1B7837", fontface = "bold", size = 4, lineheight = .95) +
   annotate("text", x = 2021, y = 120, label = "not yet reported:\n191 → 78 countries", color = REDC, size = 3.5, hjust = 1.05, lineheight = .95) +
   labs(title = "We use every country that reports, for as long as it reports",
@@ -211,5 +211,28 @@ p5 <- ggplot(cnt, aes(Year, n)) +
        x = NULL, y = "Countries reporting") + theme_w
 save_both(p5, "w2_fig5_panel_construction", 12.5, 5.8)
 
-cat(sprintf("v2 figures written to %s\nPRIMARY %d countries (%.1f%% CO2, %d gaps filled) | HISTORY %d countries\n",
-            od, P$n, P$share, P$filled, H$n))
+## ---- FIGURE 6 · does the panel choice matter? ----------------------------------
+cmp <- do.call(rbind, lapply(list(list(lab = sprintf("From 1980\n%d countries, %.1f%% of CO2", P$n, P$share), G = P$g),
+                                  list(lab = sprintf("From 1990\n%d countries, %.1f%% of CO2", R$n, R$share), G = R$g)),
+  function(o) do.call(rbind, lapply(names(kcols), function(k) {
+    d <- data.frame(Year = o$G$Year, y = series(o$G, k)); r <- nw(d, 2015)
+    data.frame(panel = o$lab, comp = nm[k], est = r[1], t = r[2],
+               se = abs(r[1] / r[2]))
+  }))))
+cmp$comp <- factor(cmp$comp, levels = rev(nm))
+cmp$sig <- abs(cmp$t) >= 2
+p6 <- ggplot(cmp, aes(est, comp, color = panel, shape = sig)) +
+  geom_vline(xintercept = 0, color = "#888888") +
+  geom_errorbarh(aes(xmin = est - 1.96 * se, xmax = est + 1.96 * se), height = .16,
+                 position = position_dodge(width = .55), linewidth = .9) +
+  geom_point(size = 4, position = position_dodge(width = .55)) +
+  scale_color_manual(values = c("#1B7837", "#3A66A5")) +
+  scale_shape_manual(values = c(`TRUE` = 16, `FALSE` = 1), guide = "none") +
+  labs(title = "The headline holds on either panel. The efficiency result does not.",
+       subtitle = "Change in each trend after 2015, with 95% intervals. Hollow points are not statistically distinguishable from no change.\nThe 1990 panel adds the post-Soviet economies, whose post-1990 efficiency catch-up raises the pre-Paris baseline and absorbs the efficiency gain.",
+       x = "Change in annual trend after 2015 (percentage points)", y = NULL, color = NULL) +
+  theme_w
+save_both(p6, "w2_fig6_panel_robustness", 12.5, 5.8)
+
+cat(sprintf("v2 figures written to %s\nPRIMARY %d countries (%.1f%% CO2, %d gaps filled) | ROBUSTNESS %d countries\n",
+            od, P$n, P$share, P$filled, R$n))

@@ -84,14 +84,14 @@ tf = box(s, 0.9, 1.7, 11.5, 3.6)
 para(tf, "Paris at Ten", size=46, bold=True, first=True, space_after=8)
 para(tf, "Emissions growth has fallen by two thirds since the Paris Agreement. We ask what the global record can, and cannot, credit the treaty for.",
      size=19, color=GRAY, space_after=14)
-runs(tf, [("182 countries · 99.8% of global CO2 · 1990-2021", GREEN, True)], size=14)
+runs(tf, [("155 countries · 90.6% of global CO2 · 1980-2021", GREEN, True)], size=14)
 notes(s, "World-level paper. Country-level mechanism analysis is the follow-on paper, referenced once at the end.")
 
 # ---------------------------------------------------------------- 2 · the question
 s = slide()
 kicker_title(s, "THE QUESTION", "Something changed after Paris. Was it Paris?")
 tf = box(s, 0.55, 1.6, 7.4, 5.4)
-para(tf, "The good news is real. Across essentially every country that reports, CO2 growth fell from +2.1% a year over the Rio-to-Paris quarter century to +0.7% a year since. Worst-case scenarios have moved off the table.",
+para(tf, "The good news is real. Across the countries we can track consistently since 1980, CO2 growth fell from +2.5% a year over the Rio-to-Paris quarter century to +0.8% a year since. Worst-case scenarios have moved off the table.",
      size=15, color=GRAY, first=True, space_after=14)
 para(tf, "But the obvious reading — that the agreement did it — is exactly the reading the data is worst at supporting. Carbon intensity has been falling for fifty years. Renewable costs collapsed on almost the same schedule as the treaty. And a slowdown in emissions can come simply from a slowdown in the economy.",
      size=15, color=GRAY, space_after=14)
@@ -109,7 +109,7 @@ notes(s, "Frame sympathetically, then set up the decomposition that structures t
 s = slide()
 kicker_title(s, "WHAT WE DID", "Three steps", kcolor=BLUE)
 steps = [("1", "Build a consistent world series",
-          "Take every country still reporting in 2021 with almost complete data, fill the handful of gaps, and add them up. That is 182 countries and 99.8% of global CO2. We stop at 2021 because most countries have not reported 2022-23 yet."),
+          "Take every country still reporting in 2021 with almost complete data back to 1980, fill the handful of gaps, and add them up. That is 155 countries and 91% of global CO2. We stop at 2021 because most countries have not reported 2022-23 yet."),
          ("2", "Let the data pick the turning point",
           "Plot each series so a straight line means a steady percentage change per year, then fit two lines meeting at a kink. Try every possible kink year and keep the one that fits best. Nothing about a treaty enters this step."),
          ("3", "Ask whether the treaty year is special",
@@ -130,27 +130,35 @@ notes(s, "One methodology slide. If asked for detail: two-segment regression wit
 finding("WHAT WE DID · THE DATA", "We use every country that reports, for as long as it reports",
         "Near-complete coverage — and the last two years are dropped because most countries have not reported them.",
         F("w2_fig5_panel_construction.png"),
-        note="182 countries, 99.8% of 2015 global CO2, 13 interpolated cells out of 5,824. The 2022-23 cliff is a reporting lag, not a real change, and including it would badly distort the post-Paris window.",
+        note="155 countries, 90.6% of 2015 global CO2, 14 interpolated cells. The missing 9% is almost entirely post-Soviet and Eastern-bloc states, which did not exist as separate series in 1980 - the robustness slide adds them back. The 2022-23 cliff is a reporting lag, not a real change.",
         kcolor=BLUE)
 
 # ---------------------------------------------------------------- 5 · finding 1
-finding("WHAT WE FIND · 1 OF 3", "Emissions growth fell — but mostly because growth fell",
-        "Two thirds of the slowdown is slower economic growth. The fuel mix improved. Energy efficiency did not change at all.",
+finding("WHAT WE FIND · 1 OF 4", "Emissions growth fell — and over half of that is slower growth",
+        "Of the 1.8-point slowdown, 1.0 point is a slower economy. The remaining 0.7 is real decarbonization, split between cleaner fuel and efficiency.",
         F("w2_fig1_what_changed.png"),
-        note="Before → after: GDP +3.1 → +2.1; fuel mix -0.0 → -0.4; efficiency -1.0 → -1.0; CO2 +2.1 → +0.7. The efficiency result is the surprise: fifty years of steady improvement, entirely unaffected by the treaty era.")
+        note="Before → after: GDP +3.1 → +2.1; fuel mix +0.0 → -0.4; efficiency -0.6 → -0.9; CO2 +2.5 → +0.8. Roughly 56% of the slowdown is the economy, 44% is decarbonization.")
 
 # ---------------------------------------------------------------- 6 · finding 2
-finding("WHAT WE FIND · 2 OF 3", "The fuel mix broke away from its trend. Efficiency stayed on it.",
-        "Cleaner energy is the one place the world is now beating its own long-run trend — and it is where climate policy would show up first.",
+finding("WHAT WE FIND · 2 OF 4", "Since Paris the world has beaten its own long-run trend",
+        "All three measures are improving faster than 35 years of trend predicted — and the effect is largest on overall carbon intensity.",
         F("w2_fig2_anniversary_test.png"),
-        note="Fuel mix -0.7 pp/yr faster than trend (t = 3.4); overall intensity -1.0 (t = 2.3); efficiency -0.3 (t = 1.3, not significant). Supply-side change, not demand-side.")
+        note="Against the 1980-2015 trend: overall intensity -1.5 pp/yr (t = 4.5); efficiency -1.0 (t = 5.5); fuel mix -0.6 (t = 2.7). All three significant on this panel - but see the robustness slide, where efficiency does not survive adding the post-Soviet states.")
 
 # ---------------------------------------------------------------- 7 · finding 3
-finding("WHAT WE FIND · 3 OF 3", "Rio fails the placebo test. Paris passes it.",
+finding("WHAT WE FIND · 3 OF 4", "Rio fails the placebo test. Paris passes it.",
         "Paris is the first treaty date the global record does not reject — it ranks in the top tenth of all candidate years.",
         F("w2_fig3_rio_vs_paris.png"),
-        caveat="the evidence is a plateau across 2012-2016, not a spike at 2015 — and that window coincides exactly with the collapse in clean-energy costs.",
-        note="Rio: 14th percentile for overall intensity, 66th for fuel mix. Paris: 97th and 93rd. This is the contrast that makes the paper — the same test that dismisses Rio does not dismiss Paris.",
+        caveat="the best-fitting year is 2014, not 2015, and the fuel mix prefers an older shift in the late 1980s — so the evidence is a plateau, not a spike, and it coincides with the clean-energy cost collapse.",
+        note="Rio: 7th percentile for overall intensity, 34th for efficiency, 69th for fuel mix. Paris: 97th, 86th, 90th. Same panel and same window as every other result now - no window-switching to make the comparison.",
+        kcolor=AMBER)
+
+# ---------------------------------------------------------------- 8b · finding 4
+finding("WHAT WE FIND · 4 OF 4", "One result depends on which countries you include",
+        "The overall acceleration holds on every panel. Whether efficiency contributed depends on whether post-Soviet economies are in the sample.",
+        F("w2_fig6_panel_robustness.png"),
+        caveat="those economies cannot be carried back to 1980 — they did not exist as separate series — so this is a genuine trade-off between history and coverage, not a modelling choice.",
+        note="Starting in 1990 adds 27 countries and 9% of global CO2, almost all post-Soviet and Eastern-bloc. Their post-1990 efficiency catch-up raises the pre-Paris baseline and absorbs the efficiency gain. We report both panels rather than choose.",
         kcolor=AMBER)
 
 # ---------------------------------------------------------------- 9 · verdict
@@ -158,13 +166,13 @@ s = slide()
 kicker_title(s, "WHAT IT ADDS UP TO", "Consistent with Paris. Not attributable to it.")
 tf = box(s, 0.55, 1.6, 6.05, 5.4)
 para(tf, "What we can say", size=15, bold=True, color=GREEN, first=True, space_after=6)
-para(tf, "Emissions growth has fallen by two thirds, and part of that is a genuine improvement in the world's fuel mix that beats fifty years of trend. That improvement sits in the supply side, exactly where climate policy and clean technology operate. And 2015 ranks near the top of all candidate turning-point years — a test the 1992 Rio agreement fails badly.",
+para(tf, "Emissions growth has fallen by two thirds, and roughly 0.7 points of that is genuine decarbonization rather than a slower economy. Carbon intensity is improving significantly faster than 35 years of trend predicted, on every panel we build. And 2015 ranks near the top of all candidate turning-point years — a test the 1992 Rio agreement fails badly.",
      size=13.5, color=GRAY, space_after=0)
 tf = box(s, 7.0, 1.6, 5.8, 5.4)
 para(tf, "What we cannot", size=15, bold=True, color=RED, first=True, space_after=6)
-para(tf, "Most of the emissions slowdown is slower economic growth, not decarbonization. Energy efficiency did not respond at all. And the evidence for a turn is spread across 2012 to 2016 rather than concentrated on the treaty year — a window the test cannot resolve, and one that coincides exactly with the collapse in clean-energy costs.",
+para(tf, "Over half the emissions slowdown is slower economic growth, not decarbonization. The best-fitting turning point is 2014 rather than 2015, and the evidence is a plateau the test cannot resolve. That plateau coincides exactly with the collapse in clean-energy costs. And the efficiency contribution disappears once post-Soviet economies are added back.",
      size=13.5, color=GRAY, space_after=10)
-para(tf, "The one thing that changed after Paris is the one thing cheap clean energy would also have changed.",
+para(tf, "The change is real, and it arrives exactly when cheap clean energy did. The record cannot tell those two apart.",
      size=13.5, color=INK, bold=True, space_after=0)
 notes(s, "If one sentence survives, it is the bolded one. Neither vindication nor indictment.")
 
@@ -187,10 +195,10 @@ s = slide()
 kicker_title(s, "LIMITS", "What we are not claiming", kcolor=RED)
 col = [("This is not causal",
         "A turning point identifies when a trend changed, never why. Even a perfect fit at 2015 would be a coincidence of timing. And an agreement that prevented backsliding would leave no turning point at all — so the absence of one is not the absence of an effect."),
-       ("The window matters",
-        "Paris ranks 97th percentile against candidate years on a 1980-start series and lower on a 1990-start one; the fuel-mix result holds above the 90th in both. We report both rather than the flattering one."),
+       ("Which countries, and how far back",
+        "Starting in 1980 buys 35 years of pre-treaty history but drops 27 countries and 9% of global CO2 — nearly all post-Soviet states, which have no separate 1980 series. Starting in 1990 recovers them and removes the efficiency result. Both are reported."),
        ("Coverage and vintage",
-        "182 countries and 99.8% of CO2, but only 13 gaps interpolated and the series stops in 2021 because 2022-23 reporting is incomplete. Adding those two years on partial coverage would overstate the acceleration."),
+        "155 countries and 91% of CO2, with only 14 gaps interpolated. The series stops in 2021 because 2022-23 reporting is incomplete — adding those years on partial coverage would overstate the acceleration."),
        ("Production-based accounting",
         "Emissions are counted where they are produced. At the world level that is the right frame — global production equals global consumption — but it matters for the national work that follows.")]
 xs, ys = [0.55, 7.0, 0.55, 7.0], [1.6, 1.6, 4.35, 4.35]
@@ -206,10 +214,10 @@ tf = box(s, 0.9, 1.6, 11.5, 2.0)
 para(tf, "The curve is bending.", size=28, bold=True, first=True, space_after=2)
 para(tf, "The record cannot yet tell us who bent it.", size=28, bold=True, color=GREEN, space_after=0)
 tf = box(s, 0.9, 3.7, 11.5, 2.9)
-for t in ["Emissions growth fell by two thirds after Paris — but two thirds of that is slower economic growth.",
-          "The fuel mix is the one component beating its long-run trend. Energy efficiency has not changed at all.",
+for t in ["Emissions growth fell by two thirds after Paris — but over half of that is a slower economy.",
+          "Carbon intensity is beating 35 years of trend, significantly, on every panel we build.",
           "Rio fails the placebo test; Paris passes it — the first treaty date the record does not reject.",
-          "And the change coincides with the clean-energy cost collapse, which six years of data cannot separate from it."]:
+          "But the best fit is 2014, not 2015, and the turn coincides with the clean-energy cost collapse."]:
     runs(tf, [("—  ", GREEN, True), (t, GRAY, False)], size=15, space_after=10)
 tf = box(s, 0.9, 6.6, 11.5, 0.7)
 para(tf, "Turning points say when · the Kaya split says through which door · placebo tests say whether the date is special",
