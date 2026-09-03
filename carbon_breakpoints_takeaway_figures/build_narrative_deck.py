@@ -132,10 +132,10 @@ s = slide()
 tf = box(s, 0.55, 0.5, 12.25, 1.0)
 para(tf, "II. THE MECHANISM", size=16, bold=True, color=GREEN, first=True, space_after=0)
 tf = box(s, 0.55, 1.55, 6.2, 5.7)
-para(tf, "Efficiency stayed flat. The fuel mix stalled, then resumed.", size=18, bold=True, color=INK, first=True, space_after=10)
-para(tf, "Carbon intensity has two doors: the fuel mix (how much carbon per unit of energy) and efficiency (how much energy per unit of GDP). Efficiency improved steadily at about -1% per year for the entire fifty-year period — unchanged by any event, including Paris.",
+para(tf, "Efficiency gains stayed flat. Supply-side decarbonization stalled, then resumed.", size=18, bold=True, color=INK, first=True, space_after=10)
+para(tf, "Carbon intensity has two doors: supply-side decarbonization (how much carbon per unit of energy) and efficiency gains (how much energy per unit of GDP). Efficiency improved steadily at about 1% per year for the entire fifty-year period — unchanged by any event, including Paris.",
      size=14, color=GRAY, space_after=12)
-para(tf, "The fuel mix tells a different story. It improved at -0.52%/yr after the oil shocks, stalled completely from 1990 to 2015, then resumed at -0.70%/yr. The resumption looks like a return to historical pace, not a new policy effect.",
+para(tf, "Supply-side decarbonization tells a different story. It improved at -0.52%/yr after the oil shocks, stalled completely from 1990 to 2015, then resumed at -0.70%/yr. The resumption looks like a return to historical pace, not a new policy effect.",
      size=14, color=GRAY, space_after=0)
 fit_image(s := s, FIGS + "/v3_fig2_baseline_problem.png", 6.5, 1.55, 6.5, 5.7)
 notes(s, "The three eras are 1973-1990 (oil shock recovery), 1990-2015 (Rio to Paris stall), 2016-2023 (resumption). Efficiency steady throughout. Fuel mix is the story.")
@@ -145,12 +145,12 @@ s = slide()
 tf = box(s, 0.55, 0.5, 12.25, 1.0)
 para(tf, "II. THE DIAGNOSIS", size=16, bold=True, color=GREEN, first=True, space_after=0)
 tf = box(s, 0.55, 1.55, 12.25, 5.7)
-para(tf, "Why the fuel mix matters for attribution", size=18, bold=True, color=INK, first=True, space_after=10)
-para(tf, "The mechanism is where policy lives. Climate agreements try to change the fuel mix — through renewable targets, carbon pricing, technology support. They do not directly move efficiency. If Paris was the cause of the 2012 turn, efficiency should have accelerated. It did not.",
+para(tf, "Why supply-side decarbonization matters for attribution", size=18, bold=True, color=INK, first=True, space_after=10)
+para(tf, "The mechanism is where policy lives. Climate agreements try to change the energy supply mix — through renewable targets, carbon pricing, technology support. They do not directly move efficiency. If Paris was the cause of the 2012 turn, efficiency should have accelerated. It did not.",
      size=14, color=GRAY, space_after=12)
-para(tf, "The fuel mix resumed in 2012 after a 25-year stall, but the resumption matches the timing of renewable cost collapse, not the treaty timeline. Solar photovoltaic costs fell by 90% between 2010 and 2020, with the steepest drops between 2010 and 2015 — exactly when the fuel mix started improving again.",
+para(tf, "Supply-side decarbonization resumed in 2012 after a 25-year stall, but the resumption matches the timing of renewable cost collapse, not the treaty timeline. Solar photovoltaic costs fell by 90% between 2010 and 2020, with the steepest drops between 2010 and 2015 — exactly when the energy mix started improving again.",
      size=14, color=GRAY, space_after=12)
-para(tf, "This is the puzzle Paris has to solve: the acceleration happened where it should have happened (fuel mix) but when it should not have happened (before the treaty), and it looks like what technology-driven change produces.",
+para(tf, "This is the puzzle Paris has to solve: the acceleration happened where it should have happened (energy supply) but when it should not have happened (before the treaty), and it looks like what technology-driven change produces.",
      size=14, color=GRAY, space_after=0)
 notes(s, "The timing and mechanism both point to technology. The Paris timing is harder to support with the data.")
 
@@ -214,28 +214,28 @@ notes(s, "Honest conclusion. Not a verdict on Paris but a parsing of what the wo
 # POLICY IMPLICATIONS 1
 s = slide()
 tf = box(s, 0.55, 0.5, 12.25, 1.0)
-para(tf, "IMPLICATION 1 · TECHNOLOGY IS THE LEVER THAT MOVED", size=16, bold=True, color=GREEN, first=True, space_after=0)
+para(tf, "IMPLICATION 1 · 2012 AS PRECURSOR, NOT PARIS AS CAUSE", size=16, bold=True, color=GREEN, first=True, space_after=0)
 tf = box(s, 0.55, 1.55, 12.25, 5.7)
-para(tf, "The data tells a story about what actually changes decarbonization", size=18, bold=True, color=INK, first=True, space_after=12)
-para(tf, "The fuel mix resumed its decline in 2012, exactly when solar photovoltaic costs began their steepest fall. The timing is too precise to be coincidence. Renewable technology became cheap enough that switching was profitable, independent of treaty commitments.",
+para(tf, "The data suggests a longer political movement, not a single turning point", size=18, bold=True, color=INK, first=True, space_after=12)
+para(tf, "The 2012 turning point precedes Paris, but it coincides with the UNFCCC negotiation process leading to Paris. Three overlapping explanations are possible: markets anticipating policy, countries implementing pre-Paris climate commitments, or renewable technology costs making switching profitable.",
      size=14, color=GRAY, space_after=12)
-para(tf, "This does not mean Paris is irrelevant. But it suggests that climate policy works best when it either makes clean technology cheaper (subsidies, R&D) or makes dirty energy more expensive (carbon pricing). Commitments alone, without the economic incentive to change, do not appear sufficient to move large-scale behavior.",
+para(tf, "This reframes the question from 'Did Paris cause 2012?' to 'Was 2012 part of a broader movement that Paris codified?' The data alone cannot distinguish between technology momentum, diplomatic expectations, and policy implementation. But it suggests that 2012-2015 was a coherent period of accelerating action, not a sharp break at treaty signing.",
      size=14, color=GRAY, space_after=12)
-para(tf, "For policymakers: the Copenhagen Accord and Paris Agreement happened while the solar industry was already collapsing in cost. The timing alignment is favorable but deceptive — the mechanism was technology, not treaty enforcement.",
+para(tf, "For policymakers: Paris did not invent decarbonization, but it locked in and extended a trend already underway. The question is whether Paris accelerated the pace beyond what technology costs alone would have driven.",
      size=14, color=GRAY, space_after=0)
 notes(s, "The policy insight: we credit Paris with decarbonization that happened because of technology cost collapse. That's not a criticism of Paris, but it means our theories of change matter. Technology is what moved behavior at world scale.")
 
 # POLICY IMPLICATIONS 2
 s = slide()
 tf = box(s, 0.55, 0.5, 12.25, 1.0)
-para(tf, "IMPLICATION 2 · EFFICIENCY IS THE MISSING HALF", size=16, bold=True, color=GREEN, first=True, space_after=0)
+para(tf, "IMPLICATION 2 · EFFICIENCY GAINS ARE THE MISSING HALF", size=16, bold=True, color=GREEN, first=True, space_after=0)
 tf = box(s, 0.55, 1.55, 12.25, 5.7)
 para(tf, "Where climate policy has not yet delivered", size=18, bold=True, color=INK, first=True, space_after=12)
-para(tf, "Energy efficiency — how much energy the world uses per unit of economic output — has improved at a steady -1% per year for fifty years, completely unmoved by Paris or any other policy intervention. This is the constraint on how fast decarbonization can go.",
+para(tf, "Energy efficiency — how much energy the world uses per unit of economic output — has improved at a steady 1% per year for fifty years, completely unmoved by Paris or any other policy intervention. This is the constraint on how fast decarbonization can accelerate.",
      size=14, color=GRAY, space_after=12)
-para(tf, "The fuel mix can only get so clean before renewable penetration hits physical or storage limits. Beyond that, the world has to use less energy per unit of output. Current evidence suggests that policy has not yet moved that needle. This is the frontier for climate strategy: understanding why efficiency is sticky and what would accelerate it.",
+para(tf, "Supply-side decarbonization can only go so far before renewable penetration hits physical or storage limits. Beyond that, the world has to use less energy per unit of output. Current evidence suggests that policy has not yet moved that needle. This is the frontier for climate strategy: understanding why demand-side efficiency is sticky and what would accelerate it.",
      size=14, color=GRAY, space_after=12)
-para(tf, "For policymakers: the current world decarbonization rate of -2.1%/yr needs to reach -5% to -11%/yr to meet climate targets. The fuel mix alone cannot carry that load. Efficiency has to move, and so far it has not responded to policy.",
+para(tf, "For policymakers: the current world decarbonization rate of -2.1%/yr needs to reach -5% to -11%/yr to meet climate targets. Supply-side improvements alone cannot carry that load. Efficiency has to improve faster, and so far it has not responded to policy.",
      size=14, color=GRAY, space_after=0)
 notes(s, "Efficiency is where we haven't made progress. It's also where the big gains are available if policy can figure out how to unlock them.")
 

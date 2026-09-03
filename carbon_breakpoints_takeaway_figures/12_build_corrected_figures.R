@@ -17,7 +17,7 @@ W <- W[W$Year >= 1965, ]
 grid <- read.csv(file.path(md, "spec_grid.csv"))
 
 kcols <- c("C/GDP" = "#3A66A5", "C/E" = "#2E8B57", "E/GDP" = "#C77F00")
-nm <- c("C/GDP" = "Carbon intensity (overall)", "C/E" = "Fuel mix (cleaner energy)", "E/GDP" = "Energy efficiency")
+nm <- c("C/GDP" = "Carbon intensity (overall)", "C/E" = "Supply-side decarbonization", "E/GDP" = "Efficiency gains")
 GREY <- "#8A8A8A"; REDC <- "#B33A3A"; PARIS <- "#2E7D32"
 theme_w <- theme_minimal(base_size = 14) +
   theme(plot.title = element_text(face = "bold", size = 17),
