@@ -42,10 +42,11 @@ HOOK = {
         "almost not at all within them year to year. Thirty of 42 countries are significant in levels; "
         "two are in differences. The obvious dismissal is that this says more about the SDG framework "
         "than about the world — 661 series, uneven coverage, seventeen goals of wildly different maturity.",
-        "So we tested that dismissal. Swap the framework for the HDI. Swap the Cantril ladder for the "
-        "European Social Survey. Go one spatial scale down to subnational regions. The collapse survives "
-        "all three swaps, which means it is a property of the design, not of the SDGs — and it means the "
-        "levels are where the signal actually lives.",
+        "So we tested that dismissal. Swap the framework for the HDI — built the opposite way on every "
+        "dimension the dismissal leans on — and the collapse is just as sharp. Swap the Cantril ladder for "
+        "the European Social Survey and go one spatial scale down, and the levels association holds on an "
+        "independent instrument. The asymmetry is a property of the design, not of the SDGs, and the levels "
+        "are where the signal actually lives.",
         "That licenses the next question. If levels are where development and wellbeing meet, which parts "
         "of development are doing the work? In the frameworks, health and education both register — but only "
         "once you stop pooling education's 35 series together. Then we ask the same question of the ESS, "
@@ -58,8 +59,8 @@ HOOK = {
     ],
     "acts": [
         ("I", "The collapse is real, and it is not about the SDGs.",
-         "Swap the framework, the wellbeing measure, and the spatial scale. Levels hold every time; "
-         "differences go to almost nothing every time. So analyse the levels."),
+         "The HDI shows it as sharply as the SDGs do, and an independent wellbeing instrument "
+         "corroborates the levels half. Differences carry nothing — so analyse the levels."),
         ("II", "At the levels, health and education carry the frameworks.",
          "The HDI's five components and the SDGs' seventeen goals, ranked. Health is 4th of 17. "
          "Education looks 12th — until you unpool it."),
@@ -83,9 +84,9 @@ ACTS = [
         "numeral": "I",
         "title": "Does the collapse survive when you change the design?",
         "key_numbers": [
-            ("71% → 5%", "SDG × WHR, 42 countries — the original finding"),
-            ("42% → 2%", "HDI × WHR, 150 countries — swap the framework"),
-            ("47% → 0%", "SHDI × ESS — swap the wellbeing measure and the scale"),
+            ("71% → 5%", "SDG × WHR, 42 countries, ~13 years — the original finding"),
+            ("42% → 2%", "HDI × WHR, 150 countries, ~13 years — swap the framework"),
+            ("47%", "SHDI × ESS at levels, across regions — swap the instrument and scale"),
         ],
         "thesis": (
             "The SDG null invites an easy dismissal: sprawling framework, uneven coverage, so "
@@ -94,9 +95,10 @@ ACTS = [
             "is an artefact of the SDGs, it should not survive."
         ),
         "close": (
-            "Three swaps, three collapses. The asymmetry belongs to the design, not to any one "
-            "framework. Differences are too noisy to carry an argument — so everything that follows "
-            "is a question about the levels."
+            "Two well-powered pairings, the same asymmetry in both. The ESS corroborates the levels "
+            "half with an independent wellbeing instrument, and is too short a panel to rule on "
+            "differences either way. Differences cannot carry an argument — so everything that "
+            "follows is a question about the levels."
         ),
         "beats": [
             {
@@ -137,24 +139,30 @@ ACTS = [
                            "and per indicator. The SDG lead is breadth, not sharper instruments.",
             },
             {
-                "label": "Swap 2 and 3 · the wellbeing measure, and the scale",
-                "heading": "Change the happiness data and the unit of analysis, and it still collapses",
+                "label": "Swap 2 · the wellbeing measure",
+                "heading": "Swapping the Cantril ladder for the ESS: what it can and cannot settle",
                 "body": [
                     "The World Happiness Report is a single Cantril-ladder question aggregated to countries. "
-                    "The European Social Survey asks its own life-satisfaction and happiness items of "
-                    "individuals, on a different sampling frame, in a different institution. And subnational "
-                    "HDI lets us drop one spatial scale below the country.",
-                    "Pairing subnational HDI with ESS life satisfaction: across regions inside a country, 47% "
-                    "of countries are FDR-significant at levels. Within each region over survey rounds, 0 of "
-                    "167 regions survive. The levels result sits right on top of the national one (47% against "
-                    "42%), and the differences result is, if anything, more complete.",
-                    "Three independent swaps — framework, wellbeing instrument, spatial scale — and the same "
-                    "asymmetry each time. Whatever produces it is structural to comparing a slow-moving "
-                    "aggregate against a noisy annual outcome, not specific to any dataset.",
+                    "The European Social Survey asks its own life-satisfaction item of individuals, on a "
+                    "different sampling frame, run by a different institution. Holding the HDI and the country "
+                    "unit fixed and changing only the wellbeing data isolates that one leg.",
+                    "The result is 8% at levels and 16% in differences across 25 countries — and it should be "
+                    "read as a null test rather than a finding in either direction. The ESS runs seven survey "
+                    "rounds where the WHR panels run thirteen years, and differences coming out above levels is "
+                    "not a pattern a real association produces. Panel b is the check: at seven observations, a "
+                    "genuine correlation of 0.5 is recovered in about 3% of units. This design cannot see much "
+                    "at that length, so its silence is not evidence.",
+                    "Where the ESS does have power is in cross-section. Pairing subnational HDI with ESS life "
+                    "satisfaction across regions inside each country — many regions per country rather than "
+                    "seven rounds — gives 47% of 15 countries FDR-significant at levels, sitting right on top "
+                    "of the 42% the HDI reaches nationally against the Cantril ladder. So the levels half "
+                    "corroborates on an independent instrument at a finer scale. The differences half rests on "
+                    "the SDG and HDI panels, which is where it always rested.",
                 ],
                 "figure": "ess_levels_diffs_collapse.png",
-                "caption": "The same FDR test in all three pairings. Levels between 42% and 71%; "
-                           "differences between 0% and 5%.",
+                "caption": "Panel a: the same FDR test, levels and differences on the same units, in all three "
+                           "pairings. Panel b: how much of a genuine association each series length recovers — "
+                           "the reason the hatched bars carry no verdict.",
             },
         ],
     },
@@ -565,6 +573,15 @@ DECISIONS = [
      "means; at that n roughly two-thirds of pure noise clears the bar, which inflated the ESS "
      "figures and made the framework comparison meaningless. ESS is now estimated on individual "
      "respondents, demeaned within country-round."),
+
+    ("What the ESS panel can and cannot test",
+     "Seven survey rounds is too short for the per-country time-series design. Simulating a REAL "
+     "correlation and asking how often the test finds it: at seven observations rho = 0.5 is "
+     "recovered in ~3% of units and rho = 0.7 in ~23%, against ~50% and ~79% at thirteen years. "
+     "So HDI x ESS returning 8% levels / 16% differences is a null test, not a finding — and the "
+     "inversion (differences above levels) is itself the tell. We report the bars and flag them "
+     "rather than dropping them. The ESS levels contribution comes from cross-section instead: "
+     "47% of 15 countries across regions, which is well-powered."),
 
     ("Scope of the trust finding",
      "Trust rests on the ESS: 36 European countries, one item, self-reported. 97% of countries "

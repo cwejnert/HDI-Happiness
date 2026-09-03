@@ -138,63 +138,132 @@ def sdg_goal_pct():
 # --------------------------------------------------------------------------
 # Act I -- the collapse, replicated three ways
 # --------------------------------------------------------------------------
-def collapse_three_ways():
-    """SDG x WHR, HDI x WHR, and SHDI x ESS: levels hold, differences do not."""
-    r = pd.read_csv("processed/region_round_panel.csv")
+def detection_rate(rho, n_obs, n_units, draws=400, seed=1):
+    """Share of units a per-unit time-series test recovers when the association is REAL.
 
-    # Levels, one spatial scale down: across regions inside each country
+    The collapse design tests each unit's own time series, so its power is set
+    by the length of that series, not by how many units there are. This is what
+    decides whether a null result means "no association" or "too few years".
+    """
+    rng = np.random.default_rng(seed)
+    cov = [[1, rho], [rho, 1]]
+    out = []
+    for _ in range(draws):
+        ps = [stats.pearsonr(*rng.multivariate_normal([0, 0], cov, size=n_obs).T)[1]
+              for _ in range(n_units)]
+        out.append(bh(ps).mean())
+    return 100 * float(np.mean(out))
+
+
+def ts_levels_diffs(panel, unit, xcol, ycol, tcol="year", minn=5):
+    """Per unit: time-series levels vs first differences, one unit for both halves.
+
+    This is the design the SDG paper uses. Both halves are FDR-corrected across
+    the same family of units, so the two bars for a pairing are comparable to
+    each other and to the other pairings.
+    """
+    lp, dp, ns = [], [], []
+    for _, g in panel.groupby(unit):
+        g = g.sort_values(tcol).dropna(subset=[xcol, ycol])
+        if len(g) < minn:
+            continue
+        if g[xcol].std() > 0 and g[ycol].std() > 0:
+            lp.append(stats.pearsonr(g[xcol], g[ycol])[1])
+            ns.append(len(g))
+        dx, dy = np.diff(g[xcol]), np.diff(g[ycol])
+        if len(dx) >= 4 and dx.std() > 0 and dy.std() > 0:
+            dp.append(stats.pearsonr(dx, dy)[1])
+    return 100 * bh(lp).mean(), 100 * bh(dp).mean(), len(lp), float(np.median(ns))
+
+
+def collapse_and_its_limits():
+    """Panel a: the collapse across three pairings. Panel b: how to read the third.
+
+    All three pairings hold the unit fixed across both halves -- an earlier
+    version did not, taking the third pairing's levels from a cross-section
+    across regions and its differences from a time series within regions, which
+    made the two halves incomparable.
+
+    The third pairing swaps only the wellbeing instrument: same HDI, same
+    countries, Cantril ladder replaced by ESS life satisfaction. It runs on
+    seven survey rounds instead of thirteen years, and it comes back weak in
+    levels AND inverted (differences above levels), which is not a pattern any
+    real association produces. Panel b gives the reason rather than asking the
+    reader to take it on trust: at seven observations the test recovers a
+    genuine correlation of 0.5 in about 3% of units.
+    """
+    nat = pd.read_csv("processed/country_round_panel.csv")
+    ess_lv, ess_df, ess_n, ess_yrs = ts_levels_diffs(nat, "cntry", "hdi", "stflife")
+
+    # separate corroboration: across regions inside each country, a cross-section
+    r = pd.read_csv("processed/region_round_panel.csv")
     lv = []
     for _, g in r.groupby("cntry"):
         g = g.dropna(subset=["shdi", "stflife"])
         if g.region_key.nunique() >= 8:
             lv.append(stats.pearsonr(g["shdi"], g["stflife"])[1])
-    reg_levels = 100 * bh(lv).mean()
+    reg_levels, n_ctry = 100 * bh(lv).mean(), len(lv)
 
-    # Differences, within each region over survey rounds
-    df_p = []
-    for _, g in r.groupby("region_key"):
-        g = g.sort_values("year").dropna(subset=["shdi", "stflife"])
-        if len(g) >= 5:
-            dx, dy = np.diff(g["shdi"]), np.diff(g["stflife"])
-            if dx.std() > 0 and dy.std() > 0:
-                df_p.append(stats.pearsonr(dx, dy)[1])
-    reg_diffs = 100 * bh(df_p).mean()
-
-    pairings = [
-        (f"SDG x WHR\n42 countries\n661 series", 71.0, 5.0),
-        (f"HDI x WHR\n150 countries\ncomposite index", 42.0, 2.0),
-        (f"SHDI x ESS\n{len(lv)} countries / {len(df_p)} regions\nsubnational", reg_levels, reg_diffs),
-    ]
-
-    fig, ax = plt.subplots(figsize=(11, 6))
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(13.5, 5.8), gridspec_kw={"width_ratios": [1.3, 1]})
     fig.patch.set_facecolor(BG)
-    x = np.arange(len(pairings))
-    w = 0.36
-    lvl = [p[1] for p in pairings]
-    dif = [p[2] for p in pairings]
-    b1 = ax.bar(x - w / 2, lvl, w, label="Levels", color=BLUE, alpha=0.85)
-    b2 = ax.bar(x + w / 2, dif, w, label="First differences", color=RED, alpha=0.85)
-    label_bars(ax, b1, [f"{v:.0f}%" for v in lvl])
-    label_bars(ax, b2, [f"{v:.0f}%" for v in dif])
 
+    # -- panel a: three pairings, same unit within each ----------------------
+    pairings = [("SDG x WHR\n42 countries\n~13 years each", 71.0, 5.0, True),
+                ("HDI x WHR\n150 countries\n~13 years each", 42.0, 2.0, True),
+                (f"HDI x ESS\n{ess_n} countries\n{ess_yrs:.0f} rounds each", ess_lv, ess_df, False)]
+    x, w = np.arange(len(pairings)), 0.32
+    b1 = ax.bar(x - w / 2, [p[1] for p in pairings], w, label="Levels", color=BLUE, alpha=0.85)
+    b2 = ax.bar(x + w / 2, [p[2] for p in pairings], w, label="First differences", color=RED, alpha=0.85)
+    for bar, p in zip(list(b1) + list(b2), [q for q in pairings] * 2):
+        if not p[3]:
+            bar.set_alpha(0.32)
+            bar.set_hatch("///")
+    label_bars(ax, b1, [f"{p[1]:.0f}%" for p in pairings])
+    label_bars(ax, b2, [f"{p[2]:.0f}%" for p in pairings])
     ax.set_xticks(x)
-    ax.set_xticklabels([p[0] for p in pairings], fontsize=9.5)
-    ax.set_ylabel("% of units FDR-significant (q < .05)", fontsize=10.5)
+    ax.set_xticklabels([p[0] for p in pairings], fontsize=9)
+    ax.set_ylabel("% of countries FDR-significant (q < .05)", fontsize=10)
     ax.set_ylim(0, 85)
     ax.legend(fontsize=9.5, loc="upper right", frameon=False)
+    ax.set_title("a  Same test, three pairings", fontsize=11.5,
+                 fontweight="bold", color=INK, loc="left")
+    ax.annotate("hatched: 7 rounds, underpowered.\ndifferences above levels is\nthe signature of a test\nthat is not working",
+                xy=(2.16, max(ess_lv, ess_df)), xytext=(1.42, 46), fontsize=8,
+                color=MUTED, arrowprops=dict(arrowstyle="->", color=GREY, lw=0.9))
     style_axes(ax)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
     ax.set_axisbelow(True)
 
-    heading(fig, "The collapse replicates: swap the framework, swap the wellbeing measure, swap the scale",
-            "Change one leg of the design at a time. Levels stay informative; differences go to almost nothing in every pairing.",
-            "Every bar is the same test: Benjamini-Hochberg FDR at q < .05, corrected within the family of units shown.\n"
-            "SHDI x ESS levels are estimated across regions inside each country; its differences within each region over survey rounds.")
-    fig.tight_layout(rect=(0, 0.07, 1, 0.87))
+    # -- panel b: power against series length -------------------------------
+    rhos = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    ess = [detection_rate(rr, 7, 27) for rr in rhos]
+    frame = [detection_rate(rr, 13, 42) for rr in rhos]
+    ax2.plot(rhos, frame, "-o", color=BLUE, lw=2, ms=5, label="13 years (SDG, HDI)")
+    ax2.plot(rhos, ess, "-o", color=GREY, lw=2, ms=5, label="7 rounds (ESS)")
+    ax2.axhline(50, color="#CFCFCF", lw=0.9, ls=":")
+    ax2.annotate(f"a real rho of 0.5 is\nfound in {ess[2]:.0f}% of units",
+                 xy=(0.5, ess[2]), xytext=(0.53, 30), fontsize=8.5, color=MUTED,
+                 arrowprops=dict(arrowstyle="->", color=GREY, lw=0.9))
+    ax2.set_xlabel("true correlation present in the data", fontsize=9.5)
+    ax2.set_ylabel("% of units the test recovers", fontsize=10)
+    ax2.set_ylim(0, 100)
+    ax2.legend(fontsize=9, loc="upper left", frameon=False)
+    ax2.set_title("b  How much of a real effect each series length recovers", fontsize=11.5,
+                  fontweight="bold", color=INK, loc="left")
+    style_axes(ax2)
+    ax2.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+    ax2.set_axisbelow(True)
+
+    heading(fig, "The collapse holds under both well-powered pairings; the ESS pairing is too short to add a verdict",
+            "Panel b simulates data where the association is REAL and asks how often a per-unit test finds it, by series length.",
+            f"All bars are Benjamini-Hochberg FDR at q < .05, corrected across the units shown, with levels and differences on the same units.\n"
+            f"The ESS does contribute a well-powered levels result, just not a time-series one: across regions inside each country, subnational HDI predicts\n"
+            f"ESS life satisfaction in {reg_levels:.0f}% of {n_ctry} countries -- close to the 42% the HDI reaches nationally, and with an independent wellbeing instrument.")
+    fig.tight_layout(rect=(0, 0.10, 1, 0.86))
     path = f"{OUT_DIR}/ess_levels_diffs_collapse.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()
-    print(f"Saved: {path}")
+    print(f"Saved: {path}  [ESS cross-sectional levels: {reg_levels:.1f}% of {n_ctry}]")
 
 
 # --------------------------------------------------------------------------
@@ -351,7 +420,7 @@ def trust_deep_dive():
 
 if __name__ == "__main__":
     print(ess_individual_fdr(rebuild=True).to_string(index=False))
-    collapse_three_ways()
+    collapse_and_its_limits()
     domains_at_levels()
     education_deep_dive()
     health_deep_dive()
