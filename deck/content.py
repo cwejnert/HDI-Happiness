@@ -364,6 +364,12 @@ ACTS = [
                     "of the paper's claim: development composites move too slowly and too smoothly to track "
                     "how people feel — within a country the HDI moves about a tenth of its between-country "
                     "spread, where the domain measures move two to three times that.",
+                    "The same question one scale down agrees, and shows where the power is. Per region over "
+                    "survey rounds, subnational HDI explains nothing at all — 0 of 167 regions, on seven "
+                    "rounds each. Across regions inside a country it recovers the levels result, 47% of 15 "
+                    "countries. And at the individual level it is decisive: 36 of 36 countries for health, 35 "
+                    "for trust, on ~10,700 respondents each. Region, country and person all tell the same "
+                    "story; only the individual level has the sample to tell it cleanly.",
                     "One caveat has to travel with the trust result. It is strong within the ESS (+0.59) and "
                     "absent against the independent WHR outcome (+0.06, not significant). Health survives both "
                     "(+0.40 and +0.20). That difference is the signature of common-method variance — same "
@@ -483,6 +489,12 @@ ACTS = [
                 "label": "The disconnect",
                 "heading": "Two different questions, and only one of them is being measured",
                 "body": [
+                    "The shape of what follows, before the detail. Two of the three domains are already inside "
+                    "these frameworks — health, and the access half of education — and on this evidence they "
+                    "are the two that track lived experience. The suggestion is not to add a wellbeing pillar "
+                    "but to let those two carry that weight explicitly: elevate them as wellbeing-relevant "
+                    "highlights, measured with variables that still vary, with social trust flagged as a "
+                    "likely third that neither framework can currently see.",
                     "'How is development progressing?' and 'what shapes how people experience their lives?' "
                     "are not the same question, and the frameworks were built to answer the first. Indicators "
                     "were chosen before the second was systematically testable, at an aggregate level, on "
