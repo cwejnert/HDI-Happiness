@@ -14,9 +14,9 @@ from __future__ import annotations
 TITLE = "Measured Where It Varies"
 SUBTITLE = (
     "A commentary in three acts, on why development predicts where wellbeing "
-    "is high but not when it rises — and on education, health and social "
-    "trust, which track lived experience once each is measured somewhere it "
-    "still moves"
+    "is high but not when it rises — and on three ways a measurement framework "
+    "loses sight of a domain that matters: the wrong construct, a variable "
+    "that has stopped varying, and no coverage at all"
 )
 DATELINE = "Working synthesis for the co-author team · August 2026"
 SCOPE = (
@@ -53,10 +53,9 @@ HOOK = {
         ("I", "We replicate the SDG result outside the SDGs.",
          "The same design on the HDI, against a second wellbeing survey, and "
          "one spatial scale down. It collapses every time."),
-        ("II", "Education, health, and the blind spots.",
-         "Education's rank swings on which construct a framework counts, "
-         "health's on whether its variable still varies, and social trust is "
-         "barely testable at all."),
+        ("II", "Education, health, and three ways to lose a domain.",
+         "The wrong construct, a variable that has stopped varying, and a "
+         "domain never collected often enough to test."),
         ("III", "Which points to a disconnect worth naming.",
          "Not that these frameworks should stay away from wellbeing, but that "
          "the components that track lived experience are ones they are not "
@@ -207,22 +206,22 @@ ACTS = [
     },
     {
         "numeral": "II",
-        "title": "Education, health, and why the frameworks disagree",
+        "title": "Education, health, and three ways to lose a domain",
         "key_numbers": [
             ("40.7% vs 3.3%", "education under the HDI against pooled SDG4"),
             ("12.7%", "SDG4 access alone — third of 17 goals if it were one"),
             ("11.5% vs 19.9%", "health: 4th of 17 SDG goals, last of the HDI's five"),
-            ("1 of 16", "SDG trust country-series testable at all, not 1 of 163"),
+            ("147 of 163", "SDG trust country-series with too few years to compute at all"),
         ],
         "thesis": (
-            "Two results and a discussion. Education leads the HDI and the "
-            "access construct of SDG4, and is the smallest effect anywhere at "
-            "the individual level. Health leads the SDG framework and the "
-            "individual data, and is weak in exactly one place, for a reason "
-            "we can name. Social trust leads wherever it is measured, which is "
-            "almost nowhere. Every disagreement between the frameworks turns "
-            "out to be about operationalisation — which construct they count, "
-            "and whether the variable they chose still varies."
+            "Two results and a coverage gap, and between them three ways a "
+            "framework can lose a domain. Education leads the HDI and the "
+            "access construct of SDG4, and disappears when SDG4 is read pooled "
+            "— the wrong construct. Health leads the SDG framework and the "
+            "individual data, and is weak in exactly one place, the HDI, whose "
+            "health input has run out of variance — the wrong variable. Social "
+            "trust is barely collected at all — no measurement to read either "
+            "way."
         ),
         "beats": [
             {
@@ -465,60 +464,36 @@ ACTS = [
 
             # ---------------- Result 3: social trust, in discussion ----------------
             {
-                "label": "Discussion · Social trust",
-                "heading": "The interesting case, and the one the measurement apparatus handles worst",
+                "label": "Discussion · The coverage gap",
+                "heading": "A third way to lose a domain: never measure it enough to find out",
                 "body": [
-                    "Trust is not a headline result here and should not be "
-                    "presented as one — it rests on a single instrument with a "
-                    "live shared-method caveat. It is in the paper because the "
-                    "reason it cannot be a headline is itself the "
-                    "commentary’s subject.",
-                    "Where it is measured it performs: significant in 34 of 36 "
-                    "ESS countries, with a median R² of 0.041 — four times "
-                    "education’s 0.0098, though well below health’s 0.091. "
-                    "Neither the HDI nor the subnational HDI measures it at "
-                    "all.",
-                    "The SDG framework appears to: 13 trust- and "
-                    "satisfaction-adjacent series, mostly Goal 16 — "
-                    "satisfaction with public services, belief that "
-                    "decision-making is inclusive, bribery prevalence. But their "
+                    "Education and health are the same failure in two costumes — "
+                    "a framework measuring the wrong thing. Social trust is a "
+                    "different one. The SDG database carries 13 trust- and "
+                    "satisfaction-adjacent series, mostly Goal 16, but their "
                     "median coverage is <em>one year</em> per country-series "
-                    "against six database-wide. The design needs at least four "
-                    "years; 147 of the 163 country-series fall short and are "
-                    "never computed at all. Of the 16 that can be run, 1 is "
-                    "significant.",
-                    "Report that as “1 of 16 testable”, never “1 of 163”. The "
-                    "latter reads as a null when it is overwhelmingly a "
-                    "coverage gap — and reporting a coverage gap as a null "
-                    "would repeat the exact error this commentary accuses the "
-                    "frameworks of making.",
-                ],
-            },
-            {
-                "label": "Discussion · Social trust",
-                "heading": "Tested the only way its coverage allows, and it still does not become a result",
-                "body": [
-                    "One year per country is useless longitudinally and "
-                    "perfectly usable cross-sectionally, so we pulled the raw "
-                    "values from the UN SDG database and ran the series against "
-                    "the ladder across countries. Nine of the 13 clear a "
-                    "12-country minimum and four are significant: bribery paid "
+                    "against six database-wide. The design needs four: 147 of "
+                    "the 163 country-series are never computed at all, and 1 of "
+                    "the 16 that can be is significant. Report that as “1 of 16 "
+                    "testable”, never “1 of 163” — the latter reads as a null "
+                    "when it is overwhelmingly a coverage gap.",
+                    "Untestable <em>in this design</em> is not untestable in "
+                    "principle, so we pulled the raw values and ran the series "
+                    "across countries instead of across years. Nine of 13 clear "
+                    "a 12-country minimum and four are significant: bribery paid "
                     "by individuals (−0.55) and firms (−0.51), inclusive "
                     "decision-making (−0.42), satisfaction with healthcare "
-                    "(+0.33).",
-                    "Three things stop that being a rescue. Every one of the "
-                    "four is weaker than what the frameworks already carry — on "
-                    "the same 134 countries the HDI and its components sit at "
-                    "|r| 0.71–0.83. The broadest series, satisfaction with "
-                    "healthcare, is Gallup World Poll, the same survey that "
-                    "produces the ladder. And none of the 13 measures "
-                    "interpersonal trust: they measure institutional "
-                    "confidence, a different construct.",
-                    "Income control kills all nine — but it also kills the HDI "
-                    "(+0.82 raw, +0.09 net). No cross-section of countries "
-                    "separates anything from income, which is why the "
-                    "levels-and-differences design exists, and the panel says so "
-                    "to stop the null being read as trust-specific.",
+                    "(+0.33). All four land below the HDI and its components on "
+                    "the same 134 countries (|r| 0.71–0.83); the broadest is "
+                    "Gallup World Poll, the survey that also produces the "
+                    "ladder; and none of the 13 measures interpersonal trust.",
+                    "So this is not a result about trust. Trust’s own evidence "
+                    "is a single instrument — 34 of 36 ESS countries at a median "
+                    "R² of 0.041 — with a shared-method caveat no external "
+                    "source can answer. It is a result about the frameworks. "
+                    "Education and health both sit inside the HDI; trust sits "
+                    "outside all of them, which makes it the clearest case that "
+                    "what is missing is scope rather than indicator choice.",
                 ],
                 "figure": "K1_sdg_trust_cross_section.png",
                 "caption": "Nine of the 13 SDG trust- and satisfaction-adjacent series, "
@@ -531,18 +506,19 @@ ACTS = [
                 "label": "The synthesis",
                 "heading": "The pattern of blind spots is the result",
                 "body": [
-                    "Laid out side by side, the three domains have three "
-                    "signatures. Education leads the HDI and the access "
+                    "Laid out side by side, the three domains fail in three "
+                    "different ways. Education leads the HDI and the access "
                     "construct of SDG4, is near-universal at the individual "
-                    "level, and is the smallest effect anywhere — a structural "
-                    "variable behaving exactly as one should. Health leads the "
-                    "SDG framework and the individual data, and is weak in "
-                    "precisely one place, the HDI, for a reason we can name. Trust leads nothing it is not the only "
-                    "candidate for, and is invisible to every development "
-                    "framework.",
-                    "None of these disagreements is about the world. Every one "
-                    "is about an operationalisation choice — which construct, "
-                    "which variable, which specification — which is why the "
+                    "level, and looks weak only where a framework pools access "
+                    "with parity and proficiency. Health leads the SDG "
+                    "framework and the individual data, and looks weak only "
+                    "where a framework reads it through a variable that has "
+                    "stopped varying. Trust looks weak nowhere and strong "
+                    "nowhere, because outside one survey it is barely "
+                    "collected.",
+                    "None of these is a disagreement about the world. Each is an "
+                    "operationalisation choice — which construct, which "
+                    "variable, whether to collect it at all — which is why the "
                     "contribution is not a ranking of domains but an account of "
                     "why the rankings differ.",
                 ],
@@ -579,13 +555,13 @@ ACTS = [
         "close": (
             "Education leads once it is measured as attainment rather than "
             "parity; health leads once it is measured somewhere it still "
-            "varies; trust leads wherever it is measured at all, which is "
-            "almost nowhere. The contribution is not a ranking of domains but "
-            "the demonstration that the ranking depends on construct and on "
-            "variable choice — neither of which the frameworks made with "
-            "wellbeing in mind, because that is not what they were built for. "
-            "Which is what makes the third act a question about fit rather "
-            "than a charge of failure."
+            "varies; trust cannot be read either way because it was never "
+            "collected often enough. Three domains, three ways of losing one — "
+            "the wrong construct, a saturated variable, and no coverage — and "
+            "none of the three choices was made with wellbeing in mind, because "
+            "that is not what these frameworks were built for. Which is what "
+            "makes the third act a question about fit rather than a charge of "
+            "failure."
         ),
     },
     {
@@ -692,32 +668,32 @@ ACTS = [
                 ],
             },
             {
-                "label": "Implication 3 · Social trust",
-                "heading": "A component that looks important, and that no framework is currently positioned to check",
+                "label": "Implication 3 · Coverage",
+                "heading": "The third failure mode is the one no indicator choice can fix",
                 "body": [
-                    "Social trust is significant in 34 of 36 ESS countries, "
-                    "and no development framework can currently check it. The HDI "
-                    "and subnational HDI do not measure the construct. The SDG "
+                    "Education's and health's implications are both about which "
+                    "variable a framework reads. Coverage is a different kind of "
+                    "problem: no choice among existing indicators fixes it, "
+                    "because the observations were never collected. The HDI and "
+                    "subnational HDI do not measure social trust at all; the SDG "
                     "framework's 13 satisfaction and integrity series average "
-                    "one observation per country, which supports no "
-                    "longitudinal design.",
+                    "one observation per country, which supports no longitudinal "
+                    "design.",
                     "We did not stop at asserting that. Act II runs those series "
-                    "the only way their coverage permits, across countries "
-                    "rather than years: 9 are testable, 4 significant, and all "
-                    "four land below the HDI's own components on the same "
-                    "countries. So the gap is a real gap, established rather "
-                    "than assumed.",
-                    "The implication is the most tentative of the three, and "
-                    "should be presented that way. Trust rests on one "
+                    "the only way their coverage permits — across countries "
+                    "rather than years — and 9 are testable, 4 significant, and "
+                    "all four land below the HDI's own components on the same "
+                    "countries. The gap is established rather than assumed.",
+                    "This is the most tentative of the three implications and "
+                    "should be presented that way: trust's own evidence is one "
                     "instrument, in Europe, with a live shared-method caveat. "
-                    "What can be said is narrow and still useful: a component "
+                    "What can be said is narrow and still useful. A component "
                     "that performs this well wherever it is measured is "
-                    "currently invisible to development measurement, and it is "
-                    "invisible for reasons of coverage rather than because it "
-                    "was weighed and found wanting. A repeated generalised-trust "
-                    "item — already standard in the ESS, the World Values Survey "
-                    "and several national statistical series — would be enough "
-                    "to find out.",
+                    "invisible to development measurement for reasons of "
+                    "coverage, not because it was weighed and found wanting — "
+                    "and a repeated generalised-trust item, already standard in "
+                    "the ESS, the World Values Survey and several national "
+                    "statistical series, would be enough to find out.",
                 ],
             },
             {
