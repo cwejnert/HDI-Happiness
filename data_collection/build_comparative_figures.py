@@ -456,12 +456,55 @@ def pooled_within(panel, unit, x, y, t="year"):
             "diffs_r": dr, "diffs_p": dp, "diffs_n": len(dx)}
 
 
+def cluster_ols_fd(panel, unit, x, y, t="essround"):
+    """Delta y on Delta x with round fixed effects; SEs clustered by unit.
+
+    A correlation says two things move together; this says by how much, in the
+    outcome's own units, which is what a reader needs to judge whether the
+    differences result is a curiosity or something worth building policy on.
+    """
+    dx_rows = []
+    for u, g in panel.groupby(unit):
+        g = g.sort_values(t).dropna(subset=[x, y])
+        if len(g) < 3:
+            continue
+        rd = g[t].to_numpy()
+        for i, (ddx, ddy) in enumerate(zip(np.diff(g[x]), np.diff(g[y]))):
+            dx_rows.append((u, rd[i + 1], ddx, ddy))
+    d = pd.DataFrame(dx_rows, columns=[unit, "round", "dx", "dy"])
+    X = pd.get_dummies(d["round"], prefix="r", drop_first=True).astype(float)
+    X.insert(0, "dx", d.dx.values)
+    X.insert(0, "const", 1.0)
+    Xv, yv = X.values, d.dy.values
+    XtXi = np.linalg.pinv(Xv.T @ Xv)
+    beta = XtXi @ Xv.T @ yv
+    resid = yv - Xv @ beta
+    meat = np.zeros((Xv.shape[1],) * 2)
+    for u in d[unit].unique():
+        m = (d[unit] == u).values
+        score = Xv[m].T @ resid[m]
+        meat += np.outer(score, score)
+    G, n, k = d[unit].nunique(), *Xv.shape
+    V = XtXi @ meat @ XtXi * (G / (G - 1)) * ((n - 1) / (n - k))
+    se = np.sqrt(np.diag(V))
+    b, b_se = beta[1], se[1]
+    t_stat = b / b_se
+    sd_x, sd_y = d.dx.std(), d.dy.std()
+    return {"b": b, "se": b_se, "t": t_stat, "sd_x": sd_x, "sd_y": sd_y,
+            "effect_1sd": b * sd_x, "pct_of_typical_move": 100 * b * sd_x / sd_y, "n": n, "G": G}
+
+
 def which_domains_survive_differences():
-    """Does within-country CHANGE in each domain track change in wellbeing?
+    """Does within-country CHANGE in each domain track change in wellbeing -- and by how much?
 
     This is the test the deck previously tried to answer with HDI x ESS, which
     only ever asked whether the development composite tracks ESS wellbeing. The
-    substantive question is about the domain measures themselves.
+    substantive question is about the domain measures themselves, and the
+    substantive answer needs a magnitude, not just a correlation: panel a
+    converts the differences result into life-satisfaction points so a 1 SD
+    change in a country's trust or health reading between ESS rounds has a
+    concrete size, benchmarked against how much life satisfaction typically
+    moves round to round.
     """
     p = pd.read_csv("processed/country_round_panel.csv")
     p["good_health"] = 6 - p["health"]
@@ -480,63 +523,96 @@ def which_domains_survive_differences():
     rows.append({"predictor": "HDI composite", "outcome": "WHR ladder", "source": "cross-source", **r})
     res = pd.DataFrame(rows)
     res.to_csv("processed/pooled_within_country_domains.csv", index=False)
-    print(f"Saved: processed/pooled_within_country_domains.csv")
+    print("Saved: processed/pooled_within_country_domains.csv")
+
+    eff = pd.DataFrame([{"predictor": lab, **cluster_ols_fd(p, "cntry", v, "stflife")}
+                        for lab, v in same]).set_index("predictor")
+    eff.to_csv("processed/differences_effect_sizes.csv")
+    print("Saved: processed/differences_effect_sizes.csv")
 
     def star(pv):
         return "***" if pv < .001 else "**" if pv < .01 else "*" if pv < .05 else "n.s."
 
-    fig, axes = plt.subplots(1, 2, figsize=(13.5, 5.8), gridspec_kw={"width_ratios": [1, 1]})
+    fig, (axA, axB) = plt.subplots(1, 2, figsize=(13.5, 5.9), gridspec_kw={"width_ratios": [1, 1.05]})
     fig.patch.set_facecolor(BG)
     palette = {"Education": BLUE, "Health": RED, "Social trust": GREEN, "HDI composite": "#7A6BC4"}
+    order = ["Social trust", "Health", "HDI composite", "Education"]
 
-    for ax, src, title in [(axes[0], "same survey", "a  Within the ESS (same survey)"),
-                           (axes[1], "cross-source", "b  Against the WHR ladder (independent source)")]:
-        d = res[res.source == src]
-        x, w = np.arange(len(d)), 0.34
-        cols = [palette[k] for k in d.predictor]
-        b1 = ax.bar(x - w / 2, d.levels_r, w, color=cols, alpha=0.9, label="Levels (within country)")
-        b2 = ax.bar(x + w / 2, d.diffs_r, w, color=cols, alpha=0.38, hatch="///",
-                    edgecolor="white", label="First differences")
-        for bar, rv, pv in list(zip(b1, d.levels_r, d.levels_p)) + list(zip(b2, d.diffs_r, d.diffs_p)):
-            ax.text(bar.get_x() + bar.get_width() / 2, max(rv, 0) + 0.018,
-                    f"{rv:+.2f}\n{star(pv)}", ha="center", va="bottom", fontsize=8.5,
-                    fontweight="bold", color=INK if pv < .05 else GREY)
-        ax.axhline(0, color=INK, lw=0.9)
-        ax.set_xticks(x)
-        ax.set_xticklabels(d.predictor, fontsize=9.5)
-        ax.set_ylabel("pooled within-country correlation", fontsize=10)
-        ax.set_ylim(-0.09, 0.78)
-        ax.set_title(title, fontsize=11.5, fontweight="bold", color=INK, loc="left")
-        style_axes(ax)
-        ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
-        ax.set_axisbelow(True)
-    # split-half: predictor and outcome from disjoint respondents, same survey
+    # -- panel a: the headline -- effect size in ESS life-satisfaction points --
+    typical_move = eff.loc["Social trust", "sd_y"]
+    xs = np.arange(len(order))
+    vals = [eff.loc[k, "effect_1sd"] for k in order]
+    cols = [palette[k] for k in order]
+    sig = [eff.loc[k, "t"] for k in order]
+    bars = axA.bar(xs, vals, color=cols, width=0.6)
+    for bar, tt in zip(bars, sig):
+        bar.set_alpha(0.9 if abs(tt) >= 1.96 else 0.35)
+    for i, k in enumerate(order):
+        row = eff.loc[k]
+        pct = row.pct_of_typical_move
+        lab = f"+{row.effect_1sd:.2f} pts" if row.t >= 1.96 else f"+{row.effect_1sd:.2f} pts (n.s.)"
+        sub = f"{pct:.0f}% of a typical\nround-to-round move" if row.t >= 1.96 else ""
+        axA.text(i, row.effect_1sd + 0.008, lab, ha="center", va="bottom", fontsize=9.5,
+                 fontweight="bold", color=INK if row.t >= 1.96 else GREY)
+        if sub:
+            axA.text(i, row.effect_1sd + 0.038, sub, ha="center", va="bottom", fontsize=7.8, color=MUTED)
+    axA.axhline(0, color=INK, lw=0.9)
+    axA.set_xticks(xs)
+    axA.set_xticklabels(order, fontsize=9.5)
+    axA.set_ylabel("ESS life-satisfaction points, per 1 SD change\nin the predictor between survey rounds", fontsize=9.5)
+    axA.set_ylim(0, 0.26)
+    axA.set_title("a  What the differences result is worth, in points", fontsize=11.5,
+                  fontweight="bold", color=INK, loc="left")
+    style_axes(axA)
+    axA.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+    axA.set_axisbelow(True)
+
+    # -- panel b: the evidence behind it -- correlations, levels vs diffs, split-half --
+    d = res[res.source == "same survey"].set_index("predictor").loc[order].reset_index()
+    x, w = np.arange(len(d)), 0.34
+    cols2 = [palette[k] for k in d.predictor]
+    b1 = axB.bar(x - w / 2, d.levels_r, w, color=cols2, alpha=0.9, label="Levels (within country)")
+    b2 = axB.bar(x + w / 2, d.diffs_r, w, color=cols2, alpha=0.38, hatch="///",
+                edgecolor="white", label="First differences")
+    for bar, rv, pv in list(zip(b1, d.levels_r, d.levels_p)) + list(zip(b2, d.diffs_r, d.diffs_p)):
+        axB.text(bar.get_x() + bar.get_width() / 2, max(rv, 0) + 0.018,
+                 f"{rv:+.2f}\n{star(pv)}", ha="center", va="bottom", fontsize=8.5,
+                 fontweight="bold", color=INK if pv < .05 else GREY)
+    axB.axhline(0, color=INK, lw=0.9)
+    axB.set_xticks(x)
+    axB.set_xticklabels(d.predictor, fontsize=9.5)
+    axB.set_ylabel("pooled within-country correlation", fontsize=10)
+    axB.set_ylim(-0.09, 0.78)
+    axB.set_title("b  The correlation evidence behind it", fontsize=11.5,
+                  fontweight="bold", color=INK, loc="left")
+    style_axes(axB)
+    axB.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+    axB.set_axisbelow(True)
+
     sh = split_half_differences().set_index("domain")
-    ax = axes[0]
-    order = list(res[res.source == "same survey"].predictor)
     first = True
-    for i, name in enumerate(order):
+    for i, name in enumerate(d.predictor):
         if name not in sh.index:
             continue
         row = sh.loc[name]
-        ax.errorbar(i + w / 2, row.split_half_r,
-                    yerr=[[row.split_half_r - row.lo], [row.hi - row.split_half_r]],
-                    fmt="D", ms=6, color=INK, ecolor=INK, elinewidth=1.4, capsize=4, zorder=6,
-                    label="Split-half: no shared respondents" if first else None)
+        axB.errorbar(i + w / 2, row.split_half_r,
+                     yerr=[[row.split_half_r - row.lo], [row.hi - row.split_half_r]],
+                     fmt="D", ms=6, color=INK, ecolor=INK, elinewidth=1.4, capsize=4, zorder=6,
+                     label="Split-half: no shared respondents" if first else None)
         first = False
-    ax.legend(fontsize=8.5, loc="upper left", frameon=False)
+    axB.legend(fontsize=8.5, loc="upper right", frameon=False)
 
-    heading(fig, "The collapse is domain-specific: health and trust track wellbeing year to year, development composites do not",
-            "Pooled across all countries rather than tested country by country, so the differences half has the power to return a verdict.",
-            "Solid = levels, demeaned within country. Hatched = first differences. Diamonds split each country-round's respondents at random and take the\n"
-            "predictor from one half and life satisfaction from the other, so no person answers both questions: trust retains 93% of its differences estimate\n"
-            "and health 88%, which rules out common-method variance. Panel b pairs the ESS against a different sample with different fieldwork timing, and\n"
-            "differencing amplifies that mismatch -- so its weaker trust result bounds the claim rather than overturning it.")
-    fig.tight_layout(rect=(0, 0.11, 1, 0.86))
+    heading(fig, "The trust and health differences are not just significant -- they move life satisfaction",
+            f"Pooled across countries, round fixed effects, SEs clustered by country. A typical round-to-round swing in life satisfaction is {typical_move:.2f} points.",
+            "Panel a: OLS of the change in life satisfaction on the change in the predictor, converted to points per 1 SD change (grey = not significant at .05).\n"
+            "Panel b: the correlations behind panel a, with split-half diamonds -- predictor and outcome from disjoint respondents, so trust's +0.59 is not two\n"
+            "questions answered by the same person in the same sitting. It retains 93% of its estimate; health retains 88%.")
+    fig.tight_layout(rect=(0, 0.11, 1, 0.85))
     path = f"{OUT_DIR}/domains_survive_differences.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()
     print(f"Saved: {path}")
+    print(eff.round(4).to_string())
     print(res[["predictor", "outcome", "levels_r", "levels_p", "diffs_r", "diffs_p", "diffs_n"]].to_string(index=False))
 
 

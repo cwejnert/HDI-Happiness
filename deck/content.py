@@ -61,12 +61,13 @@ HOOK = {
         ("I", "The collapse is real, and it is not about the SDGs.",
          "The HDI shows it as sharply as the SDGs do, and an independent wellbeing instrument "
          "corroborates the levels half. Differences carry nothing — so analyse the levels."),
-        ("II", "At the levels, health and education carry the frameworks.",
-         "The HDI's five components and the SDGs' seventeen goals, ranked. Health is 4th of 17. "
-         "Education looks 12th — until you unpool it."),
-        ("II-a", "Measure the same domains on people, and a third one appears.",
-         "Social trust joins health and education, ahead of education. And pooled for power, health "
-         "and trust keep tracking wellbeing year to year where development composites stop."),
+        ("II", "At the levels, education and health carry the frameworks.",
+         "Both domains, across all three frameworks at once. Health is 4th of 17 SDG goals and the "
+         "weakest HDI component; education looks 12th of 17 — until you unpool it."),
+        ("II-a", "Trust: the domain only people can report, and what it is worth.",
+         "Second strongest on people, ahead of education, and invisible to both development "
+         "frameworks. It also survives differencing — worth +0.20 life-satisfaction points, "
+         "with no person answering both questions."),
         ("III", "Three domains, three different reasons frameworks lose them.",
          "Wrong construct pooled together, a variable that has stopped varying, and a domain that "
          "was never collected at all."),
@@ -178,63 +179,61 @@ ACTS = [
 
     {
         "numeral": "II",
-        "title": "At the levels, what is actually doing the work?",
+        "title": "At the levels: education and health, across three frameworks",
         "key_numbers": [
-            ("19% vs 41%", "HDI life expectancy vs mean years of schooling, at levels"),
-            ("4th of 17", "where health ranks among SDG goals (11.5%)"),
+            ("41% vs 19%", "HDI: mean years of schooling leads, life expectancy is weakest"),
             ("12.7% vs 3.3%", "SDG4 access indicators alone vs all 35 pooled"),
+            ("89% / 100%", "ESS countries significant on people: education / health"),
         ],
         "thesis": (
             "If the levels are where development and wellbeing meet, the useful question is which "
-            "components are carrying that association. Ask it of both frameworks' internals: the "
-            "HDI's five components, and the SDGs' seventeen goals. Two domains come out — but one "
-            "of them only after you stop pooling it."
+            "components are carrying that association — asked of all three frameworks at once, "
+            "domain by domain, rather than one framework's internals at a time. Two domains come "
+            "out: education and health. Both need a second look before they agree with each other."
         ),
         "close": (
             "Health and education are what the frameworks can see at the levels. Health registers "
             "wherever it is measured somewhere that still varies; education registers only when the "
-            "construct being counted is access. That is two domains — and it is everything these "
-            "frameworks are able to test."
+            "construct being counted is access. That is two domains — and, so far, it is everything "
+            "these frameworks are able to test. The next section is the domain that only appears "
+            "once you measure people rather than countries."
         ),
         "beats": [
             {
-                "label": "Inside the HDI",
-                "heading": "Schooling leads the HDI's components; life expectancy is the weakest of the five",
+                "label": "All three domains, at the levels",
+                "heading": "Education, health and social trust all predict life satisfaction — where they can be measured",
                 "body": [
-                    "Decompose the composite and the five components separate cleanly at levels: mean years "
-                    "of schooling 41%, income 40%, expected years of schooling 33%, the composite itself 42% "
-                    "— and life expectancy last at 19%. In differences all five sit between 1% and 5%, so "
-                    "the collapse is a property of the composite and of every part of it.",
-                    "Life expectancy being the weakest is the first hint that this is about measurement rather "
-                    "than about health. The top 100 countries span 81 to 85 years. A variable with that little "
-                    "range left cannot carry much association, whatever the underlying domain does.",
+                    "Before drilling into any one domain, the shape of the whole result. Test each of "
+                    "education, health and social trust against wellbeing at the levels, in every framework "
+                    "that measures it, on one comparable unit: % of countries FDR-significant. Where a "
+                    "framework can test a domain, the domain matters — the question that varies is which "
+                    "frameworks can test which domains.",
+                    "The HDI and the SDGs can both test education and health, and both find something, "
+                    "though not always in agreement with each other at face value. Neither can test social "
+                    "trust at all — there is no HDI bar for it, and the SDGs' nearest series measure a "
+                    "different construct. That gap is the subject of the next section. This one is about "
+                    "the two domains every framework here can at least attempt.",
                 ],
-                "figure": "hdi_full_structure.png",
-                "caption": "HDI composite and its five components, levels and first differences, "
-                           "Benjamini–Hochberg corrected within each country.",
+                "figure": "domains_at_levels_comparison.png",
+                "caption": "All three domains across all three frameworks, all on % of countries "
+                           "FDR-significant. Trust has no HDI bar because the HDI does not measure it.",
             },
             {
-                "label": "Inside the SDGs",
-                "heading": "Health ranks 4th of 17 goals; education ranks 12th",
+                "label": "Education, across frameworks",
+                "heading": "Strong wherever you measure attainment; the SDGs' 3.3% is the outlier that needs explaining",
                 "body": [
-                    "The same question of the SDG side. Pooled within each goal, health (Goal 3) reaches 11.5% "
-                    "of country-indicator pairs — fourth of seventeen, and first among the goals with "
-                    "substantive coverage. Health also dominates the individual-series ranking: 16 of the 25 "
-                    "most predictive series in the whole database fall under Goal 3, and they are survival "
-                    "measures — infant and under-five mortality, stunting, neonatal mortality, sanitation, "
-                    "drinking water.",
-                    "Education comes twelfth, at 3.3%. Taken at face value that says education barely matters "
-                    "for wellbeing — which contradicts the HDI, where schooling is the strongest component "
-                    "there is. Both cannot be right, and the next slide is why.",
-                    "One caveat worth stating here rather than later: Goal 16 is where anything trust-shaped "
-                    "would live, and it comes fifteenth at 1.5%. But its thirteen trust-adjacent series measure "
-                    "satisfaction with public services, perceived bribery, and perceived inclusiveness in "
-                    "decision-making. That is confidence in institutions, not trust in other people. It is a "
-                    "different construct, and the low rank should not be read as evidence about interpersonal trust.",
+                    "Inside the HDI, education is not one component but two, and both lead the index at "
+                    "levels: mean years of schooling 41%, expected years of schooling 33% — both ahead of "
+                    "the composite itself (42% is close, but that's the whole index against two of its five "
+                    "parts). On people, in the ESS, years of schooling is significant in 89% of countries.",
+                    "Against that, SDG4 pooled across all 35 of its series returns 3.3% — twelfth of "
+                    "seventeen goals, which taken at face value says education barely matters. Three "
+                    "measurements agree and the fourth contradicts them, which is a sign to look inside "
+                    "the fourth rather than to average it in as if it settled anything.",
                 ],
-                "figure": "sdg_indicator_top20.png",
-                "caption": "The 25 most predictive individual SDG series. Sixteen are Goal 3 health "
-                           "indicators, nearly all of them survival measures.",
+                "figure": "education_levels_comparison.png",
+                "caption": "Education across four measurements: ESS individual, HDI expected years of "
+                           "schooling, SDG4 access only, SDG4 pooled across all 35 series.",
             },
             {
                 "label": "Access check",
@@ -245,164 +244,115 @@ ACTS = [
                     "equity and parity ratios 2.5%, infrastructure 2.0%, learning outcomes 0.9%.",
                     "Parity ratios are 18 of the 35 series. Pooling weights every series equally, so the "
                     "half of the goal that carries no wellbeing signal drags the whole goal below the part "
-                    "that does. Unpooled, education would rank third among the seventeen goals rather than "
-                    "twelfth — and it would agree with the HDI instead of contradicting it.",
+                    "that does. Unpooled, education's access series would rank third among the seventeen "
+                    "goals rather than twelfth — and would agree with the HDI instead of contradicting it.",
                 ],
                 "figure": "sdg4_unpooled.png",
                 "caption": "SDG4 split by construct. Access and participation (12.7%) against equity and "
                            "parity ratios (2.5%), infrastructure (2.0%) and learning outcomes (0.9%).",
+            },
+            {
+                "label": "Health, across frameworks",
+                "heading": "The strongest domain on people; the weakest component of the HDI; still ranks 4th of 17 SDG goals",
+                "body": [
+                    "Self-rated health is the single strongest predictor of life satisfaction in the ESS: "
+                    "every country significant, median individual R² 0.092 — roughly fifteen times "
+                    "education's. In the SDGs, health (Goal 3) reaches 11.5% of country-indicator pairs, "
+                    "fourth of seventeen goals and first among the goals with substantive coverage; it also "
+                    "dominates the database's individual-series ranking, with 16 of the top 25 most "
+                    "predictive series falling under Goal 3 — survival measures, infant and under-five "
+                    "mortality, stunting, sanitation, drinking water.",
+                    "In the HDI, health's proxy is life expectancy, and it is last of five components at "
+                    "19%, against 41% for mean years of schooling. The domain is not weak; the HDI's chosen "
+                    "proxy for it is. The top 100 countries span 81 to 85 years of life expectancy, and a "
+                    "variable with that little range left cannot carry much association, whatever the "
+                    "underlying domain does. Same domain, three variables, three very different-looking "
+                    "results — and it is the variable doing the work, not the domain.",
+                ],
+                "figure": "health_levels_comparison.png",
+                "caption": "Health measured three ways. The HDI result is about life expectancy's "
+                           "saturation, not about health.",
             },
         ],
     },
 
     {
         "numeral": "II-a",
-        "title": "Now measure the same domains on people",
+        "title": "Trust: the domain only people can report, and what it is worth",
         "key_numbers": [
-            ("100% / 97% / 89%", "ESS countries significant at levels: health, trust, education"),
-            ("+0.55 / +0.35", "trust and health in differences with NO shared respondents"),
-            ("+0.03 / −0.02", "education and the HDI in differences — they do not"),
+            ("97%", "ESS countries where social trust is significant at levels"),
+            ("+0.20 pts / 59%", "trust's differences effect, share of a typical round-to-round move"),
+            ("93%", "of that effect retained with predictor and outcome from disjoint respondents"),
         ],
         "thesis": (
-            "Everything so far uses a development composite as the predictor. The ESS carries the three "
-            "domains asked directly of people — self-rated health, years of schooling, and whether most "
-            "people can be trusted — which lets us change the predictor rather than the outcome. That "
-            "surfaces a third domain neither framework collects, and it turns out to be where the "
-            "differences half of the argument finally has something to say."
+            "Neither the HDI nor the SDGs measure interpersonal trust. The ESS does, at the individual "
+            "level, which is also the level at which the differences half of Act I can finally be "
+            "answered — not just whether a domain survives differencing, but what a change in it is "
+            "worth in life-satisfaction points."
         ),
         "close": (
-            "Health, trust and education are all significant on people, in almost every country, and "
-            "interpersonal trust — the one domain neither framework collects — outranks education. Pooled "
-            "for power, health and trust also survive differencing where the HDI does not, and survive a "
-            "split-half test that rules out the same people answering both questions. The collapse was never "
-            "about differencing; it was about what the frameworks chose to measure."
+            "Social trust is the second-strongest domain on people, ahead of education, and it is the "
+            "one domain neither development framework collects. It also survives differencing where "
+            "development composites do not: a country whose trust rises between ESS rounds sees life "
+            "satisfaction rise with it, by an amount worth more than half of what life satisfaction "
+            "typically moves round to round — and that holds with no person answering both questions."
         ),
         "beats": [
             {
-                "label": "Three domains, one unit",
-                "heading": "Health, social trust and education all predict life satisfaction — trust is second",
+                "label": "Social trust, at levels",
+                "heading": "Second strongest domain on people; absent from both development frameworks",
                 "body": [
-                    "Same FDR test, same unit, now on 351,023 respondents. Self-rated health is significant "
-                    "in 36 of 36 countries, median individual R² 0.092. Interpersonal trust in 35 of 36, "
-                    "median R² 0.039. Years of schooling in 32 of 36, median R² 0.006 — significant almost "
-                    "everywhere but explaining far less per person than either of the others.",
-                    "Set against the frameworks, health behaves consistently: strongest on people, and the "
-                    "highest-ranked substantive goal in the SDGs. Education behaves consistently too, once "
-                    "unpooled. Trust is the one that does not appear anywhere else, because there is nowhere "
-                    "else for it to appear — the HDI has no counterpart at all, and SDG16's 1.5% measures "
-                    "confidence in institutions rather than trust in people.",
-                    "The caveat is real and bounds the claim: the ESS is 36 European countries, self-reported, "
-                    "one trust item. This is not a global result. It is enough to say that a domain the "
-                    "frameworks never collect outranks one they both do.",
-                ],
-                "figure": "domains_at_levels_comparison.png",
-                "caption": "The three domains across all three frameworks, all on % of countries "
-                           "FDR-significant. Trust has no HDI bar because the HDI does not measure it.",
-            },
-            {
-                "label": "Education, close up",
-                "heading": "Significant on people and in the HDI; invisible in the SDGs only because of pooling",
-                "body": [
-                    "Education across all four ways of measuring it: 89% of ESS countries on individual years "
-                    "of schooling, 33% of HDI countries on expected years of schooling, 12.7% of SDG4 access "
-                    "series, 3.3% pooled across all 35.",
-                    "Three of those four numbers tell a consistent story and the fourth is a construction "
-                    "choice. Nothing about education changed between the third bar and the fourth — only which "
-                    "series were averaged together. This is the cleanest case in the paper of a framework "
-                    "hiding a domain it does in fact measure.",
-                ],
-                "figure": "education_levels_comparison.png",
-                "caption": "Education across four measurements. The gap between the last two bars is "
-                           "entirely pooling, not data.",
-            },
-            {
-                "label": "Health, close up",
-                "heading": "The strongest domain on people, and the weakest component of the HDI",
-                "body": [
-                    "Self-rated health is the single strongest predictor of life satisfaction in the ESS: "
-                    "every country significant, median R² 0.092, roughly fifteen times education's. In the "
-                    "SDGs, health leads the substantive goals at 11.5%. In the HDI it is last of five, at 19%.",
-                    "The domain is not weak; the HDI's chosen proxy for it is. Life expectancy has largely "
-                    "saturated across the countries the index covers, and a variable with almost no variance "
-                    "left cannot predict much. Self-rated health, asked of the same populations, is the "
-                    "strongest thing in the ESS. Same domain, different variable, opposite conclusion.",
-                ],
-                "figure": "health_levels_comparison.png",
-                "caption": "Health measured three ways. The HDI result is about life expectancy's "
-                           "saturation, not about health.",
-            },
-            {
-                "label": "Social trust, close up",
-                "heading": "Second strongest on people, and absent from both frameworks",
-                "body": [
-                    "Interpersonal trust — 'generally speaking, would you say that most people can be trusted?' "
-                    "— is significant in 35 of 36 ESS countries, with a median R² of 0.039: below self-rated "
-                    "health, well above years of schooling.",
-                    "The HDI does not measure trust in any form. The SDG framework's nearest thing is Goal 16's "
-                    "thirteen series, and they measure something else: satisfaction with public services, "
-                    "perceived bribery, perceived inclusiveness in decision-making. Institutional confidence "
-                    "and interpersonal trust are distinct constructs, and the substitution should not pass "
-                    "silently. Coverage compounds it — median one observation per country-series against six "
-                    "for the database overall, and 147 of 163 country-series cannot support a time-series "
-                    "design at all.",
-                    "Education's and health's problems are about which variable to count inside a domain the "
-                    "framework already has. Trust's is categorically different: there is no variable to choose "
-                    "between, because the domain was never collected.",
+                    "Interpersonal trust — 'generally speaking, would you say that most people can be "
+                    "trusted?' — is significant in 35 of 36 ESS countries, with a median individual R² of "
+                    "0.039: below self-rated health, well above years of schooling.",
+                    "The HDI does not measure trust in any form. The SDG framework's nearest thing is Goal "
+                    "16's thirteen series, and they measure something else — satisfaction with public "
+                    "services, perceived bribery, perceived inclusiveness in decision-making. Institutional "
+                    "confidence and interpersonal trust are distinct constructs, and coverage compounds the "
+                    "mismatch: median one observation per country-series against six for the database "
+                    "overall, and 147 of 163 country-series cannot support a time-series design at all.",
+                    "Education's and health's problems, in the previous section, were about which variable "
+                    "to count inside a domain the frameworks already have. Trust's is categorically "
+                    "different: there is no variable to choose between, because the domain was never "
+                    "collected in the first place.",
                 ],
                 "figure": "trust_coverage_comparison.png",
                 "caption": "Interpersonal trust in the ESS against the closest SDG counterpart and an "
                            "absent HDI one. The asterisked bar is a different construct.",
             },
             {
-                "label": "Back to differences · which domains survive it",
-                "heading": "The collapse is domain-specific: health tracks wellbeing year to year, development composites do not",
+                "label": "What trust is worth in differences",
+                "heading": "A country's rising trust predicts rising life satisfaction — and the effect is not small",
                 "body": [
-                    "Act I left the differences half unresolved, because the per-country design spends its "
-                    "power on 25 separate tests of seven points each. Pool the same within-country question "
-                    "across all countries and it has the power to answer — and the answer is that the collapse "
-                    "is not a universal property of differencing. It is specific to what you differenced.",
-                    "Within the ESS: health goes from r = +0.56 at levels to +0.40 in first differences, and "
-                    "social trust from +0.51 to +0.59. Both survive. Education goes from +0.29 to +0.03, not "
-                    "significant, and the HDI composite from +0.44 to +0.20. Against the World Happiness Report "
-                    "ladder on the full 150-country panel, the HDI collapses outright: +0.15 at levels to "
-                    "−0.02 in differences across 1,548 country-year changes.",
-                    "One check before leaning on this. These are 25 European countries over seven rounds, "
-                    "where a common shock — a financial crisis, a pandemic — could move health, trust and "
-                    "wellbeing together and manufacture the correlation. Removing whatever is shared within "
-                    "each survey round leaves health at +0.42 and trust at +0.58, with education still null. "
-                    "The domain results are idiosyncratic country movement, not shared shocks.",
-                    "So when a country's self-rated health rises between rounds, its life satisfaction rises "
-                    "with it. When its HDI rises, that tells you almost nothing. This is the sharpest version "
-                    "of the paper's claim: development composites move too slowly and too smoothly to track "
-                    "how people feel — within a country the HDI moves about a tenth of its between-country "
-                    "spread, where the domain measures move two to three times that.",
-                    "The same question one scale down agrees, and shows where the power is. Per region over "
-                    "survey rounds, subnational HDI explains nothing at all — 0 of 167 regions, on seven "
-                    "rounds each. Across regions inside a country it recovers the levels result, 47% of 15 "
-                    "countries. And at the individual level it is decisive: 36 of 36 countries for health, 35 "
-                    "for trust, on ~10,700 respondents each. Region, country and person all tell the same "
-                    "story; only the individual level has the sample to tell it cleanly.",
-                    "The obvious objection to the trust result is common-method variance: the same people "
-                    "answer the trust question and the life-satisfaction question in the same sitting, so of "
-                    "course the two move together. That is testable. Split each country-round's respondents at "
-                    "random, take the trust mean from one half and life satisfaction from the other, and no "
-                    "person contributes to both sides while sample, fieldwork and timing stay identical. Trust "
-                    "retains 93% of its estimate (+0.59 to +0.55) and health 88% (+0.40 to +0.35). Education "
-                    "stays null. The association is between people in a country, not inside a questionnaire.",
-                    "What does bound the trust claim is the cross-source panel. Against the WHR ladder, trust "
-                    "reaches +0.20 at levels and +0.06 in differences, where health reaches +0.51 and +0.20. "
-                    "But that pairing sets ESS rounds against a different sample, with different fieldwork "
-                    "timing and its own sampling error, and differencing amplifies all of it — trust is the "
-                    "weaker signal to begin with, so it has less to lose before vanishing. Read as a bound, "
-                    "not a refutation: trust has not yet been corroborated against an independent wellbeing "
-                    "instrument, and health has.",
+                    "Act I left the differences half of the argument unresolved, because the per-country "
+                    "design spends its power on 25 separate tests of seven points each. Pool the same "
+                    "within-country question across all countries and it has the power to answer: the "
+                    "collapse is not a property of differencing in general, it is specific to what you "
+                    "differenced. Development composites collapse. The domain measures do not, all of them.",
+                    "In points: a one-SD change in a country's trust reading between ESS rounds predicts a "
+                    "+0.20 point change in mean life satisfaction, on the 0–10 scale — 59% of a typical "
+                    "round-to-round swing in life satisfaction itself. Health's equivalent effect is +0.14 "
+                    "points, 41% of a typical swing. Education and the HDI composite are not "
+                    "distinguishable from zero. These are not curiosities; they are the size of the thing.",
+                    "The obvious objection is common-method variance — the same person answers the trust "
+                    "question and the life-satisfaction question in the same sitting, so of course they "
+                    "move together. That is testable: split each country-round's respondents at random, "
+                    "take the trust mean from one half and life satisfaction from the other, so no person "
+                    "answers both. Trust retains 93% of its estimate this way, health 88%. The association "
+                    "is between people in a country, not inside a questionnaire.",
+                    "What still bounds the claim is cross-source replication. Against the World Happiness "
+                    "Report ladder, health's differences result survives (+0.20) and trust's does not "
+                    "(+0.06, not significant) — plausibly because that pairing sets ESS rounds against a "
+                    "different sample with its own fieldwork timing, and trust is the weaker signal to "
+                    "begin with, so it has less room before vanishing. Read as a bound, not a refutation: "
+                    "trust has not yet been corroborated on an independent wellbeing instrument, and health "
+                    "has. That is the honest state of the evidence, and it is why the recommendation in "
+                    "Act IV treats trust as the most tentative of the three.",
                 ],
                 "figure": "domains_survive_differences.png",
-                "caption": "Pooled within-country correlations, levels against first differences. Panel a "
-                           "within the ESS; panel b against the independent WHR ladder. Health is the only "
-                           "domain significant in differences in both.",
+                "caption": "Panel a: the differences effect converted to life-satisfaction points. Panel b: "
+                           "the correlation evidence behind it, with split-half validation.",
             },
-
             {
                 "label": "Why the SDG trust series cannot stand in",
                 "heading": "Institutional confidence does not survive an income control; interpersonal trust does",
@@ -614,6 +564,14 @@ ACTS = [
 # Appendix (figures carried for reference, not in main narrative)
 # --------------------------------------------------------------------------
 APPENDIX = [
+    ("hdi_full_structure.png",
+     "HDI composite and its five components, in full",
+     "Levels and first differences for all five, Benjamini–Hochberg corrected within each "
+     "country. The source for the 41%/33%/19% component figures cited in Act II."),
+    ("sdg_indicator_top20.png",
+     "Top 25 SDG series by levels significance",
+     "Sixteen of the 25 most predictive individual series in the whole SDG database are "
+     "Goal 3 health indicators — the source for Act II's health ranking."),
     ("collapse_hdi_shdi_whr.png",
      "The collapse across all three national pairings",
      "Countries FDR-significant at levels versus first differences under the SDG framework, "
@@ -661,6 +619,14 @@ DECISIONS = [
      "and not shocks common to a round. And the split-half design — predictor and outcome from "
      "disjoint respondents — rules out common-method variance, with trust retaining 93%. What "
      "remains untested is replication of the trust result on an independent wellbeing instrument."),
+
+    ("Where the effect-size numbers come from",
+     "Act II-a's '+0.20 pts / 59%' is OLS of the change in ESS life satisfaction on the change in "
+     "the predictor, round fixed effects, SEs clustered by country (processed/"
+     "differences_effect_sizes.csv). Trust: b=0.56 per point of trust (t=6.2), health: b=1.59 per "
+     "point of good-health (t=2.7). Effect per 1 SD of the predictor's typical round-to-round move, "
+     "benchmarked against 0.35 pts, the SD of life satisfaction's own round-to-round move. Education "
+     "and the HDI composite are not distinguishable from zero at conventional significance."),
 
     ("What the ESS panel can and cannot test",
      "Seven survey rounds is too short for the per-country time-series design. Simulating a REAL "
