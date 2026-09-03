@@ -169,6 +169,22 @@ ACTS = [
         ),
         "beats": [
             {
+                "label": "Framework comparison",
+                "heading": "How the frameworks compare on detection, budget-match, and per-indicator basis",
+                "body": [
+                    "Before we ask what matters, we need to understand how these frameworks differ. "
+                    "The SDG database detects significance in more countries (71% raw) than the HDI (51% raw), "
+                    "but when both are given the same budget — five indicators across 42 countries — the HDI's edge "
+                    "becomes real but modest (30% vs 51% among those 42 countries). When normalized per indicator, "
+                    "the HDI dominates: most SDG series sit in the zero-significance tail, while HDI indicators cluster "
+                    "higher. This is context we need before asking which components matter most.",
+                ],
+                "figure": "framework_three_comparisons.png",
+                "caption": "How SDG and HDI frameworks compare on detection rate, budget-matched analysis, "
+                           "and per-indicator significance distribution.",
+            },
+
+            {
                 "label": "All three matter",
                 "heading": "Education, health, and social trust all significantly predict life satisfaction",
                 "body": [
@@ -229,16 +245,29 @@ ACTS = [
                     "Life expectancy is close to saturated in developed countries: the top 100 countries "
                     "range from 81 to 85 years. The variance that remains is so small that between-country "
                     "differences add little predictive power. This is not health's problem; it is the "
-                    "specific HDI indicator's problem. Within the SDG database's vast landscape of 661 series "
-                    "across 42 countries, health indicators dominate the top-ranked individual series, with "
-                    "16 of the top 25 most predictive SDG series falling under Goal 3 — survival measures like "
-                    "infant mortality, under-five mortality, stunting, and sanitation. The low 11.5% rate for "
-                    "health is not evidence that health doesn't matter; it is evidence that most of the SDG "
-                    "database does not predict wellbeing. Within that context, health ranks high.",
+                    "specific HDI indicator's problem. The gap between frameworks shows the importance "
+                    "of variable choice, not of health itself.",
                 ],
                 "figure": "health_levels_comparison.png",
                 "caption": "Health's R² (% of countries significant at levels) across three frameworks. "
                            "Self-rated health in ESS dominates; external HDI proxy (life expectancy) is weak.",
+            },
+
+            {
+                "label": "SDG indicator rankings · why health matters despite low %",
+                "heading": "Health indicators rank 4th among 17 SDG goals; the low percentage reflects weak overall SDG signal",
+                "body": [
+                    "The SDG database is vast: 661 series across 42 countries testing 17 goals. The overall significance "
+                    "rate is low — only 3-4% of all country-indicator pairs are significant. At the goal level, health (Goal 3) "
+                    "reaches 11.5% of country-indicator pairs, ranking fourth of 17 goals. Within that sparse landscape, "
+                    "health indicators dominate the top-ranked individual series, with 16 of the top 25 most predictive SDG series "
+                    "falling under Goal 3. These are survival measures: infant mortality, under-five mortality, stunting, neonatal mortality, "
+                    "sanitation, drinking water — all objective, externally measured.",
+                    "The low 11.5% rate for health is not evidence that health doesn't matter. It is evidence that most of "
+                    "the SDG database does not predict wellbeing. Within that context, health ranks high.",
+                ],
+                "figure": "sdg_indicator_top20.png",
+                "caption": "Top 25 SDG indicators by significance. Health (Goal 3) dominates: 16 of 25 top series.",
             },
 
             {
@@ -248,27 +277,26 @@ ACTS = [
                     "Social trust — 'most people can be trusted' — is significant in 94% of ESS countries, "
                     "third strongest domain after health and income, with median R² = 0.041. Neither the HDI "
                     "nor the SDG framework measures it at all.",
-                    "The SDG database does carry 13 trust- and satisfaction-adjacent series under Goal 16, but "
-                    "the detail reveals why they fail to capture interpersonal trust. First, coverage: only nine "
-                    "of thirteen can be tested across countries, and four are significant — weaker than the development "
-                    "indicators the frameworks already carry. Second, construct: bribery (individuals and firms) and "
-                    "decision-making inclusiveness predict wellbeing; satisfaction with healthcare, government services, "
-                    "and secondary education do not. These measure institutional confidence, not interpersonal trust. "
-                    "Third, when you control for income — net of log GNI per capita — nearly all SDG trust series disappear. "
-                    "This is a known artifact of subjective institutional scales; interpersonal trust, by contrast, shows robust "
-                    "signal independent of income controls.",
-                    "Education's and health's problems are about which variable to count within a domain. Trust's problem is "
-                    "different: it is not in the frameworks at all. That is a coverage gap that cannot be fixed by choosing the "
-                    "right variable, because no variable was ever measured.",
+                    "The SDG database does carry 13 trust- and satisfaction-adjacent series under Goal 16: "
+                    "satisfaction with public services, perception of bribery, perceived decision-making "
+                    "inclusiveness. But these measure institutional confidence, not interpersonal trust — a "
+                    "different construct, and one that correlates more weakly with life satisfaction even "
+                    "when tested across countries. Moreover, their median coverage is one observation per "
+                    "country-series against six for the database as a whole; 147 of 163 country-series cannot "
+                    "support a time-series design.",
+                    "Education's and health's problems are about which variable to count within a domain. "
+                    "Trust's problem is different: it is not in the frameworks at all. That is a coverage gap, "
+                    "not a measurement problem.",
                 ],
-                "figure": "K1_sdg_trust_cross_section.png",
-                "caption": "SDG16 trust series can barely be tested (9 of 13 measurable, 4 significant) and collapse when "
-                           "controlled for income. Interpersonal trust only appears in ESS.",
+                "figure": "trust_coverage_comparison.png",
+                "caption": "Social trust: 94% of ESS countries significant (individual level), 1.5% of SDG16 "
+                           "country-indicator pairs (institutional confidence, not interpersonal trust), "
+                           "not measured in the HDI.",
             },
 
             {
                 "label": "Synthesis",
-                "heading": "Three domains, three frameworks, three different blind spots",
+                "heading": "Three domains, three ways frameworks lose sight of what matters",
                 "body": [
                     "Education's rank depends on which construct you count: attainment works, but parity "
                     "ratios and learning outcomes do not, so pooling dilutes the signal. Health's rank depends "
@@ -276,12 +304,25 @@ ACTS = [
                     "health does, so the HDI's choice costs it. Social trust's rank is zero because it is not "
                     "collected at scale in development frameworks at all — a coverage gap that cannot be fixed "
                     "by choosing the right variable, because no variable was ever measured.",
-                    "These are not criticisms of the frameworks; they were built to track development, and they do. "
-                    "Education is testable in all three frameworks but its rank depends entirely on which construct was chosen. "
-                    "Health is testable everywhere and leads wherever it is measured something that still varies — a robust "
-                    "signal despite the HDI's proxy choice. Social trust is testable in one instrument only: the ESS, where it "
-                    "emerges as third strongest. It does not appear in the HDI at all, and the SDG framework measures institutional "
-                    "confidence instead, a different construct entirely.",
+                    "These are not criticisms of the frameworks; they were built to track development, and "
+                    "they do. But which components look most consequential for lived experience is not the "
+                    "question they were built to answer.",
+                ],
+                "figure": "domain_horse_race.png",
+                "caption": "Domains competing within one instrument (ESS), at two levels of aggregation. "
+                           "Individual level (left) and country means (right).",
+            },
+
+            {
+                "label": "Framework blind spots · domain by domain",
+                "heading": "Education, health and social trust — and which frameworks can see them",
+                "body": [
+                    "A summary of the blind spots: which frameworks can test which domains, and whether the test "
+                    "yields a signal. Education is testable in all three frameworks but its rank depends entirely on which "
+                    "construct the framework chose to count. Health is testable everywhere and leads wherever it is measured "
+                    "somewhere it still varies — a robust signal despite the HDI's poor choice of proxy. Social trust is testable "
+                    "in one instrument only: the ESS. It does not appear in the HDI at all, and the SDG framework measures "
+                    "institutional confidence instead, which is a different construct and a weaker predictor.",
                 ],
                 "figure": "domain_scorecard.png",
                 "caption": "Which frameworks can test each domain (green = tracks wellbeing, "
@@ -313,6 +354,23 @@ ACTS = [
         ),
         "beats": [
             {
+                "label": "Method matters · what survives",
+                "heading": "Health survives both measurement methods. Social trust does not.",
+                "body": [
+                    "A critical test: which domains actually predict wellbeing regardless of how you measure development? "
+                    "Health is significant in both administrative sources (SDG, 11.5% of country-indicator pairs) and "
+                    "self-reported sources (ESS, median R² = 0.091). This is robust. Education shows weak signal in both "
+                    "(SDG 3.3%, ESS R² = 0.0098), so the issue is not method-dependent but measurement-dependent. "
+                    "Social trust, however, only appears in self-reported data: 94% of ESS countries (median R² = 0.041) "
+                    "versus 1.5% of SDG16 country-pairs measuring institutional confidence instead. The three domains do not "
+                    "behave the same way across measurement methods.",
+                ],
+                "figure": "health_trust_corroboration.png",
+                "caption": "Health is robust across administrative and self-reported sources. Education is weak in both. "
+                           "Social trust appears only in self-reported individual-level data.",
+            },
+
+            {
                 "label": "Within-country evidence",
                 "heading": "Individual-level, self-reported data captures year-to-year change that administrative frameworks miss",
                 "body": [
@@ -322,24 +380,43 @@ ACTS = [
                     "frameworks are poorly designed; it is because they measure aggregate, administrative "
                     "data at long intervals (annual at best for HDI and SDG). Individual survey responses "
                     "capture year-to-year variation in how people experience their lives.",
-                    "This is why social trust emerges here. At the country level, the SDG database carries 13 trust-adjacent series, "
-                    "but only nine can be tested, four are significant, and nearly all disappear when controlling for income. They measure "
-                    "institutional confidence, not interpersonal trust. In the HDI, trust is not measured at all. But at the individual level, "
-                    "within countries, the ESS shows interpersonal trust is significant in 94% of countries and drives year-to-year change "
-                    "in wellbeing. The three domains emerge not because the frameworks reveal them, but because ESS measures them where people "
-                    "actually experience variation: in themselves, over time.",
-                    "This is not about measurement error. It is structural. Frameworks designed for tracking aggregate national progress "
-                    "cannot see individual experience responsive to change. At regional scale, the collapse persists: across 167 subnational "
-                    "regions within ESS countries with ≥5 survey years, life satisfaction and regional development show the same pattern as "
-                    "national data — strong levels associations, weak differences associations. The problem is not aggregation; it is temporal "
-                    "resolution and individual measurement.",
-                    "The caveats are substantial: 36 European countries, self-reported measures, annual cycles. But the implication is clear. "
-                    "Development frameworks' blindness to social trust is not because trust does not matter for wellbeing; it is because development "
-                    "was never designed to measure individual experience at the temporal resolution where people and places change.",
+                    "This matters for social trust most of all. At the country level, SDG has almost no trust "
+                    "coverage; in the HDI, none. But at the individual level, within countries, ESS shows trust "
+                    "is significant in 94% of countries and drives year-to-year change in how satisfied people "
+                    "report being. The three domains emerge not because the frameworks reveal them, but because "
+                    "ESS measures them where people actually experience variation: in themselves, over time.",
+                    "The caveats are substantial: 36 European countries, self-reported measures, annual cycles. "
+                    "But the implication is clear. Development frameworks' blindness to social trust is not because "
+                    "trust does not matter for wellbeing; it is because development was never designed to measure "
+                    "individual experience at the temporal resolution where people change.",
                 ],
                 "figure": "collapse_shdi_ess_regional.png",
-                "caption": "Regional collapse: 167 subnational regions, levels vs. differences. ESS persists; collapse "
-                           "confirms it is not an artifact of national aggregation but of measurement type.",
+                "caption": "Regional collapse: 167 subnational regions within ESS countries, levels vs. differences. "
+                           "The collapse persists at regional scale, confirming it is not an artifact of national aggregation.",
+            },
+
+            {
+                "label": "Why SDG's trust data doesn't work",
+                "heading": "SDG16 measures institutional confidence, not interpersonal trust, and the signal is weak",
+                "body": [
+                    "The SDG framework carries 13 trust-adjacent series under Goal 16, but the detail reveals why "
+                    "they fail. First, coverage: only nine of thirteen can be tested across countries, and four are "
+                    "significant — weaker than the development indicators the frameworks already carry. Second, construct: "
+                    "bribery (individuals), bribery (firms), and decision-making inclusiveness predict the Cantril ladder; "
+                    "satisfaction with healthcare, government services, and secondary education do not. These measure "
+                    "satisfaction with institutions, not trust in people.",
+                    "More critically, when you control for income — net of log GNI per capita — nearly all SDG trust series "
+                    "disappear. Bribery stays significant, but satisfaction with government, services, and education vanishes. "
+                    "This is a known artifact of subjective institutional scales across income levels; the same survey administered "
+                    "at different income levels produces structural differences in response patterns unrelated to trust itself. "
+                    "Interpersonal trust, by contrast, shows robust signal independent of income controls.",
+                    "This is not a flaw in the SDG framework's execution. It reflects a fundamental choice: development frameworks "
+                    "measure institutions and systems, not personal relationships. Social trust emerges in individual-level, "
+                    "self-reported data because that is where it lives — in how people experience their immediate world.",
+                ],
+                "figure": "K1_sdg_trust_cross_section.png",
+                "caption": "SDG16 trust series can barely be tested (9 of 13 measurable, 4 significant) and collapse when "
+                           "controlled for income. Panel (b) shows bribery persists but satisfaction measures disappear.",
             },
         ],
     },
@@ -366,56 +443,74 @@ ACTS = [
         ),
         "beats": [
             {
-                "label": "The structural disconnect",
-                "heading": "These frameworks were built to measure development, not to capture what predicts wellbeing",
+                "label": "The disconnect",
+                "heading": "Development frameworks and wellbeing frameworks are solving different problems",
                 "body": [
-                    "The HDI and SDG frameworks do not answer the question 'what makes people's lives better?' "
-                    "They were designed to track development at the aggregate level, with indicators chosen before "
-                    "the question of individual wellbeing was systematically tested. That is not a design failure; "
-                    "it is the intended scope. But it creates a structural gap: frameworks measuring aggregate, "
-                    "infrequent administrative data cannot see individual experience that responds to change.",
-                    "The gap is not incurable. It is built on three concrete, fixable problems: wrong constructs "
-                    "for some domains, saturated variables for others, and missing coverage for those not measured "
-                    "at all. This commentary suggests how to fix each.",
+                    "The HDI and SDG frameworks do not answer the question 'what makes people's "
+                    "lives better?' any more than a global income statistics database answers 'what "
+                    "makes a person happy?' They were designed to track development, measured at "
+                    "the aggregate level, with indicators chosen before the question of individual "
+                    "wellbeing was systematically tested. That is not a design failure; it is the "
+                    "intended scope. The problem is that these two questions — how development progresses, "
+                    "and what shapes lived experience — are not the same question.",
+                    "The gap is structural and manifests in three ways. Education's access indicators "
+                    "predict wellbeing; its parity ratios do not. Pooling them does not fix the problem; "
+                    "it just averages out the signal. For health, life expectancy is saturated in developed "
+                    "countries; choosing it as the universal proxy sacrifices prediction where it matters "
+                    "most for wellbeing measurement. And social trust is not collected at scale in either "
+                    "framework, so no measurement choice can recover what was never measured. These are not "
+                    "failures to improve. They are features of frameworks built to answer a different question.",
                 ],
                 "figure": None,
                 "caption": None,
             },
 
             {
-                "label": "Implication 1 · Fix wrong constructs",
-                "heading": "Education and health: measurement specificity based on what predicts wellbeing",
+                "label": "Implication 1 · Measurement choices constrain what frameworks can see",
+                "heading": "Education and health: what prescriptive measurement looks like",
                 "body": [
-                    "Education is significant everywhere it is measured as attainment (92% in ESS, 34% in HDI, "
-                    "12.7% in SDG4 access alone). But SDG4 averages it with parity ratios and learning outcomes, "
-                    "which do not predict wellbeing, collapsing the pooled rate to 3.3%. The fix: development "
-                    "frameworks should make construction choices with explicit reference to what research shows "
-                    "matters for lived experience. For education in wellbeing contexts, this means weighting access "
-                    "and completion more heavily than equity ratios.",
-                    "Health is nearly invisible in the HDI (20% significant) because life expectancy is saturated "
-                    "in developed countries — the top 100 range from 81–85 years. Yet self-rated health is significant "
-                    "in 100% of ESS countries. The fix: use different variables at different income levels. Life expectancy "
-                    "for lower-income settings where it still varies; self-reported health, or condition-specific mortality "
-                    "(maternal, neonatal, under-five), in saturated ones.",
+                    "Education is significant everywhere it is measured as attainment, but nearly "
+                    "invisible in SDG4 because most indicators measure something else. Health is "
+                    "nearly invisible in the HDI because life expectancy has saturated. Neither domain "
+                    "has changed; the frameworks' construction choices have. The evidence suggests three "
+                    "concrete shifts.",
+                    "For education: development measurement should prioritize access and completion "
+                    "over parity ratios and learning outcomes when the intent is tracking lived experience. "
+                    "The data shows access indicators reach 12.7% significance in predicting wellbeing; "
+                    "equity parity ratios reach 2.5%. Weighting constructs explicitly by their "
+                    "wellbeing correlation, rather than equally by series count, would surface what actually "
+                    "matters.",
+                    "For health: measurement should become adaptive, varying by development context. "
+                    "Life expectancy works as a proxy in lower-income settings where variance remains; "
+                    "in saturated regions, self-reported health or diagnosis-specific conditions (depression, "
+                    "chronic conditions) capture variation life expectancy misses. This is not suggesting two "
+                    "separate frameworks; it is suggesting that the same domain — health — should be measured "
+                    "differently where the same variable no longer moves.",
                 ],
                 "figure": None,
                 "caption": None,
             },
 
             {
-                "label": "Implication 2 · Add missing coverage",
-                "heading": "Social trust: why coverage gaps cannot be fixed by better measurement of wrong things",
+                "label": "Implication 2 · Coverage gaps are more fundamental than construct choice",
+                "heading": "Social trust: building what was never measured",
                 "body": [
-                    "Social trust is significant in 94% of ESS countries and is the third-strongest predictor after "
-                    "health and income. Neither the HDI nor the SDG framework measures it. The SDG database has 13 "
-                    "series under Goal 16, but they measure institutional confidence—satisfaction with government, "
-                    "healthcare, education—not interpersonal trust. Moreover, 147 of 163 country-series have fewer than "
-                    "four years of data, making time-series designs impossible.",
-                    "The fix: development frameworks cannot discover what matters by measuring something else and hoping "
-                    "it correlates. If wellbeing is part of development measurement's purpose, interpersonal trust must be "
-                    "collected at scale. This could mean building social trust into core frameworks, or integrating data from "
-                    "surveys designed to measure individual experience (ESS, Gallup World Poll, World Values Survey). The scope "
-                    "of trust findings—36 European countries, individual-level—is tentative. But tentative is better than absent.",
+                    "Social trust is the most tentative finding here. The ESS is Europe-only, across "
+                    "36 countries, and relies on a single item. That bounds the claim: the pattern "
+                    "holds in Europe, with a wellbeing survey, on a self-report basis. It does not claim "
+                    "universality.",
+                    "But the reason it is tentative points to the deepest problem: trust is not collected "
+                    "at global scale in either framework. The SDG database has 13 series adjacent to trust, "
+                    "but they measure institutional confidence, not interpersonal trust, and they are "
+                    "intermittent (147 of 163 country-series have fewer than four years of data). "
+                    "This is not a construct-choice problem that better measurement can solve. "
+                    "It is a coverage gap, and the prescription follows directly: if wellbeing-conscious "
+                    "development monitoring is the intent, interpersonal trust must be collected at scale.",
+                    "This does not mean overloading the HDI or SDG questionnaires. It could mean "
+                    "systematic linkage between core development frameworks and dedicated wellbeing surveys — "
+                    "the ESS in Europe, Gallup World Poll and World Values Survey globally — that measure trust "
+                    "at individual level and can be integrated into country-level assessments. The evidence "
+                    "suggests this is not optional if the goal is understanding what shapes lived experience.",
                 ],
                 "figure": None,
                 "caption": None,
@@ -423,20 +518,25 @@ ACTS = [
 
             {
                 "label": "Conclusion",
-                "heading": "From evidence to redesign",
+                "heading": "From evidence to intent: what should wellbeing measurement look like?",
                 "body": [
-                    "The evidence is clear: which domain predicts life satisfaction depends on which framework measures it "
-                    "and what variable they chose. This is not about the domains; it is about the tools. Development frameworks "
-                    "work well for their stated purpose — tracking aggregate progress toward development goals. But if that purpose "
-                    "is understood to include supporting lived experience, the measurement needs to change.",
-                    "The three implications suggest where to start: make construction choices based on what research shows matters "
-                    "(education's access, health's variation, not saturation); choose variables that still move at the development "
-                    "levels being measured; and collect data for domains that matter but are currently missing. This is not a complete "
-                    "redesign. It is targeted adjustment rooted in evidence about what predicts individual wellbeing.",
-                    "The underlying question remains: Should development measurement be redesigned with lived experience in mind? "
-                    "If yes, should it measure at the individual level, with shorter intervals, using variables chosen for their "
-                    "responsiveness to change and their evidence of predicting wellbeing? The frameworks in place today are built for "
-                    "a different answer. These findings suggest what a different answer might measure.",
+                    "The evidence shows a consistent pattern: which domain looks most consequential "
+                    "for wellbeing depends on which framework measures it and what variable they chose. "
+                    "This is not about the domains; it is about the tools. And if the tools were redesigned "
+                    "with wellbeing in mind, the evidence points to concrete changes.",
+                    "Three recommendations emerge from this analysis. First: for education, construct "
+                    "measurement choices explicitly to favor access and completion over equity parity ratios "
+                    "when the intent is tracking lived experience. Second: for health, make variable choice "
+                    "adaptive — life expectancy where variance remains, self-reported measures or condition-specific "
+                    "indicators where it does not. Third: for social trust, build interpersonal-trust measurement "
+                    "into development frameworks, either directly or through systematic integration with wellbeing "
+                    "surveys that capture it.",
+                    "Whether development frameworks should take on wellbeing as part of their purpose remains "
+                    "a choice, not a necessity. These frameworks have done important work tracking development. "
+                    "But if the intent is understanding what actually shapes how people experience their lives, "
+                    "the evidence suggests the measurement that serves that intent should be different — more "
+                    "granular in which constructs to count, more responsive to where variables still move, and "
+                    "more systematic about collecting domains that matter but have never been measured at scale.",
                 ],
                 "figure": None,
                 "caption": None,
