@@ -240,6 +240,22 @@ ACTS = [
             },
 
             {
+                "label": "SDG indicator rankings · why health matters despite low %",
+                "heading": "Health indicators rank 4th among 17 SDG goals; the low percentage reflects weak overall SDG signal",
+                "body": [
+                    "The SDG database is vast: 661 series across 42 countries testing 17 goals. The overall significance "
+                    "rate is low — only 3-4% of all country-indicator pairs are significant. Within that sparse landscape, "
+                    "health indicators rank fourth, with 16 of the top 25 most predictive SDG series falling under Goal 3. "
+                    "These are survival measures: infant mortality, under-five mortality, stunting, neonatal mortality, "
+                    "sanitation, drinking water — all objective, externally measured.",
+                    "The low 11.5% rate for health is not evidence that health doesn't matter. It is evidence that most of "
+                    "the SDG database does not predict wellbeing. Within that context, health ranks high.",
+                ],
+                "figure": "sdg_indicator_top20.png",
+                "caption": "Top 25 SDG indicators by significance. Health (Goal 3) dominates: 16 of 25 top series.",
+            },
+
+            {
                 "label": "Result 3 · Social trust",
                 "heading": "Social trust leads the ESS, is nearly invisible to development frameworks",
                 "body": [
