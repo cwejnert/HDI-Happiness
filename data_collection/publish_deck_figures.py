@@ -34,17 +34,22 @@ MAPPING = {
     # Act I -- the replicated collapse
     "collapse_hdi_shdi_whr.png": "collapse_hdi_shdi_whr.png",
     "hdi_full_structure.png": "hdi_full_structure.png",
+    "ess_levels_diffs_collapse.png": "ess_levels_diffs_collapse.png",
     "collapse_hdi_ess.png": "B4_collapse_bar_national.png",
     "collapse_shdi_ess_regional.png": "D3_collapse_scatter_regional.png",
 
-    # Act II -- frameworks, the two results, the synthesis
+    # Act II -- frameworks, the three results, the synthesis
+    "domains_at_levels_comparison.png": "domains_at_levels_comparison.png",
+    "education_levels_comparison.png": "education_levels_comparison.png",
+    "sdg4_unpooled.png": "F2_sdg4_education_categories.png",
+    "health_levels_comparison.png": "health_levels_comparison.png",
+    "trust_coverage_comparison.png": "trust_coverage_comparison.png",
+    "domain_horse_race.png": "domain_horse_race.png",
     "framework_three_comparisons.png": "I1_framework_three_comparisons.png",
     "sdg_indicator_top20.png": "F6_sdg_indicator_ranking.png",
-    "sdg4_unpooled.png": "F2_sdg4_education_categories.png",
     "ess_individual_education.png": "F4_ess_individual_education_boxplot.png",
     "sdg_by_goal.png": "F1_sdg_goal_significance_ranking.png",
     "health_trust_corroboration.png": "health_trust_corroboration.png",
-    "domain_horse_race.png": "domain_horse_race.png",
     "K1_sdg_trust_cross_section.png": "K1_sdg_trust_cross_section.png",
     "domain_scorecard.png": "J1_domain_framework_scorecard.png",
     "Figure1_commentary.png": "Figure1_commentary.png",
