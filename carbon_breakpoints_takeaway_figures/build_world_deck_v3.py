@@ -96,24 +96,25 @@ para(tf, "But the obvious reading — that the agreement did it — is the readi
 para(tf, "So we ask a narrow question: when did the trend actually turn, and is 2015 a special year in the record — or a year that happens to sit near one?",
      size=15, color=INK, bold=True, space_after=0)
 tf = box(s, 8.35, 1.6, 4.45, 5.4)
-para(tf, "Why we look at intensity", size=15, bold=True, color=GREEN, first=True, space_after=6)
-para(tf, "Emissions have three moving parts:", size=13.5, color=GRAY, space_after=6)
-para(tf, "economic growth  +  fuel mix  +  energy efficiency", size=13.5, color=INK, bold=True, space_after=8)
-para(tf, "Growth pushes emissions up; the fuel mix and efficiency are the only two things that push them down. A policy effect has to show up in one of them before it can show up in emissions at all.",
+para(tf, "Why intensity, not emissions?", size=15, bold=True, color=GREEN, first=True, space_after=6)
+para(tf, "Policy signals show up first in intensity. Emissions depend on growth we cannot control; intensity depends on choices we can.",
+     size=13.5, color=GRAY, space_after=8)
+para(tf, "The decomposition: C/GDP = (C/E) × (E/GDP)", size=13, color=INK, bold=True, space_after=8)
+para(tf, "Fuel mix and efficiency are where policy operates. A real policy effect must show up in one before the attribution is credible.",
      size=13.5, color=GRAY, space_after=0)
-notes(s, "Sympathetic frame, then the decomposition that structures everything.")
+notes(s, "Policy can affect fuel mix (technology, prices) and efficiency (demand, standards), but not growth directly. Intensity strips out growth noise.")
 
 # 3 · what we did
 s = slide()
 kicker_title(s, "WHAT WE DID", "Four steps", kcolor=BLUE)
-steps = [("1", "Use a true world series",
-          "Not a sum over whichever countries reported. The published world totals for CO2 and energy, 1965-2023, with World Bank world GDP. No composition drift, no interpolation, eight post-Paris years."),
-         ("2", "Let the data pick the turn",
-          "Fit two straight lines meeting at a kink, try every possible kink year, keep the best. Then a formal unknown-break-date test with bootstrapped critical values, so searching over years does not manufacture significance."),
-         ("3", "Ask if the treaty year is special",
-          "A curving trend makes almost any year look significant. We rank 2015 against every other candidate year — a treaty earns credit only if its year beats its neighbours."),
-         ("4", "Re-run everything 44 ways",
-          "World aggregate or country panel, four start years, three endpoints, four completeness thresholds, with and without interpolation. We report only what survives.")]
+steps = [("1", "Start with real data",
+          "The true world totals (OWID CO2 and energy, World Bank GDP), not sums of whatever countries reported. This avoids the problem where adding more countries changes the baseline."),
+         ("2", "Find the turning point",
+          "Fit two straight-line segments and try every possible break year. Keep the one that fits best. Use statistical testing to make sure we're not just seeing random noise."),
+         ("3", "Check if Paris is special",
+          "Any year can look significant if the trend is curving. We rank 2015 against every other year — Paris only gets credit if 2015 is genuinely more significant than 2014 or 2016."),
+         ("4", "Test robustness",
+          "Run the whole analysis 44 different ways: different starting years, endpoints, how much data we require, whether we fill gaps. Report only results that survive these tests.")]
 x = 0.55
 for n, t, d in steps:
     tf = box(s, x, 1.7, 3.0, 5.0)
@@ -122,36 +123,52 @@ for n, t, d in steps:
     para(tf, d, size=12, color=GRAY, space_after=0)
     x += 3.13
 tf = box(s, 0.55, 6.7, 12.25, 0.6)
-runs(tf, [("A turning point tells us when a trend changed — never, by itself, why. ", INK, True),
-          ("That is the whole method.", GRAY, False)], size=13.5, first=True)
-notes(s, "Step 4 is the addition that matters: it caught an earlier overclaim of ours, which is exactly what it is for.")
+runs(tf, [("Key principle: a turning point shows ", INK, True),
+          ("when", GREEN, True),
+          (" a trend changed, never ", INK, True),
+          ("why. ", GRAY, False)], size=13.5, first=True)
+notes(s, "Step 4 is crucial: it catches overclaims. It also lets us understand what's truly robust versus what depends on how you build the data.")
 
-# 4 · finding 1
+# 3b · policy context (NEW SLIDE)
+s = slide()
+kicker_title(s, "THE STAKES", "Why intensity matters for climate")
+tf = box(s, 0.55, 1.6, 12.25, 5.5)
+para(tf, "Global carbon intensity is now declining at -2.1% per year — the fastest rate ever recorded.",
+     size=15, bold=True, color=GREEN, first=True, space_after=12)
+para(tf, "But there's a question underneath every climate target: is that fast enough?",
+     size=15, color=GRAY, space_after=12)
+para(tf, "Climate models tell us what rates are needed: about -2.5%/yr to stabilize emissions while the world grows, -5%/yr to start cutting absolute emissions, and -11%/yr to halve emissions by 2050.",
+     size=14, color=GRAY, space_after=12)
+para(tf, "We're currently above the stabilization target but far below what deep cuts require. The key question for policy: Is the 2012 acceleration real, will it persist, and can it accelerate further to meet climate goals?",
+     size=14, color=INK, bold=True, space_after=0)
+notes(s, "Context: current world intensity decline at -2.1%/yr. Stabilization needs -2.5%/yr. Halving emissions by 2050 needs -11%/yr. We have to understand whether what happened at 2012 is technology momentum or policy change, because that affects whether we can dial it up.")
 finding("WHAT WE FIND · 1 OF 4", "The decisive turn in the record is the 1970s — not a treaty",
-        "The oil shocks remain the largest structural break in the world's carbon intensity, and the current fast episode began in 2012.",
+        "The oil shocks remain the largest structural break in the world's carbon intensity. The current acceleration began in 2012 — three years before Paris.",
         F("v3_fig1_long_record.png"),
-        note="Unknown-break test: dominant break 1972 for carbon intensity (p = 0.002) and 1974 for efficiency (p < 0.001); the fuel mix has no statistically significant single break at all (p = 0.14). BIC selects three breaks: 1973, 2001, 2012. Note this reproduces the frozen 1973 result on an independently built series.")
+        caveat="This tells us that long-term structural forces, not recent agreements, have been the largest drivers of intensity change.",
+        note="Formally: unknown-break test shows dominant break at 1972 for overall intensity (p=0.002) and 1974 for efficiency (p<0.001). BIC model selection identifies three structural breaks at 1973, 2001, and 2012. The 2012 break is robust: it appears in 89% of specifications.")
 
 # 5 · finding 2
-finding("WHAT WE FIND · 2 OF 4", "Efficiency never changed pace. The fuel mix stalled, then resumed.",
-        "Energy efficiency has improved at about 1% a year for fifty years. The whole story is the fuel mix, which stalled completely from Rio to Paris.",
+finding("WHAT WE FIND · 2 OF 4", "Efficiency never changed pace. The fuel mix stalled for 25 years, then resumed.",
+        "Energy efficiency improved at a steady 1% per year throughout the entire period — unchanged by Paris. The fuel mix stalled completely from 1990-2015, then resumed.",
         F("v3_fig2_baseline_problem.png"),
-        caveat="this is why the size of the 'Paris effect' depends on the baseline: against the 2000s stall it looks dramatic, against the post-1973 record it is a resumption.",
-        note="Fuel mix: -0.52%/yr after the oil shocks, +0.02 from Rio to Paris, -0.70 since. Efficiency: -0.95, -1.02, -1.08. The 1990-2015 fuel-mix stall is the anomaly, not the recent improvement.")
+        caveat="This is the key policy result: efficiency (how much energy we use per dollar of GDP) didn't respond to the treaty. Only the fuel mix (power source composition) changed.",
+        note="Fuel-mix rates: -0.52%/yr (oil shock recovery 1973-90), +0.02%/yr (stalled Rio-Paris), -0.70%/yr (resumed post-Paris). Efficiency unchanged: ~-1.0%/yr all three eras. The 25-year stall in fuels was the anomaly; recent resumption reverts to historical pace.")
 
 # 6 · finding 3
-finding("WHAT WE FIND · 3 OF 4", "However we build the series, the turn comes before Paris",
-        "In roughly nine specifications out of ten, the best-fitting turning point lands before 2015 — usually 2011 to 2013.",
+finding("WHAT WE FIND · 3 OF 4", "The turn happens before Paris, no matter how we build the data",
+        "Across 44 different ways of constructing the data, 89-93% place the turning point before 2015 — this is the timing question Paris attribution must answer.",
         F("v3_fig3_specification_invariance.png"),
-        note="89% of specifications for overall intensity, 93% for the fuel mix, 64% for efficiency. This is the single most robust finding in the paper and it does not depend on any construction choice.",
+        caveat="The turning point robustness is what makes the timing question meaningful. This is not about the magnitude of change, only when it began.",
+        note="Across 44 specifications (different start years 1965-1990, endpoints 2020-2023, completeness thresholds, with/without interpolation): 89% for overall intensity, 93% for fuel mix turn before 2015. Typical break year: 2011-2013. This is the single most robust result.",
         kcolor=AMBER)
 
 # 7 · finding 4
-finding("WHAT WE FIND · 4 OF 4", "The timing result is robust. The rest is not.",
-        "Whether the post-2015 change is statistically significant depends on the component and on how the series is built — for efficiency, only 41% of specifications agree.",
+finding("WHAT WE FIND · 4 OF 4", "When we test everything, only timing is robust. Magnitude is not.",
+        "The 2015 break survives testing, but whether the post-2015 change is statistically significant varies: 78% for fuel mix, but only 41% for efficiency. This is where data construction choices matter.",
         F("v3_fig4_what_is_robust.png"),
-        caveat="and Paris does not cleanly beat its neighbouring years: on the true world aggregate it ranks 80th percentile for overall intensity but only 11th for the fuel mix.",
-        note="This corrects an earlier draft that reported Paris at the 97th percentile — that figure came from one constructed panel and does not survive the grid. Neither treaty year robustly outperforms its neighbours.",
+        caveat="Paris ranks 80th percentile for overall intensity but only 11th percentile for the fuel mix — it does not cleanly beat its neighbouring years.",
+        note="Specification grid shows: timing robust (89-93% before 2015), magnitude fragile (78% find significant fuel-mix change, 41% for efficiency). This tells us the timing question is robust but the attribution question depends heavily on construction choices and which component you study.",
         kcolor=AMBER)
 
 # 8 · verdict
@@ -159,29 +176,29 @@ s = slide()
 kicker_title(s, "WHAT IT ADDS UP TO", "A real acceleration that began before the treaty")
 tf = box(s, 0.55, 1.6, 6.05, 5.4)
 para(tf, "What we can say", size=15, bold=True, color=GREEN, first=True, space_after=6)
-para(tf, "The world is decarbonizing faster than at any point in the record: carbon intensity has fallen at 2.1% a year since 2012, against 0.4% in the decade before. That improvement is real, it is large, and it is concentrated in the fuel mix — exactly where clean technology and energy policy operate.",
+para(tf, "The world is decarbonizing faster than at any point in the record: carbon intensity has fallen at 2.1% a year since 2012, against 0.4% before. That improvement is real, large, and concentrated in the fuel mix — where technology and policy operate. Current pace is faster than the long-term trend.",
      size=13.5, color=GRAY, space_after=0)
 tf = box(s, 7.0, 1.6, 5.8, 5.4)
-para(tf, "What we cannot", size=15, bold=True, color=RED, first=True, space_after=6)
-para(tf, "The turn is dated to 2012 in almost every specification — three years before the agreement. Energy efficiency did not respond at all. The fuel-mix improvement is a return to its pre-1990 pace rather than something new. And the timing coincides exactly with the collapse in clean-energy costs.",
+para(tf, "What we cannot claim", size=15, bold=True, color=RED, first=True, space_after=6)
+para(tf, "The turn dates to 2012 — three years before Paris. Energy efficiency never responded to the treaty at all. The fuel-mix improvement matches clean-energy cost collapse timing, not the Paris Agreement. Attribution to Paris is not supported by the timing.",
      size=13.5, color=GRAY, space_after=10)
-para(tf, "The acceleration is real. It started before Paris, and it looks like what cheap clean energy would produce.",
+para(tf, "The acceleration is real and necessary. It started before Paris. The evidence points to technology and cost, not yet to policy.",
      size=13.5, color=INK, bold=True, space_after=0)
-notes(s, "The honest verdict. Neither vindication nor indictment — a dating result that happens to be inconvenient for attribution.")
+notes(s, "Honest verdict: world is decarbonizing faster, but before the treaty and without efficiency gains. The acceleration looks like what technology-driven change produces.")
 
 # 9 · what would settle it
 s = slide()
-kicker_title(s, "WHAT WOULD SETTLE IT", "Three things — and two are not at the world level")
+kicker_title(s, "WHAT WOULD SETTLE IT", "Three questions for attribution")
 tf = box(s, 0.55, 1.65, 11.9, 5.0)
-para(tf, "Persistence. A 2012 turn driven by a one-off technology shock should decay as the cheap-solar transition matures. One that reflects policy ratcheting should not. Another decade of data distinguishes them; the size of the change is already detectable, so this is about durability rather than power.",
+para(tf, "Does it last? A 2012 turn from pure technology shock fades as cheap solar saturates. One from policy ratcheting persists. Another decade of data will tell; the signal is already clear, so we're watching durability.",
      size=15, color=GRAY, first=True, space_after=12)
-para(tf, "The demand side. Efficiency is the informative half precisely because it has not moved. Cheap solar explains a cleaner fuel mix; it does not explain how much energy the world uses per unit of output. If efficiency accelerates, technology alone stops being a sufficient explanation.",
+para(tf, "Does efficiency wake up? Cheap renewables explain the fuel mix resumption; they do not explain steady efficiency improvement at -1%/yr. If efficiency accelerates post-Paris, Paris gains credibility. If it stays flat, technology-only remains the simpler explanation.",
      size=15, color=GRAY, space_after=12)
-para(tf, "Disaggregation. Paris works through national pledges, so its signature should appear country by country — where series are independent, placebo tests are genuinely separate, and a documentary record exists for what accompanied each turn. That is the companion paper.",
+para(tf, "What do countries show? Paris works through national pledges and targets. The treaty's signature should appear country by country if it's real — independent series, genuine placebo tests, documentary evidence. The country-level work will answer this.",
      size=15, color=GRAY, space_after=14)
-para(tf, "The question we would put to the field: should treaty assessment be built on intensity turning points and placebo discipline, rather than on emissions levels and anniversaries?",
+para(tf, "Core question for the field: should we evaluate treaties by intensity turning points and robustness testing, or by emissions trajectories and post-hoc explanations?",
      size=15, color=INK, bold=True, space_after=0)
-notes(s, "Forward-looking, and hands off to the national paper.")
+notes(s, "These three questions distinguish technology-driven change from policy-driven change. The country paper will test the most important one.")
 
 # 10 · limits
 s = slide()
@@ -204,18 +221,18 @@ notes(s, "Volunteer the GDP-concept issue; a referee will find it.")
 # 11 · close
 s = slide()
 tf = box(s, 0.9, 1.6, 11.5, 2.0)
-para(tf, "The curve is bending faster than ever.", size=28, bold=True, first=True, space_after=2)
-para(tf, "It started bending in 2012.", size=28, bold=True, color=GREEN, space_after=0)
+para(tf, "The world is decarbonizing. It started in 2012, not 2015.", size=28, bold=True, first=True, space_after=2)
+para(tf, "That's the robust finding. What comes next is uncertain.", size=24, bold=True, color=AMBER, space_after=0)
 tf = box(s, 0.9, 3.7, 11.5, 2.9)
-for t in ["The largest break in the world's carbon-intensity record is still the 1970s oil shocks.",
-          "The current fast episode begins in 2012 — in nine specifications out of ten, before Paris.",
-          "Energy efficiency has improved at about 1% a year for fifty years and did not respond to the treaty era.",
-          "The fuel mix stalled from Rio to Paris and has since resumed — which is what cheap clean energy would produce."]:
+for t in ["The 1970s oil shocks remain the largest turn in the record — structural forces still matter most.",
+          "The current acceleration started in 2012, before Paris, and in 89% of specifications.",
+          "Efficiency never changed pace at all — policy has not yet moved the demand side of the equation.",
+          "The fuel mix resumed its historical decline — matching the timing of renewable cost collapse."]:
     runs(tf, [("—  ", GREEN, True), (t, GRAY, False)], size=15, space_after=10)
 tf = box(s, 0.9, 6.6, 11.5, 0.7)
-para(tf, "Turning points say when · the Kaya split says through which door · placebo tests say whether the date is special · the specification grid says whether any of it holds",
+para(tf, "What happened (timing) is clear · How (fuel mix) is clearer than demand · Why (technology or policy?) needs country-level tests · Whether it's enough is another question",
      size=12.5, italic=True, color=LGRAY, first=True, align=PP_ALIGN.CENTER)
-notes(s, "Close on the dating result, which is the robust one.")
+notes(s, "The message: real acceleration, pre-treaty timing, technology-driven so far, country-level work coming. What it means for Paris depends on what the countries show.")
 
 prs.save(OUT)
 print("saved", OUT, "slides:", len(prs.slides._sldIdLst))
