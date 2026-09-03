@@ -314,6 +314,22 @@ ACTS = [
                 "caption": "Domains competing within one instrument (ESS), at two levels of aggregation. "
                            "Individual level (left) and country means (right).",
             },
+
+            {
+                "label": "Framework blind spots · domain by domain",
+                "heading": "Education, health and social trust — and which frameworks can see them",
+                "body": [
+                    "A summary of the blind spots: which frameworks can test which domains, and whether the test "
+                    "yields a signal. Education is testable in all three frameworks but its rank depends entirely on which "
+                    "construct the framework chose to count. Health is testable everywhere and leads wherever it is measured "
+                    "somewhere it still varies — a robust signal despite the HDI's poor choice of proxy. Social trust is testable "
+                    "in one instrument only: the ESS. It does not appear in the HDI at all, and the SDG framework measures "
+                    "institutional confidence instead, which is a different construct and a weaker predictor.",
+                ],
+                "figure": "domain_scorecard.png",
+                "caption": "Which frameworks can test each domain (green = tracks wellbeing, "
+                           "yellow = measurable but weak signal, gray = framework cannot test it).",
+            },
         ],
     },
 
@@ -376,8 +392,33 @@ ACTS = [
                     "trust does not matter for wellbeing; it is because development was never designed to measure "
                     "individual experience at the temporal resolution where people change.",
                 ],
-                "figure": None,
-                "caption": None,
+                "figure": "collapse_shdi_ess_regional.png",
+                "caption": "Regional collapse: 167 subnational regions within ESS countries, levels vs. differences. "
+                           "The collapse persists at regional scale, confirming it is not an artifact of national aggregation.",
+            },
+
+            {
+                "label": "Why SDG's trust data doesn't work",
+                "heading": "SDG16 measures institutional confidence, not interpersonal trust, and the signal is weak",
+                "body": [
+                    "The SDG framework carries 13 trust-adjacent series under Goal 16, but the detail reveals why "
+                    "they fail. First, coverage: only nine of thirteen can be tested across countries, and four are "
+                    "significant — weaker than the development indicators the frameworks already carry. Second, construct: "
+                    "bribery (individuals), bribery (firms), and decision-making inclusiveness predict the Cantril ladder; "
+                    "satisfaction with healthcare, government services, and secondary education do not. These measure "
+                    "satisfaction with institutions, not trust in people.",
+                    "More critically, when you control for income — net of log GNI per capita — nearly all SDG trust series "
+                    "disappear. Bribery stays significant, but satisfaction with government, services, and education vanishes. "
+                    "This is a known artifact of subjective institutional scales across income levels; the same survey administered "
+                    "at different income levels produces structural differences in response patterns unrelated to trust itself. "
+                    "Interpersonal trust, by contrast, shows robust signal independent of income controls.",
+                    "This is not a flaw in the SDG framework's execution. It reflects a fundamental choice: development frameworks "
+                    "measure institutions and systems, not personal relationships. Social trust emerges in individual-level, "
+                    "self-reported data because that is where it lives — in how people experience their immediate world.",
+                ],
+                "figure": "K1_sdg_trust_cross_section.png",
+                "caption": "SDG16 trust series can barely be tested (9 of 13 measurable, 4 significant) and collapse when "
+                           "controlled for income. Panel (b) shows bribery persists but satisfaction measures disappear.",
             },
         ],
     },
