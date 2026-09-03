@@ -160,10 +160,12 @@ def domains_at_levels():
 
     # Load SDG data
     sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
+    sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
+    sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
     # Extract education (Goal 4), health (Goal 3), trust (Goal 16) percentages
-    sdg_education = sdg_sig[sdg_sig["Goal"] == "4"]["pct_sig_levels"].values[0] if len(sdg_sig[sdg_sig["Goal"] == "4"]) > 0 else 3.3
-    sdg_health = sdg_sig[sdg_sig["Goal"] == "3"]["pct_sig_levels"].values[0] if len(sdg_sig[sdg_sig["Goal"] == "3"]) > 0 else 11.5
-    sdg_trust = sdg_sig[sdg_sig["Goal"] == "16"]["pct_sig_levels"].values[0] if len(sdg_sig[sdg_sig["Goal"] == "16"]) > 0 else 1.5
+    sdg_education = float(sdg_sig[sdg_sig["Goal"] == 4]["pct_sig_levels"].values[0]) if len(sdg_sig[sdg_sig["Goal"] == 4]) > 0 else 3.3
+    sdg_health = float(sdg_sig[sdg_sig["Goal"] == 3]["pct_sig_levels"].values[0]) if len(sdg_sig[sdg_sig["Goal"] == 3]) > 0 else 11.5
+    sdg_trust = float(sdg_sig[sdg_sig["Goal"] == 16]["pct_sig_levels"].values[0]) if len(sdg_sig[sdg_sig["Goal"] == 16]) > 0 else 1.5
 
     # Build figure: 3 domains × 3 frameworks
     fig, axes = plt.subplots(1, 3, figsize=(14, 5))
@@ -217,6 +219,200 @@ def domains_at_levels():
     print(f"Saved: {path}")
 
 
+def education_deep_dive():
+    """Education R² across frameworks at levels."""
+    panel = pd.read_csv("processed/country_round_panel.csv")
+
+    # ESS individual-level R²
+    ess_education_r2 = []
+    for cntry in panel["cntry"].unique():
+        grp = panel[panel["cntry"] == cntry]
+        ess_education_r2.append(fast_r2(grp["eduyrs"], grp["stflife"]))
+    ess_median = np.nanmedian(ess_education_r2)
+    ess_sig = (np.array(ess_education_r2) > 0.04).sum()
+    ess_tot = len([x for x in ess_education_r2 if not np.isnan(x)])
+
+    # HDI education (expected years of schooling)
+    hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
+    hdi_eys = hdi_sig[hdi_sig["indicator"] == "eys"]["r2_levels"].values
+    hdi_eys_sig = (hdi_eys > 0.04).sum()
+    hdi_eys_tot = len(hdi_eys)
+    hdi_pct = hdi_eys_sig / hdi_eys_tot * 100
+
+    # SDG education (all 35 indicators)
+    sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
+    sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
+    sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
+    sdg_education_pct = float(sdg_sig[sdg_sig["Goal"] == 4]["pct_sig_levels"].values[0])
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    fig.patch.set_facecolor(BG)
+
+    frameworks = ["ESS\nIndividual level\n(R² by country)",
+                  "HDI\nCountry level\n(% of 150 countries)",
+                  "SDG4\nCountry-indicator\n(% of pairs)"]
+    values = [ess_median, hdi_pct, sdg_education_pct]
+    colors = [BLUE, BLUE, BLUE]
+
+    bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
+
+    # Add value labels and sample sizes
+    for bar, val, label in zip(bars, values,
+                                [f"{ess_median:.4f}\n({ess_sig}/{ess_tot} sig)",
+                                 f"{hdi_pct:.1f}%\n({hdi_eys_sig}/{hdi_eys_tot})",
+                                 f"{sdg_education_pct:.1f}%"]):
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
+                label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
+
+    ax.set_ylabel("Effect size", fontsize=11)
+    ax.set_ylim(0, max(values) * 1.35)
+    style_axes(ax)
+    ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+
+    fig.text(0.05, 0.95, "Education across frameworks",
+             fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
+    fig.text(0.05, 0.90, "How education predicts life satisfaction/wellbeing in three frameworks, measured at levels only.",
+             fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
+
+    fig.tight_layout(rect=(0, 0, 1, 0.88))
+    path = f"{OUT_DIR}/education_levels_comparison.png"
+    fig.savefig(path, dpi=200, facecolor=BG)
+    plt.close()
+    print(f"Saved: {path}")
+
+
+def health_deep_dive():
+    """Health R² across frameworks at levels."""
+    panel = pd.read_csv("processed/country_round_panel.csv")
+
+    # ESS individual-level R²
+    ess_health_r2 = []
+    for cntry in panel["cntry"].unique():
+        grp = panel[panel["cntry"] == cntry]
+        ess_health_r2.append(fast_r2(grp["health"], grp["stflife"]))
+    ess_median = np.nanmedian(ess_health_r2)
+    ess_sig = (np.array(ess_health_r2) > 0.04).sum()
+    ess_tot = len([x for x in ess_health_r2 if not np.isnan(x)])
+
+    # HDI health (life expectancy)
+    hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
+    hdi_le = hdi_sig[hdi_sig["indicator"] == "le"]["r2_levels"].values
+    hdi_le_sig = (hdi_le > 0.04).sum()
+    hdi_le_tot = len(hdi_le)
+    hdi_pct = hdi_le_sig / hdi_le_tot * 100
+
+    # SDG health (Goal 3)
+    sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
+    sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
+    sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
+    sdg_health_pct = float(sdg_sig[sdg_sig["Goal"] == 3]["pct_sig_levels"].values[0])
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    fig.patch.set_facecolor(BG)
+
+    frameworks = ["ESS\nIndividual level\n(R² by country)",
+                  "HDI\nCountry level\n(% of 150 countries)",
+                  "SDG3\nCountry-indicator\n(% of pairs)"]
+    values = [ess_median, hdi_pct, sdg_health_pct]
+    colors = [RED, RED, RED]
+
+    bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
+
+    # Add value labels and sample sizes
+    for bar, val, label in zip(bars, values,
+                                [f"{ess_median:.4f}\n({ess_sig}/{ess_tot} sig)",
+                                 f"{hdi_pct:.1f}%\n({hdi_le_sig}/{hdi_le_tot})",
+                                 f"{sdg_health_pct:.1f}%"]):
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
+                label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
+
+    ax.set_ylabel("Effect size", fontsize=11)
+    ax.set_ylim(0, max(values) * 1.35)
+    style_axes(ax)
+    ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+
+    fig.text(0.05, 0.95, "Health across frameworks",
+             fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
+    fig.text(0.05, 0.90, "How health predicts life satisfaction/wellbeing in three frameworks, measured at levels only.",
+             fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
+
+    fig.tight_layout(rect=(0, 0, 1, 0.88))
+    path = f"{OUT_DIR}/health_levels_comparison.png"
+    fig.savefig(path, dpi=200, facecolor=BG)
+    plt.close()
+    print(f"Saved: {path}")
+
+
+def trust_deep_dive():
+    """Trust across frameworks — strong in ESS, weak/absent in SDG/HDI."""
+    panel = pd.read_csv("processed/country_round_panel.csv")
+
+    # ESS individual-level R²
+    ess_trust_r2 = []
+    for cntry in panel["cntry"].unique():
+        grp = panel[panel["cntry"] == cntry]
+        ess_trust_r2.append(fast_r2(grp["ppltrst"], grp["stflife"]))
+    ess_median = np.nanmedian(ess_trust_r2)
+    ess_sig = (np.array(ess_trust_r2) > 0.04).sum()
+    ess_tot = len([x for x in ess_trust_r2 if not np.isnan(x)])
+
+    # SDG trust (Goal 16 - institutional confidence, not interpersonal trust)
+    sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
+    sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
+    sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
+    sdg_trust_pct = float(sdg_sig[sdg_sig["Goal"] == 16]["pct_sig_levels"].values[0])
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    fig.patch.set_facecolor(BG)
+
+    frameworks = ["ESS\nInterpersonal trust\n(R² by country)",
+                  "SDG16\nInstitutional confidence*\n(% of pairs)",
+                  "HDI\nNot measured"]
+    values = [ess_median, sdg_trust_pct, 0]
+    colors = [GREEN, GREY, GREY]
+
+    bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
+
+    # Set lower alpha for HDI bar (not measured)
+    bars[2].set_alpha(0.2)
+
+    # Add value labels
+    labels = [f"{ess_median:.4f}\n({ess_sig}/{ess_tot} sig)",
+              f"{sdg_trust_pct:.1f}%",
+              "—"]
+    for bar, label in zip(bars, labels):
+        if bar.get_height() > 0:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
+                    label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
+        else:
+            ax.text(bar.get_x() + bar.get_width()/2., 0.002,
+                    label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=GREY)
+
+    ax.set_ylabel("Effect size", fontsize=11)
+    ax.set_ylim(0, max(values) * 1.35 if max(values) > 0 else 0.15)
+    style_axes(ax)
+    ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+
+    fig.text(0.05, 0.95, "Social trust across frameworks — a coverage gap",
+             fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
+    fig.text(0.05, 0.90, "Interpersonal trust is strong where it's measured (ESS). The SDG framework measures institutional\nconfidence instead. The HDI does not measure trust at all.",
+             fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
+    fig.text(0.05, 0.04, "* SDG16 includes satisfaction with public services, perception of bribery, and perceived decision-making inclusiveness.\nNone of these directly measure interpersonal trust.",
+             fontsize=7.5, color=GREY, transform=fig.transFigure, va="bottom", style="italic")
+
+    fig.tight_layout(rect=(0, 0.08, 1, 0.88))
+    path = f"{OUT_DIR}/trust_coverage_comparison.png"
+    fig.savefig(path, dpi=200, facecolor=BG)
+    plt.close()
+    print(f"Saved: {path}")
+
+
 if __name__ == "__main__":
     ess_collapse()
     domains_at_levels()
+    education_deep_dive()
+    health_deep_dive()
+    trust_deep_dive()
