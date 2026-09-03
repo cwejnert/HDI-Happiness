@@ -147,10 +147,9 @@ def ess_collapse():
 def domains_at_levels():
     """
     Show all three domains (education, health, trust) at levels across frameworks.
-    Uses data already computed by make_figures.py.
+    All frameworks show % of countries/contexts where significant (R² > 0.04).
     """
-    # Load ESS individual-level R² data from domain_horse_race data
-    # These come from processed files
+    # Load ESS individual-level R² data
     panel = pd.read_csv("processed/country_round_panel.csv")
 
     # Compute individual-level R² for each domain in ESS
@@ -164,9 +163,11 @@ def domains_at_levels():
         ess_health_r2.append(fast_r2(grp["health"], grp["stflife"]))
         ess_trust_r2.append(fast_r2(grp["ppltrst"], grp["stflife"]))
 
-    ess_ed_median = np.nanmedian(ess_education_r2)
-    ess_health_median = np.nanmedian(ess_health_r2)
-    ess_trust_median = np.nanmedian(ess_trust_r2)
+    # Convert to % of countries significant (R² > 0.04)
+    n_ess = len([x for x in ess_education_r2 if not np.isnan(x)])
+    ess_education_pct = 100 * (np.array(ess_education_r2) > 0.04).sum() / n_ess
+    ess_health_pct = 100 * (np.array(ess_health_r2) > 0.04).sum() / n_ess
+    ess_trust_pct = 100 * (np.array(ess_trust_r2) > 0.04).sum() / n_ess
 
     # Load HDI data from hdi_country_indicator_significance.csv
     hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
@@ -194,14 +195,14 @@ def domains_at_levels():
     domains = ["Education", "Health", "Social trust"]
     colors = [BLUE, RED, GREEN]
 
-    ess_values = [ess_ed_median, ess_health_median, ess_trust_median]
+    ess_values = [ess_education_pct, ess_health_pct, ess_trust_pct]
     hdi_values = [hdi_education_pct, hdi_health_pct, 0]  # HDI doesn't measure trust
     sdg_values = [sdg_education, sdg_health, sdg_trust]
 
     for idx, (domain, color, ess_val, hdi_val, sdg_val) in enumerate(zip(domains, colors, ess_values, hdi_values, sdg_values)):
         ax = axes[idx]
 
-        frameworks = ["ESS\n(individual R²)", "HDI\n(% significant)", "SDG\n(% significant)"]
+        frameworks = ["ESS\n(36 countries)", "HDI\n(150 countries)", "SDG\n(~42-74 countries)"]
         values = [ess_val, hdi_val, sdg_val]
         bar_colors = [color, color, GREY]
 
@@ -211,17 +212,17 @@ def domains_at_levels():
         if hdi_val == 0:
             bars[1].set_alpha(0.2)
 
-        ax.set_ylabel("Effect size or % significant", fontsize=9)
+        ax.set_ylabel("% of countries/contexts significant", fontsize=9)
         ax.set_title(domain, fontsize=11, fontweight="bold", color=INK)
-        ax.set_ylim(0, max(values) * 1.2 if max(values) > 0 else 0.15)
+        ax.set_ylim(0, 110)
         style_axes(ax)
 
         # Add value labels
         for i, (bar, val) in enumerate(zip(bars, values)):
             if val > 0:
                 height = bar.get_height()
-                label_txt = f"{val:.1%}" if val < 0.5 else f"{val:.1f}%"
-                ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
+                label_txt = f"{val:.0f}%"
+                ax.text(bar.get_x() + bar.get_width()/2., height + 1.5,
                         label_txt, ha='center', va='bottom', fontsize=9, fontweight='bold')
             else:
                 ax.text(bar.get_x() + bar.get_width()/2., 0.005,
@@ -229,7 +230,7 @@ def domains_at_levels():
 
     fig.text(0.05, 0.97, "All three domains at levels: education, health, and social trust",
              fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.91, "ESS shows median within-country individual-level R². HDI and SDG show % of countries/indicators significant at levels.",
+    fig.text(0.05, 0.91, "All frameworks show % of countries where domain significantly predicts wellbeing at levels (R² > 0.04).",
              fontsize=8.5, color=MUTED, transform=fig.transFigure, va="top")
 
     fig.tight_layout(rect=(0, 0, 1, 0.88))
