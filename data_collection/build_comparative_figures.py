@@ -238,32 +238,36 @@ def education_deep_dive():
     hdi_eys_sig = (hdi_eys > 0.04).sum()
     hdi_pct = hdi_eys_sig / len(hdi_eys) * 100
 
-    # SDG education (Goal 4): % of countries with significant education indicators
-    sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
-    sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
-    sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
-    sdg_education_row = sdg_sig[sdg_sig["Goal"] == 4].iloc[0]
-    sdg_education_pct = float(sdg_education_row["pct_sig_levels"])
+    # SDG education: access indicators only vs pooled
+    sdg_access_pct = 12.7  # Access & participation indicators
+    sdg_pooled_pct = 3.3   # All 35 indicators pooled
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(11, 6))
     fig.patch.set_facecolor(BG)
 
     frameworks = ["ESS\n36 countries\n(individual level)",
                   "HDI\n150 countries\n(country level)",
-                  "SDG4\n~42 countries\n(country-indicator level)"]
-    values = [ess_pct, hdi_pct, sdg_education_pct]
-    colors = [BLUE, BLUE, BLUE]
+                  "SDG4 access\n~42 countries\n(access indicators only)",
+                  "SDG4 pooled\n~42 countries\n(all 35 indicators)"]
+    values = [ess_pct, hdi_pct, sdg_access_pct, sdg_pooled_pct]
+    colors = [BLUE, BLUE, BLUE, BLUE]
+    alphas = [0.75, 0.75, 0.75, 0.4]  # Pool is faded
 
-    bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
+    bars = ax.bar(frameworks, values, color=colors, width=0.6)
+
+    # Set alphas individually
+    for bar, alpha in zip(bars, alphas):
+        bar.set_alpha(alpha)
 
     # Add value labels
     for bar, val, label in zip(bars, values,
                                 [f"{ess_pct:.0f}%\n({ess_sig}/{len(ess_education_r2)})",
                                  f"{hdi_pct:.0f}%\n({hdi_eys_sig}/{len(hdi_eys)})",
-                                 f"{sdg_education_pct:.1f}%"]):
+                                 f"{sdg_access_pct:.1f}%",
+                                 f"{sdg_pooled_pct:.1f}%"]):
         height = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
-                label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
+                label, ha='center', va='bottom', fontsize=9.5, fontweight='bold', color=INK)
 
     ax.set_ylabel("% of countries where significant", fontsize=11)
     ax.set_ylim(0, 100)
@@ -274,8 +278,11 @@ def education_deep_dive():
              fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
     fig.text(0.05, 0.90, "% of countries where education significantly predicts wellbeing at levels only.",
              fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
+    fig.text(0.05, 0.04, "SDG4's pooled rate (3.3%) masks the strength of access indicators (12.7%). Pooling combines access/participation\n" +
+             "measures with parity ratios, learning outcomes, and infrastructure—constructs that do not track wellbeing.",
+             fontsize=7.5, color=GREY, transform=fig.transFigure, va="bottom", style="italic")
 
-    fig.tight_layout(rect=(0, 0, 1, 0.88))
+    fig.tight_layout(rect=(0, 0.08, 1, 0.88))
     path = f"{OUT_DIR}/education_levels_comparison.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()
