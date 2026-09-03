@@ -112,15 +112,19 @@ ACTS = [
                     "European Social Survey asks similar life satisfaction and happiness questions "
                     "of individuals rather than aggregating them to countries.",
                     "Running the same levels-and-differences design against the ESS — 36 European "
-                    "countries, 351,000 respondents — shows the collapse holds there too. At the "
-                    "individual level, within countries, development composite scores predict "
-                    "significant variance in life satisfaction and happiness; year-to-year changes "
-                    "in the HDI within countries predict almost none. The levels are where the "
-                    "signal is, regardless of the framework or the instrument.",
+                    "countries, 351,000 respondents — reveals something unexpected: the collapse "
+                    "does NOT hold here. Both levels and differences show significant associations. "
+                    "Life satisfaction and happiness respond to year-to-year changes in how people "
+                    "report themselves, not just to between-country differences. This is a important "
+                    "caveat to our main finding: self-reported wellbeing measures capture changes that "
+                    "administrative development indicators miss — but only at the temporal and geographic "
+                    "resolution of the ESS (36 European countries, annual cycles). The persistence of the "
+                    "collapse in SDG and HDI suggests their construction choices matter more than the "
+                    "measurement method alone.",
                 ],
                 "figure": "ess_levels_diffs_collapse.png",
-                "caption": "ESS + HDI: levels-to-differences collapse holds for both life satisfaction "
-                           "and happiness at the individual level.",
+                "caption": "ESS shows persistent associations in differences, unlike SDG and HDI. "
+                           "Caveat: 36 European countries, self-reported measures, annual survey cycles.",
             },
             {
                 "label": "The composite + sub-components",
@@ -130,9 +134,10 @@ ACTS = [
                     "(0.326) and in differences (0.069), above the composite itself. Income is "
                     "level with it in levels, weaker in differences. Life expectancy — the HDI's "
                     "proxy for health — is weakest in levels.",
-                    "Education's apparent strength in levels is not a hint that differences would "
-                    "show it recovering. Instead, it is the entry point to Act II: which components "
-                    "are actually strong, weak, or invisible once you look at each framework's "
+                    "The HDI still shows the collapse, unlike the ESS, so the question shifts: "
+                    "which components of development are actually strong at the levels, and why does "
+                    "the type of measurement matter? This is the entry point to Act II: which components "
+                    "are actually strong, weak, or invisible when you look at each framework's "
                     "construction choices rather than its top-line numbers?",
                 ],
                 "figure": "hdi_full_structure.png",

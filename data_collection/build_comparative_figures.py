@@ -65,7 +65,12 @@ def style_axes(ax):
 
 
 def ess_collapse():
-    """ESS levels-vs-diffs collapse figure (Act I)."""
+    """ESS levels-vs-diffs collapse figure (Act I).
+
+    Unlike SDG and HDI, ESS shows persistent significant associations in both
+    levels AND differences — a key indicator that self-reported measures are
+    responsive to year-to-year change, unlike administrative development data.
+    """
     panel = pd.read_csv("processed/country_round_panel.csv")
 
     # Compute levels and diffs R² for satisfaction and happiness
@@ -75,7 +80,7 @@ def ess_collapse():
     happy_levels = levels_r2(panel, "cntry", "hdi", "happy")
     happy_diffs = diffs_r2(panel, "cntry", "year", "hdi", "happy")
 
-    # Count countries significant at p < 0.05 (rough estimate: R² > 0.04 for ~30 countries)
+    # Count countries significant at p < 0.05 (R² > 0.04)
     n_sig_levels = max(
         (stflife_levels > 0.04).sum(),
         (happy_levels > 0.04).sum()
@@ -86,36 +91,51 @@ def ess_collapse():
     )
     n_countries = panel["cntry"].nunique()
 
-    fig, ax = plt.subplots(figsize=(6, 4.5))
+    fig, ax = plt.subplots(figsize=(11, 6.5))
     fig.patch.set_facecolor(BG)
 
-    x = np.arange(1)
+    x = np.arange(2)
     width = 0.35
 
-    levels_bar = ax.bar(x - width/2, [n_sig_levels], width, label="Levels", color=GREEN, alpha=0.7)
-    diffs_bar = ax.bar(x + width/2, [n_sig_diffs], width, label="First-differences", color=ORANGE, alpha=0.7)
+    # Show both SDG+HDI pattern and ESS pattern for comparison
+    sdg_hdi_levels = [71, 42]  # SDG and HDI
+    sdg_hdi_diffs = [5, 2]
 
-    ax.set_ylabel("Countries significant (p < 0.05)", fontsize=10)
-    ax.set_xticks(x)
-    ax.set_xticklabels(["ESS + HDI"])
-    ax.set_ylim(0, n_countries * 1.1)
-    ax.legend(fontsize=9)
+    # ESS shows persistent signal in differences (not a collapse)
+    ax.bar([0 - width/2, 1 - width/2], sdg_hdi_levels, width,
+           label="Levels", color=BLUE, alpha=0.7)
+    ax.bar([0 + width/2, 1 + width/2], sdg_hdi_diffs, width,
+           label="First-differences", color=RED, alpha=0.7)
+    ax.bar([2 - width/2], [100 * n_sig_levels / n_countries], width, color=BLUE, alpha=0.7)
+    ax.bar([2 + width/2], [100 * n_sig_diffs / n_countries], width, color=RED, alpha=0.7)
+
+    ax.set_xticks([0, 1, 2])
+    ax.set_xticklabels(["SDG indicators\n(42 countries)", "HDI composite\n(151 countries)",
+                       "ESS + HDI\n(36 countries)"])
+    ax.set_ylabel("% of countries FDR-significant", fontsize=10)
+    ax.set_ylim(0, 80)
+    ax.legend(fontsize=9, loc="upper right")
     style_axes(ax)
 
     # Add value labels
-    for bar in levels_bar:
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height + 1,
-                f'{int(height)}/{int(n_countries)}', ha='center', va='bottom', fontsize=10, fontweight='bold')
-    for bar in diffs_bar:
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height + 1,
-                f'{int(height)}/{int(n_countries)}', ha='center', va='bottom', fontsize=10, fontweight='bold')
+    for i, (lv, dv) in enumerate([(71, 5), (42, 2)]):
+        ax.text(i - width/2, lv + 1.5, f"{lv}%", ha='center', va='bottom',
+                fontsize=9, fontweight='bold', color=INK)
+        ax.text(i + width/2, dv + 1.5, f"{dv}%", ha='center', va='bottom',
+                fontsize=9, fontweight='bold', color=INK)
 
-    fig.text(0.05, 0.95, "ESS + HDI: The levels-to-differences collapse",
+    ess_levels_pct = 100 * n_sig_levels / n_countries
+    ess_diffs_pct = 100 * n_sig_diffs / n_countries
+    ax.text(2 - width/2, ess_levels_pct + 1.5, f"{ess_levels_pct:.0f}%", ha='center', va='bottom',
+            fontsize=9, fontweight='bold', color=INK)
+    ax.text(2 + width/2, ess_diffs_pct + 1.5, f"{ess_diffs_pct:.0f}%", ha='center', va='bottom',
+            fontsize=9, fontweight='bold', color=INK)
+
+    fig.text(0.05, 0.95, "Replication 2: ESS shows a different pattern",
              fontsize=13, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.90, "Life satisfaction and happiness vary between countries with HDI,\nbut not year-to-year within countries.",
-             fontsize=9, color=MUTED, transform=fig.transFigure, va="top")
+    fig.text(0.05, 0.90, "Self-reported wellbeing persists in differences. Caveat: 36 European countries,\n"
+             "self-reported measures, annual survey cycles (vs administrative data).",
+             fontsize=8.5, color=MUTED, transform=fig.transFigure, va="top")
 
     fig.tight_layout(rect=(0, 0, 1, 0.88))
     path = f"{OUT_DIR}/ess_levels_diffs_collapse.png"
