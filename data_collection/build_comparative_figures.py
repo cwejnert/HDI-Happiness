@@ -220,59 +220,59 @@ def domains_at_levels():
 
 
 def education_deep_dive():
-    """Education R² across frameworks at levels."""
+    """Education: % of countries where significant across frameworks at levels."""
     panel = pd.read_csv("processed/country_round_panel.csv")
 
-    # ESS individual-level R²
+    # ESS individual-level: % of 36 countries significant
     ess_education_r2 = []
     for cntry in panel["cntry"].unique():
         grp = panel[panel["cntry"] == cntry]
         ess_education_r2.append(fast_r2(grp["eduyrs"], grp["stflife"]))
-    ess_median = np.nanmedian(ess_education_r2)
+    ess_education_r2 = [x for x in ess_education_r2 if not np.isnan(x)]
     ess_sig = (np.array(ess_education_r2) > 0.04).sum()
-    ess_tot = len([x for x in ess_education_r2 if not np.isnan(x)])
+    ess_pct = ess_sig / len(ess_education_r2) * 100
 
-    # HDI education (expected years of schooling)
+    # HDI education (expected years of schooling): % of 150 countries significant
     hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
     hdi_eys = hdi_sig[hdi_sig["indicator"] == "eys"]["r2_levels"].values
     hdi_eys_sig = (hdi_eys > 0.04).sum()
-    hdi_eys_tot = len(hdi_eys)
-    hdi_pct = hdi_eys_sig / hdi_eys_tot * 100
+    hdi_pct = hdi_eys_sig / len(hdi_eys) * 100
 
-    # SDG education (all 35 indicators)
+    # SDG education (Goal 4): % of countries with significant education indicators
     sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
     sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
     sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
-    sdg_education_pct = float(sdg_sig[sdg_sig["Goal"] == 4]["pct_sig_levels"].values[0])
+    sdg_education_row = sdg_sig[sdg_sig["Goal"] == 4].iloc[0]
+    sdg_education_pct = float(sdg_education_row["pct_sig_levels"])
 
     fig, ax = plt.subplots(figsize=(10, 6))
     fig.patch.set_facecolor(BG)
 
-    frameworks = ["ESS\nIndividual level\n(R² by country)",
-                  "HDI\nCountry level\n(% of 150 countries)",
-                  "SDG4\nCountry-indicator\n(% of pairs)"]
-    values = [ess_median, hdi_pct, sdg_education_pct]
+    frameworks = ["ESS\n36 countries\n(individual level)",
+                  "HDI\n150 countries\n(country level)",
+                  "SDG4\n~42 countries\n(country-indicator level)"]
+    values = [ess_pct, hdi_pct, sdg_education_pct]
     colors = [BLUE, BLUE, BLUE]
 
     bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
 
-    # Add value labels and sample sizes
+    # Add value labels
     for bar, val, label in zip(bars, values,
-                                [f"{ess_median:.4f}\n({ess_sig}/{ess_tot} sig)",
-                                 f"{hdi_pct:.1f}%\n({hdi_eys_sig}/{hdi_eys_tot})",
+                                [f"{ess_pct:.0f}%\n({ess_sig}/{len(ess_education_r2)})",
+                                 f"{hdi_pct:.0f}%\n({hdi_eys_sig}/{len(hdi_eys)})",
                                  f"{sdg_education_pct:.1f}%"]):
         height = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
                 label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
 
-    ax.set_ylabel("Effect size", fontsize=11)
-    ax.set_ylim(0, max(values) * 1.35)
+    ax.set_ylabel("% of countries where significant", fontsize=11)
+    ax.set_ylim(0, 100)
     style_axes(ax)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
 
     fig.text(0.05, 0.95, "Education across frameworks",
              fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.90, "How education predicts life satisfaction/wellbeing in three frameworks, measured at levels only.",
+    fig.text(0.05, 0.90, "% of countries where education significantly predicts wellbeing at levels only.",
              fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
 
     fig.tight_layout(rect=(0, 0, 1, 0.88))
@@ -283,59 +283,59 @@ def education_deep_dive():
 
 
 def health_deep_dive():
-    """Health R² across frameworks at levels."""
+    """Health: % of countries where significant across frameworks at levels."""
     panel = pd.read_csv("processed/country_round_panel.csv")
 
-    # ESS individual-level R²
+    # ESS individual-level: % of 36 countries significant
     ess_health_r2 = []
     for cntry in panel["cntry"].unique():
         grp = panel[panel["cntry"] == cntry]
         ess_health_r2.append(fast_r2(grp["health"], grp["stflife"]))
-    ess_median = np.nanmedian(ess_health_r2)
+    ess_health_r2 = [x for x in ess_health_r2 if not np.isnan(x)]
     ess_sig = (np.array(ess_health_r2) > 0.04).sum()
-    ess_tot = len([x for x in ess_health_r2 if not np.isnan(x)])
+    ess_pct = ess_sig / len(ess_health_r2) * 100
 
-    # HDI health (life expectancy)
+    # HDI health (life expectancy): % of 150 countries significant
     hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
     hdi_le = hdi_sig[hdi_sig["indicator"] == "le"]["r2_levels"].values
     hdi_le_sig = (hdi_le > 0.04).sum()
-    hdi_le_tot = len(hdi_le)
-    hdi_pct = hdi_le_sig / hdi_le_tot * 100
+    hdi_pct = hdi_le_sig / len(hdi_le) * 100
 
-    # SDG health (Goal 3)
+    # SDG health (Goal 3): % of countries with significant health indicators
     sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
     sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
     sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
-    sdg_health_pct = float(sdg_sig[sdg_sig["Goal"] == 3]["pct_sig_levels"].values[0])
+    sdg_health_row = sdg_sig[sdg_sig["Goal"] == 3].iloc[0]
+    sdg_health_pct = float(sdg_health_row["pct_sig_levels"])
 
     fig, ax = plt.subplots(figsize=(10, 6))
     fig.patch.set_facecolor(BG)
 
-    frameworks = ["ESS\nIndividual level\n(R² by country)",
-                  "HDI\nCountry level\n(% of 150 countries)",
-                  "SDG3\nCountry-indicator\n(% of pairs)"]
-    values = [ess_median, hdi_pct, sdg_health_pct]
+    frameworks = ["ESS\n36 countries\n(individual level)",
+                  "HDI\n150 countries\n(country level)",
+                  "SDG3\n~45 countries\n(country-indicator level)"]
+    values = [ess_pct, hdi_pct, sdg_health_pct]
     colors = [RED, RED, RED]
 
     bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
 
-    # Add value labels and sample sizes
+    # Add value labels
     for bar, val, label in zip(bars, values,
-                                [f"{ess_median:.4f}\n({ess_sig}/{ess_tot} sig)",
-                                 f"{hdi_pct:.1f}%\n({hdi_le_sig}/{hdi_le_tot})",
+                                [f"{ess_pct:.0f}%\n({ess_sig}/{len(ess_health_r2)})",
+                                 f"{hdi_pct:.0f}%\n({hdi_le_sig}/{len(hdi_le)})",
                                  f"{sdg_health_pct:.1f}%"]):
         height = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
                 label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
 
-    ax.set_ylabel("Effect size", fontsize=11)
-    ax.set_ylim(0, max(values) * 1.35)
+    ax.set_ylabel("% of countries where significant", fontsize=11)
+    ax.set_ylim(0, 100)
     style_axes(ax)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
 
     fig.text(0.05, 0.95, "Health across frameworks",
              fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.90, "How health predicts life satisfaction/wellbeing in three frameworks, measured at levels only.",
+    fig.text(0.05, 0.90, "% of countries where health significantly predicts wellbeing at levels only.",
              fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
 
     fig.tight_layout(rect=(0, 0, 1, 0.88))
@@ -346,31 +346,32 @@ def health_deep_dive():
 
 
 def trust_deep_dive():
-    """Trust across frameworks — strong in ESS, weak/absent in SDG/HDI."""
+    """Trust: % of countries where significant across frameworks."""
     panel = pd.read_csv("processed/country_round_panel.csv")
 
-    # ESS individual-level R²
+    # ESS individual-level: % of 36 countries significant
     ess_trust_r2 = []
     for cntry in panel["cntry"].unique():
         grp = panel[panel["cntry"] == cntry]
         ess_trust_r2.append(fast_r2(grp["ppltrst"], grp["stflife"]))
-    ess_median = np.nanmedian(ess_trust_r2)
+    ess_trust_r2 = [x for x in ess_trust_r2 if not np.isnan(x)]
     ess_sig = (np.array(ess_trust_r2) > 0.04).sum()
-    ess_tot = len([x for x in ess_trust_r2 if not np.isnan(x)])
+    ess_pct = ess_sig / len(ess_trust_r2) * 100
 
     # SDG trust (Goal 16 - institutional confidence, not interpersonal trust)
     sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
     sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
     sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
-    sdg_trust_pct = float(sdg_sig[sdg_sig["Goal"] == 16]["pct_sig_levels"].values[0])
+    sdg_trust_row = sdg_sig[sdg_sig["Goal"] == 16].iloc[0]
+    sdg_trust_pct = float(sdg_trust_row["pct_sig_levels"])
 
     fig, ax = plt.subplots(figsize=(10, 6))
     fig.patch.set_facecolor(BG)
 
-    frameworks = ["ESS\nInterpersonal trust\n(R² by country)",
-                  "SDG16\nInstitutional confidence*\n(% of pairs)",
-                  "HDI\nNot measured"]
-    values = [ess_median, sdg_trust_pct, 0]
+    frameworks = ["ESS\n36 countries\n(interpersonal trust)",
+                  "SDG16\n~74 countries\n(institutional confidence)*",
+                  "HDI\n150 countries\n(not measured)"]
+    values = [ess_pct, sdg_trust_pct, 0]
     colors = [GREEN, GREY, GREY]
 
     bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
@@ -379,7 +380,7 @@ def trust_deep_dive():
     bars[2].set_alpha(0.2)
 
     # Add value labels
-    labels = [f"{ess_median:.4f}\n({ess_sig}/{ess_tot} sig)",
+    labels = [f"{ess_pct:.0f}%\n({ess_sig}/{len(ess_trust_r2)})",
               f"{sdg_trust_pct:.1f}%",
               "—"]
     for bar, label in zip(bars, labels):
@@ -388,17 +389,17 @@ def trust_deep_dive():
             ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
                     label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
         else:
-            ax.text(bar.get_x() + bar.get_width()/2., 0.002,
+            ax.text(bar.get_x() + bar.get_width()/2., 2,
                     label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=GREY)
 
-    ax.set_ylabel("Effect size", fontsize=11)
-    ax.set_ylim(0, max(values) * 1.35 if max(values) > 0 else 0.15)
+    ax.set_ylabel("% of countries where significant", fontsize=11)
+    ax.set_ylim(0, 100)
     style_axes(ax)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
 
     fig.text(0.05, 0.95, "Social trust across frameworks — a coverage gap",
              fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.90, "Interpersonal trust is strong where it's measured (ESS). The SDG framework measures institutional\nconfidence instead. The HDI does not measure trust at all.",
+    fig.text(0.05, 0.90, "Interpersonal trust is significant in 94% of ESS countries. SDG16 measures institutional confidence.\nThe HDI does not measure trust at all.",
              fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
     fig.text(0.05, 0.04, "* SDG16 includes satisfaction with public services, perception of bribery, and perceived decision-making inclusiveness.\nNone of these directly measure interpersonal trust.",
              fontsize=7.5, color=GREY, transform=fig.transFigure, va="bottom", style="italic")
