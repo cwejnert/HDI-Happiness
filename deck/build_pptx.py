@@ -269,17 +269,28 @@ def slide_decisions(prs):
     para(tf, f"{len(C.DECISIONS)} things the acts do not settle, in the order they block drafting.",
          size=13, color=INK_SOFT)
 
+    # the grid has to fit whatever DECISIONS holds: three rows of three at the
+    # old fixed 2.45" pitch starts its last row at 6.9" and runs off the slide,
+    # so derive the row pitch from the space actually left below the header
     cols, x0, y0 = 3, MARGIN, Inches(2.0)
-    colw = (W - 2 * MARGIN - Inches(0.7)) / cols
+    rows = -(-len(C.DECISIONS) // cols)
+    gap = Inches(0.35)
+    colw = (W - 2 * MARGIN - gap * (cols - 1)) / cols
+    step = int(min(Inches(2.45), (H - y0 - Inches(0.3)) / rows))
+    cardh = step - Inches(0.28)
+    body_sz = 11 if rows <= 2 else 9.5
+    head_sz = 10.5 if rows <= 2 else 9.5
     for i, (head, body) in enumerate(C.DECISIONS):
         col, row = i % cols, i // cols
-        x = x0 + col * (colw + Inches(0.35))
-        y = y0 + row * Inches(2.45)
+        x = x0 + col * (colw + gap)
+        y = y0 + row * step
         rule(s, x, y, colw, ACCENT, Pt(2))
-        tf = textbox(s, x, y + Inches(0.2), colw, Inches(2.0))
-        para(tf, head, size=10.5, color=ACCENT, font=MONO, caps=True,
-             space_after=7, first=True)
-        para(tf, body, size=11, color=INK_SOFT, spacing=1.3)
+        tf = textbox(s, x, y + Inches(0.16), colw, cardh)
+        sz = fit_size([head, body], colw / Inches(1), cardh / Inches(1),
+                      body_sz, 1.28, 6, floor=7.5)
+        para(tf, head, size=min(head_sz, sz + 1), color=ACCENT, font=MONO, caps=True,
+             space_after=6, first=True)
+        para(tf, body, size=sz, color=INK_SOFT, spacing=1.28)
 
 
 def slide_appendix_divider(prs):

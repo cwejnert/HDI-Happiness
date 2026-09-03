@@ -597,3 +597,47 @@ def split_half_differences(n_splits=120, rebuild=False):
     out.to_csv(SPLIT_CACHE, index=False)
     print(f"Saved: {SPLIT_CACHE}")
     return out
+
+
+def differences_robustness(save=True):
+    """Both ESS outcomes, with and without common time shocks removed.
+
+    Two robustness questions at once. First, the brief always said "life
+    satisfaction and happiness", so both ESS outcome items are run. Second,
+    the ESS panel is 25 European countries over 7 rounds, where a shared shock
+    (2008-09, 2020) moves everyone together and can manufacture a pooled
+    first-difference correlation. Demeaning each difference by survey round
+    removes anything common to a round and leaves only idiosyncratic
+    country-level movement.
+
+    The HDI's differences result against ESS happiness halves under that
+    control (+0.31 -> +0.17), so most of the gap between the two ESS outcomes
+    was shared shocks. Health and social trust are unaffected.
+    """
+    p = pd.read_csv("processed/country_round_panel.csv")
+    p["good_health"] = 6 - p["health"]
+    rows = []
+    for var, lab in [("hdi", "HDI composite"), ("good_health", "Health"),
+                     ("ppltrst", "Social trust"), ("eduyrs", "Education")]:
+        for out in ["stflife", "happy"]:
+            recs = []
+            for c, g in p.groupby("cntry"):
+                g = g.sort_values("essround").dropna(subset=[var, out])
+                if len(g) < 3:
+                    continue
+                rd = g.essround.to_numpy()
+                recs += [(rd[i + 1], dx, dy) for i, (dx, dy)
+                         in enumerate(zip(np.diff(g[var]), np.diff(g[out])))]
+            d = pd.DataFrame(recs, columns=["round", "dx", "dy"])
+            r0, p0 = stats.pearsonr(d.dx, d.dy)
+            xa = d.dx - d.groupby("round").dx.transform("mean")
+            ya = d.dy - d.groupby("round").dy.transform("mean")
+            r1, p1 = stats.pearsonr(xa, ya)
+            rows.append({"predictor": lab, "outcome": out, "n_diffs": len(d),
+                         "diffs_r": r0, "diffs_p": p0,
+                         "diffs_r_round_fe": r1, "diffs_p_round_fe": p1})
+    out = pd.DataFrame(rows)
+    if save:
+        out.to_csv("processed/differences_robustness.csv", index=False)
+        print("Saved: processed/differences_robustness.csv")
+    return out

@@ -151,11 +151,17 @@ ACTS = [
                     "panels have thirteen years, and panel b shows what that costs — at seven observations a "
                     "genuine correlation of 0.5 is recovered in about 3% of units. Differences landing above "
                     "levels is the tell that the test is not working, not a result.",
-                    "Pooled across countries, where the power is, it does replicate: the HDI's within-country "
-                    "association with ESS life satisfaction falls from r = +0.44 at levels to +0.20 in first "
-                    "differences. The attenuation is sharp, though it stops short of the clean null the "
-                    "Cantril ladder gives on the full panel — there, across 1,548 country-year changes, the "
-                    "HDI goes from +0.15 to −0.02 and is not significant at all.",
+                    "The comparison is like-for-like on the outcome: the Cantril ladder is a life evaluation, "
+                    "so the ESS analogue is its life-satisfaction item rather than its separate happiness "
+                    "question. Pooled across countries, where the power is, the HDI's within-country "
+                    "association falls from r = +0.44 at levels to +0.20 in differences — and stays there "
+                    "(+0.19) once survey-round effects are removed, so it is not a shared shock across "
+                    "European countries.",
+                    "So the HDI attenuates by about 55% against ESS life satisfaction — substantial, but short "
+                    "of the clean null the Cantril ladder gives on the full panel, where across 1,548 "
+                    "country-year changes the HDI goes from +0.15 to −0.02 and is not significant at all. The "
+                    "collapse survives the instrument swap in direction and roughly in magnitude, on a much "
+                    "smaller and Europe-only panel.",
                     "The ESS also corroborates the levels half in cross-section, where it has plenty of power: "
                     "subnational HDI predicts ESS life satisfaction across regions inside each country in 47% "
                     "of 15 countries, sitting on top of the 42% the HDI reaches nationally. So the collapse "
@@ -360,6 +366,11 @@ ACTS = [
                     "significant, and the HDI composite from +0.44 to +0.20. Against the World Happiness Report "
                     "ladder on the full 150-country panel, the HDI collapses outright: +0.15 at levels to "
                     "−0.02 in differences across 1,548 country-year changes.",
+                    "One check before leaning on this. These are 25 European countries over seven rounds, "
+                    "where a common shock — a financial crisis, a pandemic — could move health, trust and "
+                    "wellbeing together and manufacture the correlation. Removing whatever is shared within "
+                    "each survey round leaves health at +0.42 and trust at +0.58, with education still null. "
+                    "The domain results are idiosyncratic country movement, not shared shocks.",
                     "So when a country's self-rated health rises between rounds, its life satisfaction rises "
                     "with it. When its HDI rises, that tells you almost nothing. This is the sharpest version "
                     "of the paper's claim: development composites move too slowly and too smoothly to track "
@@ -635,6 +646,21 @@ DECISIONS = [
      "means; at that n roughly two-thirds of pure noise clears the bar, which inflated the ESS "
      "figures and made the framework comparison meaningless. ESS is now estimated on individual "
      "respondents, demeaned within country-round."),
+
+    ("Which ESS wellbeing item, and why",
+     "The deck runs on ESS life satisfaction throughout, because the WHR Cantril ladder is a life "
+     "evaluation and that is the like-for-like analogue. The ESS happiness item was run as a check "
+     "and agrees (trust +0.59 identical; health +0.26 against +0.40; education null in both), so "
+     "nothing turns on the choice — with one exception worth knowing: the HDI's differences result "
+     "against happiness reads +0.31 raw but +0.17 net of survey-round effects, where the life "
+     "satisfaction result is +0.20 either way. Numbers in processed/differences_robustness.csv."),
+
+    ("Robustness of the differences result",
+     "Two checks beyond the item choice. Removing survey-round effects leaves health and trust "
+     "intact (+0.42, +0.58) rather than reducing them, so they are idiosyncratic country movement "
+     "and not shocks common to a round. And the split-half design — predictor and outcome from "
+     "disjoint respondents — rules out common-method variance, with trust retaining 93%. What "
+     "remains untested is replication of the trust result on an independent wellbeing instrument."),
 
     ("What the ESS panel can and cannot test",
      "Seven survey rounds is too short for the per-country time-series design. Simulating a REAL "
