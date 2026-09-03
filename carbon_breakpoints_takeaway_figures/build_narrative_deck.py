@@ -211,5 +211,58 @@ para(tf, "The acceleration is real and necessary. It started before Paris, in a 
      size=16, color=GRAY, space_after=0)
 notes(s, "Honest conclusion. Not a verdict on Paris but a parsing of what the world-level data can and cannot claim.")
 
+# POLICY IMPLICATIONS 1
+s = slide()
+tf = box(s, 0.55, 0.5, 12.25, 1.0)
+para(tf, "IMPLICATION 1 · TECHNOLOGY IS THE LEVER THAT MOVED", size=16, bold=True, color=GREEN, first=True, space_after=0)
+tf = box(s, 0.55, 1.55, 12.25, 5.7)
+para(tf, "The data tells a story about what actually changes decarbonization", size=18, bold=True, color=INK, first=True, space_after=12)
+para(tf, "The fuel mix resumed its decline in 2012, exactly when solar photovoltaic costs began their steepest fall. The timing is too precise to be coincidence. Renewable technology became cheap enough that switching was profitable, independent of treaty commitments.",
+     size=14, color=GRAY, space_after=12)
+para(tf, "This does not mean Paris is irrelevant. But it suggests that climate policy works best when it either makes clean technology cheaper (subsidies, R&D) or makes dirty energy more expensive (carbon pricing). Commitments alone, without the economic incentive to change, do not appear sufficient to move large-scale behavior.",
+     size=14, color=GRAY, space_after=12)
+para(tf, "For policymakers: the Copenhagen Accord and Paris Agreement happened while the solar industry was already collapsing in cost. The timing alignment is favorable but deceptive — the mechanism was technology, not treaty enforcement.",
+     size=14, color=GRAY, space_after=0)
+notes(s, "The policy insight: we credit Paris with decarbonization that happened because of technology cost collapse. That's not a criticism of Paris, but it means our theories of change matter. Technology is what moved behavior at world scale.")
+
+# POLICY IMPLICATIONS 2
+s = slide()
+tf = box(s, 0.55, 0.5, 12.25, 1.0)
+para(tf, "IMPLICATION 2 · EFFICIENCY IS THE MISSING HALF", size=16, bold=True, color=GREEN, first=True, space_after=0)
+tf = box(s, 0.55, 1.55, 12.25, 5.7)
+para(tf, "Where climate policy has not yet delivered", size=18, bold=True, color=INK, first=True, space_after=12)
+para(tf, "Energy efficiency — how much energy the world uses per unit of economic output — has improved at a steady -1% per year for fifty years, completely unmoved by Paris or any other policy intervention. This is the constraint on how fast decarbonization can go.",
+     size=14, color=GRAY, space_after=12)
+para(tf, "The fuel mix can only get so clean before renewable penetration hits physical or storage limits. Beyond that, the world has to use less energy per unit of output. Current evidence suggests that policy has not yet moved that needle. This is the frontier for climate strategy: understanding why efficiency is sticky and what would accelerate it.",
+     size=14, color=GRAY, space_after=12)
+para(tf, "For policymakers: the current world decarbonization rate of -2.1%/yr needs to reach -5% to -11%/yr to meet climate targets. The fuel mix alone cannot carry that load. Efficiency has to move, and so far it has not responded to policy.",
+     size=14, color=GRAY, space_after=0)
+notes(s, "Efficiency is where we haven't made progress. It's also where the big gains are available if policy can figure out how to unlock them.")
+
+# POLICY IMPLICATIONS 3
+s = slide()
+tf = box(s, 0.55, 0.5, 12.25, 1.0)
+para(tf, "IMPLICATION 3 · ATTRIBUTION REQUIRES COUNTRY-LEVEL WORK", size=16, bold=True, color=GREEN, first=True, space_after=0)
+tf = box(s, 0.55, 1.55, 12.25, 5.7)
+para(tf, "Why global timing does not settle the Paris question", size=18, bold=True, color=INK, first=True, space_after=12)
+para(tf, "At world level, timing is ambiguous. The global acceleration could reflect renewable cost, pre-existing climate policies in major economies (California's standards, China's targets predating Paris), or Paris itself. We cannot tell from the world aggregate alone.",
+     size=14, color=GRAY, space_after=12)
+para(tf, "Countries offer a cleaner test. If Paris changed national behavior, each country's carbon intensity should show a break near 2015, independent of technology cost. If the break appears everywhere before 2015, or if it does not correlate with Paris commitments, then technology cost is the simpler explanation.",
+     size=14, color=GRAY, space_after=12)
+para(tf, "For policymakers and researchers: do not settle the Paris question at world level. The answer lives in country-by-country variation, where you can control for technology diffusion and test whether national commitments shaped national outcomes.",
+     size=14, color=GRAY, space_after=0)
+notes(s, "This is why the companion country paper matters. The world-level question is genuinely ambiguous. Countries can resolve it.")
+
+# FINAL SYNTHESIS
+s = slide()
+tf = box(s, 0.55, 0.5, 12.25, 1.2)
+para(tf, "THE BOTTOM LINE", size=20, bold=True, color=GREEN, first=True, space_after=0)
+tf = box(s, 0.55, 1.8, 12.25, 5.4)
+para(tf, "The world is decarbonizing faster than ever before. That is real, necessary, and visible in the data. But the cause is not what the treaty timeline suggests. At world level, renewable technology cost collapse provides a simpler and more direct explanation for when and how the acceleration began.",
+     size=16, color=GRAY, first=True, space_after=14)
+para(tf, "This is not an argument that Paris is ineffective or unimportant. It is an argument that world-level attribution is insufficient to settle the question. Whether and to what degree Paris shifted national behavior requires country-level analysis where policy effects can be isolated from technology diffusion. That question is open and important. It is also answerable.",
+     size=16, color=GRAY, space_after=0)
+notes(s, "Final framing: we have a real acceleration, a plausible alternative explanation, and an open empirical question. That is the honest statement.")
+
 prs.save(OUT)
 print("saved", OUT, "slides:", len(prs.slides._sldIdLst))
