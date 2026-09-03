@@ -156,9 +156,10 @@ INVERSION = [
 # (c) The method check: administrative vs self-report, three domains.
 # --------------------------------------------------------------------------
 METHOD = [
-    ("Health", 11.5, 0.513, RED),
-    ("Education", 3.3, -0.078, BLUE),
-    ("Social trust", 1.5, 0.487, GREEN),
+    # domain, SDG pooled %, ESS individual median R2, colour
+    ("Health", 11.5, 0.0910, RED),
+    ("Education", 3.3, 0.0098, BLUE),
+    ("Social trust", 1.5, 0.0407, GREEN),
 ]
 
 
@@ -203,8 +204,8 @@ def panel_c(ax):
         ax.barh(yi + w / 2, a, w, color=m[3], alpha=0.95)
         ax.barh(yi - w / 2, b, w, color=m[3], alpha=0.40)
         ax.text(a + 0.015, yi + w / 2, f"{m[1]}%", va="center", fontsize=8.5, color=INK)
-        ax.text(b + (0.015 if b >= 0 else -0.015), yi - w / 2, f"{m[2]:+.3f}",
-                va="center", ha="left" if b >= 0 else "right", fontsize=8.5, color=INK)
+        ax.text(b + 0.015, yi - w / 2, f"R² {m[2]:.4f}", va="center",
+                fontsize=8.5, color=INK)
 
     # empty barh containers render with the axes' colour cycle rather than the
     # colour asked for, so build the legend from explicit patches
@@ -214,8 +215,7 @@ def panel_c(ax):
         frameon=False, fontsize=8.5, loc="upper right", bbox_to_anchor=(1.0, 0.62))
     ax.set_yticks(y)
     ax.set_yticklabels([m[0] for m in METHOD], fontsize=9.5)
-    ax.set_xlim(-0.30, 1.22)
-    ax.axvline(0, color=INK, linewidth=0.9)
+    ax.set_xlim(0, 1.22)
     ax.set_xticks([0, 0.5, 1.0])
     ax.set_xticklabels(["0", "half the leader", "leading domain"], fontsize=8)
     ax.set_xlabel("Position relative to the leading domain within each source", fontsize=9)
@@ -226,10 +226,9 @@ def panel_c(ax):
                  fontsize=10.5, fontweight="bold", color=INK, loc="left", pad=34)
     ax.text(0, 1.012,
             "Labels give the raw values: % of SDG country × indicator pairs significant, "
-            "and median within-country\nregional correlation in the ESS. Trust tops the "
-            "self-report source and sits near the bottom of the administrative one. Education "
-            "is weak\nin both, and inside countries its correlations are not even consistently "
-            "signed — positive in 8 of 16.",
+            "and median within-country\nR² across ESS respondents. Trust ranks second in the "
+            "self-report source and near the bottom of the administrative one — the SDG\n"
+            "framework has no interpersonal-trust indicator at all. Education is weak in both.",
             transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
 
 
@@ -434,13 +433,6 @@ HORSE = {
         ("Household income", 0.379, None, 36, ORANGE),
         ("Education (years)", 0.292, None, 36, BLUE),
     ],
-    "within": [
-        ("Social trust", 0.565, 8, 16, GREEN),
-        ("Self-rated health", 0.502, 7, 16, RED),
-        ("Household income", 0.230, 2, 16, ORANGE),
-        ("Development (SHDI)", 0.219, 3, 16, PURPLE),
-        ("Education (years)", -0.078, 3, 16, BLUE),
-    ],
 }
 PANELS = [
     ("individual", "a  Individual respondents",
@@ -448,14 +440,11 @@ PANELS = [
      "Median R² across 36 countries", 0.10),
     ("country", "b  Across countries",
      "Country means, 36 ESS countries", "R² across countries", 0.85),
-    ("within", "c  Within countries, across regions",
-     "Median regional correlation, 16 countries",
-     "Median r within country", 0.65),
 ]
 
 
 def build_horse_race(outdir: Path):
-    fig, axes = plt.subplots(1, 3, figsize=(15.5, 6.2))
+    fig, axes = plt.subplots(1, 2, figsize=(11.5, 6.2))
     fig.patch.set_facecolor(BG)
     for ax, (key, title, sub, xlab, xmax) in zip(axes, PANELS):
         rows = HORSE[key]
@@ -482,19 +471,19 @@ def build_horse_race(outdir: Path):
              fontsize=15, fontweight="bold", color=INK, va="top")
     fig.text(0.006, 0.930,
              "One instrument (European Social Survey, 36 countries, 351,023 respondents, "
-             "2010–2023) at three levels of aggregation, so the domains compete on equal terms.",
+             "2010–2023) at two levels of aggregation, so the domains compete on equal terms.",
              fontsize=9, color="#5A5A5A", va="top")
-    fig.text(0.006, 0.030,
+    fig.text(0.006, 0.048,
              "Self-rated health reversed so higher = better. Education is significant almost "
-             "everywhere but carries the smallest effect of any domain tested; the HDI leads "
-             "between countries, where it proxies everything at once, and falls to 4th within them.",
+             "everywhere but carries the smallest\neffect of any domain tested; the HDI leads "
+             "between countries, where it proxies every domain at once.",
              fontsize=8, color=GREY, va="bottom")
-    fig.text(0.006, 0.008,
+    fig.text(0.006, 0.006,
              "CAVEAT: health and trust are self-reported by the same respondent in the same "
-             "survey as life satisfaction, so part of their lead is shared method variance. "
-             "The externally measured predictors (HDI, SHDI) carry no such advantage.",
+             "survey as life satisfaction, so part of their\nlead is shared method variance. "
+             "The HDI, externally measured, carries no such advantage.",
              fontsize=8, color=RED, va="bottom")
-    fig.tight_layout(rect=(0, 0.05, 1, 0.895))
+    fig.tight_layout(rect=(0, 0.115, 1, 0.895))
     path = outdir / "domain_horse_race.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close(fig)
@@ -512,11 +501,11 @@ def build_horse_race(outdir: Path):
 CORROB = [
     # domain,            SDG pooled %, SDG goal rank, ESS within-country r, colour, verdict
     ("Health", 11.5, "SDG3, 4th of 17 goals; 16 of the top 25 series overall",
-     0.513, RED, "corroborated"),
+     0.0910, RED, "corroborated"),
     ("Education", 3.3, "SDG4, 12th of 17; best series 100th of 609",
-     -0.078, BLUE, "weak in both"),
+     0.0098, BLUE, "weak in both"),
     ("Social trust /\ninstitutions", 1.5, "SDG16, 15th of 17; no trust indicator exists",
-     0.487, GREEN, "ESS only"),
+     0.0407, GREEN, "ESS only"),
 ]
 
 
@@ -543,11 +532,11 @@ def build_corroboration(outdir: Path):
     ax = axes[1]
     ax.barh(y, [c[3] for c in CORROB], 0.55, color=[c[4] for c in CORROB])
     for yi, c in zip(y, CORROB):
-        ax.text(c[3] + 0.012, yi, f"+{c[3]:.3f}", va="center", fontsize=9.5,
+        ax.text(c[3] + 0.0022, yi, f"R² {c[3]:.4f}", va="center", fontsize=9.5,
                 color=INK, fontweight="bold")
     ax.set_yticks(y); ax.set_yticklabels([])
-    ax.set_xlim(0, 0.68)
-    ax.set_xlabel("Median within-country regional correlation with life satisfaction", fontsize=9)
+    ax.set_xlim(0, 0.125)
+    ax.set_xlabel("Median within-country R², own attribute vs own life satisfaction", fontsize=9)
     style_axes(ax); ax.grid(axis="y", visible=False)
     ax.set_title("b  Self-reported evidence (European Social Survey)", fontsize=11,
                  fontweight="bold", color=INK, loc="left", pad=24)
@@ -559,13 +548,13 @@ def build_corroboration(outdir: Path):
              fontsize=15, fontweight="bold", color=INK, va="top")
     fig.text(0.006, 0.928,
              "Health leads in both an administrative source and a self-report source, so its "
-             "showing is not shared-method variance.\nTrust is the strongest ESS predictor and "
-             "close to the weakest SDG domain — the framework has no trust indicator at all.",
+             "showing is not shared-method variance.\nTrust ranks second in the ESS and close to "
+             "last in the SDG framework, which has no interpersonal-trust indicator at all.",
              fontsize=9, color="#5A5A5A", va="top", linespacing=1.4)
     fig.text(0.006, 0.020,
              "SDG health series in the top 25 are survival measures — infant and under-five "
-             "mortality, stunting, neonatal mortality, sanitation, drinking water — none self-reported. "
-             "Sources: UN SDG Global Database; European Social Survey rounds 5–11.",
+             "mortality, stunting, neonatal mortality, sanitation, drinking water — none "
+             "self-reported.\nSources: UN SDG Global Database; European Social Survey rounds 5–11.",
              fontsize=8, color=GREY, va="bottom")
     fig.tight_layout(rect=(0, 0.055, 1, 0.855))
     path = outdir / "health_trust_corroboration.png"

@@ -50,12 +50,12 @@ STRONG = "#1BAF7A"   # domain clearly tracks wellbeing here
 WEAK = "#EDA100"     # measurable, but little or no signal
 BLIND = "#C9CDD4"    # the framework cannot test this domain
 
+# the two regional columns came out when the within-country analysis was cut
+# from the commentary; they live with that paper now
 COLUMNS = [
     ("UN SDG\n42 countries", "% of country × indicator\npairs significant, levels"),
     ("UNDP HDI\n150 countries", "% of countries\nsignificant, levels"),
-    ("Subnational HDI\n16 countries", "median within-country\nregional r (external)"),
     ("ESS individual\n36 countries", "countries significant,\nmedian R²"),
-    ("ESS regional\n16 countries", "median within-country\nregional r"),
 ]
 
 # value, status, optional footnote marker
@@ -63,23 +63,17 @@ ROWS = [
     ("Education", [
         ("3.3% pooled · 12.7% access\nbest series 100th of 609", WEAK),
         ("40.7% / 34.0%\nmean / expected schooling", STRONG),
-        ("+0.057\n2 of 16 countries", WEAK),
-        ("33 of 36\nR² = 0.0098", STRONG),
-        ("no consistent sign\n8 of 16 countries positive", WEAK),
+        ("33 of 36\nR² = 0.0098 — smallest tested", STRONG),
     ]),
     ("Health", [
         ("11.5%\nSDG3, 4th of 17 goals", STRONG),
         ("19.9%\nlife expectancy — last of 5", WEAK),
-        ("+0.344\n6 of 15 countries", STRONG),
-        ("36 of 36\nR² = 0.091", STRONG),
-        ("+0.513\n8 of 16 countries", STRONG),
+        ("36 of 36\nR² = 0.091 — largest tested", STRONG),
     ]),
     ("Social trust", [
         ("16 of 163 country-series testable\nover time, 1 significant; across\ncountries 4 of 9, all below the HDI", BLIND),
         ("not measured", BLIND),
-        ("not measured", BLIND),
         ("34 of 36\nR² = 0.041", STRONG),
-        ("+0.487\n6 of 16 countries", STRONG),
     ]),
 ]
 
@@ -105,7 +99,7 @@ def verify_trust_coverage():
 def main():
     verify_trust_coverage()
 
-    fig, ax = plt.subplots(figsize=(16.5, 6.6))
+    fig, ax = plt.subplots(figsize=(12.5, 6.6))
     fig.patch.set_facecolor(BG)
     ax.set_facecolor(BG)
     ncol, nrow = len(COLUMNS), len(ROWS)
@@ -149,9 +143,9 @@ def main():
              fontsize=15.5, fontweight="bold", color=INK, va="top")
     fig.text(0.005, 0.928,
              "The pattern of blind spots is the finding. Education is testable everywhere and its rank "
-             "depends entirely on construct. Health is testable everywhere and leads almost "
-             "everywhere it varies.\nTrust is near the top of the one instrument that measures it "
-             "repeatedly — and effectively invisible to every development framework.",
+             "depends entirely on which construct a framework counts.\nHealth is testable everywhere "
+             "and leads wherever it is measured somewhere it still varies. Trust is testable in one "
+             "instrument and effectively invisible to the development frameworks.",
              fontsize=9, color="#5A5A5A", va="top", linespacing=1.5)
     fig.text(0.005, 0.028,
              "The SDG framework does carry 13 trust- and satisfaction-adjacent series (SDG16: "

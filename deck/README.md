@@ -16,15 +16,15 @@ rebuild both; don't edit the HTML or the PPTX directly.
 ## The arc
 
 Two results and a discussion, in that order: **education**, then **health**,
-then **social trust**. Act II closes by putting all three under three
-specifications at once.
+then **social trust**. The within-country regional analysis has been cut — see
+below.
 
 | | |
 |---|---|
 | **Opening** | Development rose; wellbeing didn't follow. Which of its parts tracks wellbeing at all? |
 | **Act I** | Replication. The levels-to-differences collapse holds on the HDI, against ESS, and at regional scale — not an SDG artifact. The subnational HDI is a disaggregation test, not a replication. |
-| **Act II** | Result 1 education, Result 2 health, then the three-specification synthesis, then social trust in discussion. Every disagreement between frameworks is about operationalisation. |
-| **Act III** | The disconnect, then one implication per result, then an exploratory conclusion. |
+| **Act II** | Result 1 education, Result 2 health, the ESS horse race, then social trust in discussion. Every disagreement between frameworks is about operationalisation. |
+| **Act III** | The disconnect, then one implication per result, then an exploratory conclusion. No within-country evidence — see below. |
 
 **The three signatures.**
 
@@ -39,58 +39,50 @@ specifications at once.
 - **Health** (Result 2) — leads the SDG framework (Goal 3, 11.5%, 4th of 17;
   16 of the top 25 series), leads the ESS (36 of 36, median R² 0.091, the
   largest effect anywhere here), and is weak in exactly one place: the HDI,
-  whose single health input is close to saturated. The only domain that passes
-  the administrative-source method check, at national and regional scale both.
-- **Social trust** (discussion, not a headline) — at or near the top of the one
-  instrument that measures it repeatedly (34 of 36 countries; +0.49 within
-  countries), and invisible to every development framework. It is in the paper
+  whose single health input is close to saturated. The only domain that can be
+  put through the administrative-source method check at all, and it passes.
+- **Social trust** (discussion, not a headline) — significant in 34 of 36 ESS
+  countries at a median R² of 0.041, four times education's and well below
+  health's, and invisible to every development framework. It is in the paper
   because the reason it can't be a headline is the paper's subject.
 
-**The three-specification synthesis.** The deck used to report the collapse and
-the within-country analysis in different acts and leave the reader to connect
-them. `specification_synthesis.py` now puts them side by side:
+## The within-country analysis is out
 
-| | Between countries, levels | Same countries, differences | Inside countries, across regions |
-|---|---|---|---|
-| Education | 40.7% (61/150) | 1.3% (2/150) | +0.06 external (2/16), **−0.08** ESS (3/16, 8 of 16 positive) |
-| Health | 19.9% (30/151) | 2.6% (4/151) | +0.34 external (6/15, 13 of 15 positive), +0.51 ESS (8/16, 12 of 16 positive) |
-| Social trust | not measured | not measured | +0.49 (6/16, 14 of 16 positive) |
-| Development | 42.4% (64/151) | 2.0% (3/151) | +0.12 (2/16), +0.12 (3/16, 9 of 16 positive) |
+The ESS × subnational-HDI regional work — the ranking flip, the within-country
+gradients, the GDL sub-index check — is no longer part of the commentary. It is
+a separate paper. The code, figures and processed files all stay in the
+repository; they are simply no longer published into `deck/figures/` or cited
+by `content.py`.
 
-The ranking changes twice, in a consistent direction: what predicts *where*
-wellbeing is high is structural (schooling, income, which between countries
-proxy the whole development bundle); what predicts it *inside* a country is
-experiential (health, trust). Education's odd combination of near-universal
-significance and near-zero, sign-unstable within-country correlation is what a
-structural variable looks like once the structure is held fixed.
+Why it came out:
 
-Panels (a) and (b) are the same instrument on the same countries, so that
-collapse is exact. Panel (c) is a different instrument at a different scale and
-is read alongside them, never subtracted from them.
+- **Europe-only, 16 countries** with ≥6 matched regions, and coverage is uneven
+  — Italy matches 30% of respondents to a region, Sweden 57%, Croatia 69%.
+- **It is specification-sensitive in a way that needs room to examine.**
+  Education's median regional correlation changes sign between two defensible
+  aggregations (−0.08 from per-round region means, +0.13 pooling respondents),
+  and the health-versus-trust ordering swaps under the same choice. Those are
+  interesting problems given a robustness section and liabilities without one.
+- **It costs both display items.** A commentary carries one or two figures; the
+  flip needs its own, and so does the composite.
 
-**Education has no consistent within-country signal, and the deck must not
-quote a single number for it.** G3 in `make_figures.py` originally ran
-development, trust and self-rated health within countries but not education, so
-the deck was quoting +0.13 from a one-off calculation. Adding education to G3
-properly showed why that number was misleading:
+What the commentary loses: social trust drops to the individual ESS result (34
+of 36 countries, median R² 0.041) plus the SDG coverage and cross-section work,
+which is enough for a discussion but not for a headline. Education's
+universal-but-tiny pattern keeps its explanation from the individual-vs-country
+contrast in the horse race rather than from the regional layer.
 
-- **8 of 16 countries positive, 8 negative.** Health is 12 of 16 positive and
-  trust 14 of 16.
-- The median depends on how region values are built: **−0.08** averaging each
-  region's per-round means (G3, and what the figures now use) against **+0.13**
-  pooling respondents directly (`pooled_regional_education()`).
-- The three countries that reach significance **point both ways** — Austria
-  −0.81, France +0.50, the Netherlands +0.60.
+What survives untouched: the whole of Act I, including the regional-scale
+collapse replication — that beat is about the collapse generalising, not about
+which domain wins, so it stays — and all of Act II's framework and construct
+work.
 
-Report it as "no consistent signal, positive in 8 of 16", never as a median.
-`specification_synthesis.py` prints both aggregations on every run so the
-instability stays visible, and panel (c) prints the count of positive countries
-beside each bar because a median near zero can mean consistently tiny or wildly
-inconsistent — for health and trust it is the first, for education the second.
-
-This strengthens rather than weakens the argument: education is a
-between-country signal that does not survive holding the country fixed, which
-is exactly what a structural variable should look like.
+**The education finding that prompted this.** Adding education to G3 and G4
+showed it has no consistent within-country signal: 8 of 16 countries positive
+and 8 negative, with the three significant countries pointing both ways
+(Austria −0.81, France +0.50, the Netherlands +0.60), against 12 of 16 positive
+for health and 14 of 16 for trust. `specification_synthesis.py` prints both
+aggregations on every run. That result travels with the separate paper.
 
 ## Act III's altitude: implications, not recommendations
 
@@ -115,9 +107,9 @@ The act was rewritten to sit where the evidence sits. The claim is a
   answer it.
 
 Each of the three implication beats keeps its own caveat rather than deferring
-them all to a limitations paragraph: education's signal is between-country
-only, health's turns on saturation and on scale running the other way, trust's
-rests on one instrument in Europe with a live shared-method objection.
+them all to a limitations paragraph: education's signal is between-country and
+tiny within, health's turns on saturation, trust's rests on one instrument in
+Europe with a live shared-method objection.
 
 `DECISIONS` carries the open question of whether this is the right altitude for
 the venue, or whether the health and education implications should be sharpened
@@ -209,11 +201,11 @@ of schooling leads that column with 7 of 150 countries — a lead over the
 composite's 3, and still a collapse. It is the exception in *consistency*
 across frameworks, producers, instruments, and units of observation.
 
-Education leading is a **between-country** claim. Inside countries it has no
-consistent signal at all — positive in 8 of 16 — which is weaker than "small".
-Act III's education implication says what a global monitoring framework should
-count; it is not a claim that moving one region's schooling moves its
-wellbeing, and the text now says so explicitly.
+Education leading is a **between-country** claim. At the individual level it is
+significant in 32–34 of 36 countries at a median R² of 0.0098 — the smallest
+effect of any domain tested. Act III's education implication says what a global
+monitoring framework should count; it is not a claim that a given schooling
+gain moves a given person's life satisfaction, and the text says so explicitly.
 
 The SDG and HDI **detection** rates (71% vs 51% of each dataset's countries
 with any indicator significant) are a fair comparison, not an artifact:
@@ -240,11 +232,10 @@ number has been checked against source.
 | HDI composite and sub-components, both specs | matches `HDI_indicator_summary.csv`; independent recomputation differs by at most one country in the denominator |
 | ESS individual education, 32–34 of 36 | reproduced exactly |
 | HDI × ESS collapse, 14.8% / 8.8% | reproduced |
-| Ranking flip: +0.150 (3/16), health +0.513 (8/16), trust +0.487 (6/16) | reproduced exactly |
+| Ranking flip: +0.117 (3/16), health +0.513 (8/16), trust +0.487 (6/16) | reproduced exactly — now carried by the separate within-country paper, not this one |
 | Region crosswalk, 217,422 / 351,023 | reproduced; three hand-rejected mismatches now excluded |
 | SDG trust cross-section, 9 of 13 testable, 4 significant | computed fresh from the UN SDG API; comparators on each series' own country set |
 | SDG4 access 12.7% = 3rd of 17 goals if it were one | checked against `sdg_education_category_significance.csv` and the goal table; 2 series / 63 pairs, and the text says so |
-| Three-specification synthesis, all cells | recomputed by `specification_synthesis.py`; education's regional cell is aggregation-sensitive and both values are printed on every run |
 
 Three region matches cleared the 0.6 similarity threshold but were the wrong
 region (`SI` Notranjsko-kraška→Obalno-kraska, `SK` Trnavský→Bratislavsky,

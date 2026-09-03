@@ -45,16 +45,14 @@ MAPPING = {
     "sdg_by_goal.png": "F1_sdg_goal_significance_ranking.png",
     "health_trust_corroboration.png": "health_trust_corroboration.png",
     "domain_horse_race.png": "domain_horse_race.png",
-    "L1_three_specifications.png": "L1_three_specifications.png",
     "K1_sdg_trust_cross_section.png": "K1_sdg_trust_cross_section.png",
     "domain_scorecard.png": "J1_domain_framework_scorecard.png",
     "Figure1_commentary.png": "Figure1_commentary.png",
     "Figure1_commentary.pdf": "Figure1_commentary.pdf",
 
-    # Act III -- the within-country evidence
-    "within_country_gradient.png": "G2_within_country_gradients.png",
-    "ranking_flip.png": "G4_ranking_flip_national_vs_within.png",
-    "within_country_external.png": "H1_within_country_external_domains.png",
+    # NOTE: the within-country regional figures (G1-G4, H1, D1-D4, E1) are no
+    # longer published here. That analysis came out of the commentary and
+    # travels with its own paper; the builders and outputs stay in figures_out.
 
     # Appendix
     "ess_year_coverage.png": "A3_ess_year_coverage.png",
@@ -64,12 +62,6 @@ MAPPING = {
     "hdi_vs_lifesat_trends.png": "B5_quadrant_national.png",
     "shdi_whr_levels_scatter.png": "C1_whr_vs_shdi_national_levels.png",
     "shdi_vs_hdi_validation.png": "C3_hdi_vs_shdi_national_agreement.png",
-    "region_shdi_lifesat_pooled.png": "D1_region_scatter_stflife_vs_shdi.png",
-    "within_country_small_multiples.png": "D2_within_country_region_smallmultiples.png",
-    "european_regional_inequality.png": "D4_shdi_distribution_by_country.png",
-    "mechanisms_trust_health.png": "E1_mechanism_variables.png",
-    "mechanisms_percountry_detail.png": "G3_within_country_mechanisms.png",
-    "shdi_within_country_spread.png": "G1_within_country_shdi_inequality.png",
     "hdi_vs_sdg_frameworks.png": "F3_hdi_vs_sdg_crossref.png",
     "ess_triangulation.png": "F5_ess_agg_education_vs_whr.png",
 }

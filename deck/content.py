@@ -14,9 +14,9 @@ from __future__ import annotations
 TITLE = "Measured Where It Varies"
 SUBTITLE = (
     "A commentary in three acts, on why development predicts where wellbeing "
-    "is high but not when it rises — on education and health, which each "
-    "track lived experience once measured somewhere they still move, and on "
-    "what changes when the question moves inside countries"
+    "is high but not when it rises — and on education, health and social "
+    "trust, which track lived experience once each is measured somewhere it "
+    "still moves"
 )
 DATELINE = "Working synthesis for the co-author team · August 2026"
 SCOPE = (
@@ -54,9 +54,9 @@ HOOK = {
          "The same design on the HDI, against a second wellbeing survey, and "
          "one spatial scale down. It collapses every time."),
         ("II", "Education, health, and the blind spots.",
-         "Education's rank swings on construct, health's on saturation, and "
-         "the whole ranking turns over again once the question moves from "
-         "between countries to inside them."),
+         "Education's rank swings on which construct a framework counts, "
+         "health's on whether its variable still varies, and social trust is "
+         "barely testable at all."),
         ("III", "Which points to a disconnect worth naming.",
          "Not that these frameworks should stay away from wellbeing, but that "
          "the components that track lived experience are ones they are not "
@@ -207,23 +207,22 @@ ACTS = [
     },
     {
         "numeral": "II",
-        "title": "Education, health, and what changes when you change the question",
+        "title": "Education, health, and why the frameworks disagree",
         "key_numbers": [
-            ("40.7% → 8 of 16", "education: leads the HDI between countries, inconsistent inside them"),
+            ("40.7% vs 3.3%", "education under the HDI against pooled SDG4"),
             ("12.7%", "SDG4 access alone — third of 17 goals if it were one"),
-            ("19.9% → +0.51", "health: last of the HDI's five, first inside countries"),
+            ("11.5% vs 19.9%", "health: 4th of 17 SDG goals, last of the HDI's five"),
             ("1 of 16", "SDG trust country-series testable at all, not 1 of 163"),
         ],
         "thesis": (
             "Two results and a discussion. Education leads the HDI and the "
-            "access construct of SDG4 and is the smallest effect anywhere. "
-            "Health leads the SDG framework and the individual data and is "
-            "weak in exactly one place, for a reason we can name. Social trust "
-            "leads wherever it is measured, which is almost nowhere. Every "
-            "disagreement between the frameworks turns out to be about "
-            "operationalisation — and the ranking changes again, in a "
-            "consistent direction, when the question moves from between "
-            "countries to inside them."
+            "access construct of SDG4, and is the smallest effect anywhere at "
+            "the individual level. Health leads the SDG framework and the "
+            "individual data, and is weak in exactly one place, for a reason "
+            "we can name. Social trust leads wherever it is measured, which is "
+            "almost nowhere. Every disagreement between the frameworks turns "
+            "out to be about operationalisation — which construct they count, "
+            "and whether the variable they chose still varies."
         ),
         "beats": [
             {
@@ -430,12 +429,11 @@ ACTS = [
                     "data puts health at 11.2% of pairs against education’s "
                     "1.2%, the same ordering the ESS gives from entirely "
                     "different measurement.",
-                    "The regional test in the next beat adds a second external "
-                    "check: GDL’s externally measured health index leads its "
-                    "education and income indices within countries too. Health "
-                    "therefore holds under administrative measurement at both "
-                    "the national and the regional scale, which is more than "
-                    "can be said for either of the other two domains.",
+                    "Health is the only domain where that check can be run at "
+                    "all. Education can be checked and comes out weak in both "
+                    "sources; social trust cannot be checked, because the SDG "
+                    "framework has no interpersonal-trust indicator to check it "
+                    "against.",
                 ],
                 "figure": "health_trust_corroboration.png",
                 "caption": "The same domains under an administrative source and a "
@@ -451,62 +449,18 @@ ACTS = [
                     "The ESS measures health, education, income and trust on the "
                     "same respondents as life satisfaction, so the domains can "
                     "compete on equal terms rather than through four separate "
-                    "literatures. Health leads at every level of aggregation; "
+                    "literatures. Health leads at both levels of aggregation; "
                     "education is significant nearly everywhere and small "
                     "everywhere; trust sits between them.",
                     "The HDI leads between countries at R² = 0.760, but that is "
                     "the one comparison a composite index is expected to win — "
-                    "it proxies every domain at once. It falls to fourth once "
-                    "you look inside countries, and that fall is the subject of "
-                    "the next beat.",
+                    "it proxies every domain at once, which is what makes its "
+                    "individual components more informative than the composite "
+                    "about which domain does the work.",
                 ],
                 "figure": "domain_horse_race.png",
-                "caption": "Domains competing within one instrument, at three levels "
+                "caption": "Domains competing within one instrument, at two levels "
                            "of aggregation.",
-            },
-            {
-                "label": "Levels, differences, and inside countries",
-                "heading": "Three specifications, and the ranking changes twice",
-                "body": [
-                    "Three tests run through this commentary and the reader has "
-                    "been left to join them up. They are not three attempts at "
-                    "one question. <strong>Levels</strong> asks whether a "
-                    "country with more of something is happier. "
-                    "<strong>Differences</strong> asks whether a country that "
-                    "gains it gets happier — the collapse of Act I. "
-                    "<strong>Inside one country, across its regions</strong> "
-                    "asks whether the places with more of it are the better "
-                    "places to live, holding national institutions, history and "
-                    "policy fixed.",
-                    "Education leads the first and all but vanishes in the "
-                    "third: 40.7% of countries, then no consistent regional "
-                    "signal at all — 8 of 16 countries positive, a median "
-                    "between −0.08 and +0.13 depending on how region values "
-                    "are aggregated, and the significant countries pointing "
-                    "both ways. Health and trust do the reverse — health "
-                    "last of the HDI’s five between countries, first inside "
-                    "them at +0.51; trust unmeasured between, second inside at "
-                    "+0.49. The middle panel flattens everything: nothing "
-                    "clears 3%.",
-                    "The direction of that shift is the finding. What predicts "
-                    "<em>where</em> wellbeing is high is structural — schooling "
-                    "and income, which between countries proxy the whole "
-                    "development bundle at once. What predicts it "
-                    "<em>inside</em> a country is experiential: health and "
-                    "trust. Education’s combination of near-universal "
-                    "significance and tiny effect is exactly what a structural "
-                    "variable looks like once the structure is held fixed.",
-                ],
-                "figure": "L1_three_specifications.png",
-                "caption": "Panels (a) and (b) are the same HDI indicators on the same "
-                           "150–151 countries, so the collapse between them is exact. "
-                           "Panel (c) is a different instrument at a different scale — "
-                           "16 ESS countries with ≥6 matched regions — so it is read "
-                           "alongside (a) and (b), not subtracted from them. Within it, "
-                           "external GDL sub-indices are drawn separately from "
-                           "same-survey self-reports, since the shared-method objection "
-                           "applies only to the latter; health leads on both.",
-                "feature": True,
             },
 
             # ---------------- Result 3: social trust, in discussion ----------------
@@ -520,10 +474,10 @@ ACTS = [
                     "reason it cannot be a headline is itself the "
                     "commentary’s subject.",
                     "Where it is measured it performs: significant in 34 of 36 "
-                    "ESS countries individually, +0.49 within countries across "
-                    "regions, second only to health on both and above education "
-                    "on both. Neither the HDI nor the subnational HDI measures "
-                    "it at all.",
+                    "ESS countries, with a median R² of 0.041 — four times "
+                    "education’s 0.0098, though well below health’s 0.091. "
+                    "Neither the HDI nor the subnational HDI measures it at "
+                    "all.",
                     "The SDG framework appears to: 13 trust- and "
                     "satisfaction-adjacent series, mostly Goal 16 — "
                     "satisfaction with public services, belief that "
@@ -582,9 +536,8 @@ ACTS = [
                     "construct of SDG4, is near-universal at the individual "
                     "level, and is the smallest effect anywhere — a structural "
                     "variable behaving exactly as one should. Health leads the "
-                    "SDG framework, the individual data and the regional data, "
-                    "and is weak in precisely one place, the HDI, for a reason "
-                    "we can name. Trust leads nothing it is not the only "
+                    "SDG framework and the individual data, and is weak in "
+                    "precisely one place, the HDI, for a reason we can name. Trust leads nothing it is not the only "
                     "candidate for, and is invisible to every development "
                     "framework.",
                     "None of these disagreements is about the world. Every one "
@@ -627,22 +580,21 @@ ACTS = [
             "Education leads once it is measured as attainment rather than "
             "parity; health leads once it is measured somewhere it still "
             "varies; trust leads wherever it is measured at all, which is "
-            "almost nowhere. And the ranking turns over a second time when the "
-            "question moves inside countries. The contribution is not a ranking "
-            "of domains but the demonstration that the ranking depends on "
-            "construct, on variable, and on specification — none of which the "
-            "frameworks chose with wellbeing in mind, because that is not what "
-            "they were built for. Which is what makes the third act a question "
-            "about fit rather than a charge of failure."
+            "almost nowhere. The contribution is not a ranking of domains but "
+            "the demonstration that the ranking depends on construct and on "
+            "variable choice — neither of which the frameworks made with "
+            "wellbeing in mind, because that is not what they were built for. "
+            "Which is what makes the third act a question about fit rather "
+            "than a charge of failure."
         ),
     },
     {
         "numeral": "III",
         "title": "What this may imply for how development is measured",
         "key_numbers": [
-            ("+0.87 → +0.12", "development, between countries → within them"),
-            ("8 of 16 vs 12 of 16", "countries where education vs health tracks wellbeing regionally"),
+            ("12.7% vs 0.9%", "SDG4 access against measured learning outcomes"),
             ("11.2% vs 1.2%", "health vs education, SDG data, high-income countries"),
+            ("1 of 16", "SDG trust country-series a longitudinal design can use"),
         ],
         "thesis": (
             "These are implications, not recommendations. The frameworks were "
@@ -655,94 +607,6 @@ ACTS = [
             "each say something specific about what capturing it would take."
         ),
         "beats": [
-            {
-                "label": "Where the lever is",
-                "heading": "Development inequality inside countries mostly does not become wellbeing inequality",
-                "body": [
-                    "Below the Very High tier, countries contain multitudes. "
-                    "Germany's regions span 0.05 of subnational HDI; China's "
-                    "span 0.30 and India's 0.19 — several development tiers' "
-                    "worth of variation inside single countries. If regional "
-                    "development drove regional wellbeing, this is where it "
-                    "would show.",
-                    "It mostly doesn't. Holding country fixed and regressing "
-                    "region-mean life satisfaction on regional subnational HDI "
-                    "gives a significantly positive gradient in only 3 of 16 "
-                    "ESS countries — France, Belgium, and Germany — and the "
-                    "gradient is not steeper where internal inequality is "
-                    "larger. Which country's ladder you are on matters more "
-                    "than which rung you occupy within it.",
-                ],
-                "figure": "within_country_gradient.png",
-                "caption": "Within-country gradients of region-mean life satisfaction "
-                           "on regional SHDI, 16 ESS countries ordered by national HDI.",
-            },
-            {
-                "label": "The flip",
-                "heading": "Health and social trust do inside countries what development does between them",
-                "body": [
-                    "Between countries, development leads and the two wellbeing "
-                    "instruments agree almost exactly: the HDI correlates at "
-                    "r = +0.89 with World Happiness Report happiness and +0.87 "
-                    "with ESS life satisfaction, with trust and health close "
-                    "behind and all three positive.",
-                    "Within countries the ranking inverts. Development falls to "
-                    "a median regional correlation of +0.12, significant in 3 of "
-                    "16 countries, while self-rated health holds at +0.51 "
-                    "(8 of 16) and social trust at +0.49 (6 of 16). Education "
-                    "falls with development, not with health and trust — and "
-                    "further: its correlations are positive in only 8 of 16 "
-                    "countries, and the three that reach significance point "
-                    "both ways (Austria −0.81, France +0.50, the Netherlands "
-                    "+0.60). The World Happiness Report cannot see any of this "
-                    "— it has no subnational values. It is the specific thing "
-                    "the ESS adds.",
-                    "This is Act II's third panel at full detail: the domains "
-                    "that lead between countries are the structural ones, and "
-                    "they are not the domains that lead inside them.",
-                    "Two cautions. The health-versus-trust ordering is not "
-                    "stable — aggregating region means across waves rather "
-                    "than within them reverses it (trust +0.57, health +0.50). "
-                    "What is stable is that both sit near +0.5 while "
-                    "development and education sit at zero. And coverage varies "
-                    "sharply: Italy matches 30% of respondents to a region, "
-                    "Sweden 57%, Croatia 69%, against 91–100% elsewhere. "
-                    "Dropping those three, or regions built on under 200 "
-                    "respondents, leaves the flip intact.",
-                ],
-                "figure": "ranking_flip.png",
-                "caption": "Candidate Figure 2. National correlations beside "
-                           "within-country regional correlations, for development, "
-                           "health, and trust.",
-                "feature": True,
-            },
-            {
-                "label": "The flip, externally measured",
-                "heading": "It survives with no self-report at all — and it is a health flip",
-                "body": [
-                    "The strongest objection to the ranking flip is that health "
-                    "and trust are reported by the same respondents as the "
-                    "outcome. GDL's regional sub-indices remove that objection: "
-                    "health, education and income indices measured per region "
-                    "from external sources, sharing no method with the ESS.",
-                    "Within countries, the external health index correlates "
-                    "with regional life satisfaction at a median of +0.34, "
-                    "significant in 6 of 15 usable countries, against +0.12 for "
-                    "the income index and +0.06 for the education index. The "
-                    "domain ordering is the same one the self-reports give, "
-                    "from measurement the respondents never touched. Self-rated "
-                    "health still runs higher (+0.50), which is exactly what "
-                    "you expect if part — but only part — of its lead is shared "
-                    "method variance. One country drops out: Albania's regional "
-                    "health index is constant, another instance of a measure "
-                    "with no variance left to predict with.",
-                ],
-                "figure": "within_country_external.png",
-                "caption": "The within-country domain race with externally measured "
-                           "predictors (solid) beside the same-survey self-reports "
-                           "(faded). Sub-indices pooled 2010–2023.",
-                "feature": True,
-            },
             {
                 "label": "The disconnect",
                 "heading": "Stating it precisely, and stating what it is not",
@@ -791,14 +655,13 @@ ACTS = [
                     "barely matters for wellbeing; one that reads the access "
                     "series will rank it third of seventeen goals. Same data, "
                     "same countries.",
-                    "Two cautions travel with this and it is weaker without "
-                    "them. Education is the most consistent signal and the "
-                    "smallest one. And it is a <em>between</em>-country signal: "
-                    "inside countries it has no consistent signal at all, "
-                    "positive in 8 of 16 and negative in 8. So the implication "
-                    "is about what a global "
-                    "monitoring framework counts, not a claim that moving one "
-                    "region's schooling moves its wellbeing.",
+                    "One caution travels with this and it is weaker without "
+                    "it. Education is the most consistent signal across "
+                    "countries and the smallest one within them — significant "
+                    "in 32 to 34 of 36 ESS countries at a median R² of 0.0098. "
+                    "So the implication is about what a global monitoring "
+                    "framework counts, not a claim that any given schooling "
+                    "gain will move a given person’s life satisfaction.",
                 ],
             },
             {
@@ -821,20 +684,19 @@ ACTS = [
                     "already collected. The implication is about which of them "
                     "a framework reads as its health signal in a high-income "
                     "setting, not about adding a new instrument.",
-                    "Health is also where the scale point runs the other way "
-                    "from education's: weak between countries and strong inside "
-                    "them. A subnational health measure is doing work a national "
-                    "one cannot, which suggests disaggregation matters here as "
-                    "much as indicator choice.",
+                    "Health is also the domain where the frameworks disagree "
+                    "with each other most sharply — first in the SDG database, "
+                    "last in the HDI — which makes it the clearest case that "
+                    "the disagreement is about the variable rather than about "
+                    "the world.",
                 ],
             },
             {
                 "label": "Implication 3 · Social trust",
                 "heading": "A component that looks important, and that no framework is currently positioned to check",
                 "body": [
-                    "Social trust is at or near the top of every test the ESS "
-                    "can run — 34 of 36 countries, +0.49 within countries — and "
-                    "no development framework can currently check it. The HDI "
+                    "Social trust is significant in 34 of 36 ESS countries, "
+                    "and no development framework can currently check it. The HDI "
                     "and subnational HDI do not measure the construct. The SDG "
                     "framework's 13 satisfaction and integrity series average "
                     "one observation per country, which supports no "
@@ -870,14 +732,13 @@ ACTS = [
                     "economic security, autonomy, and social standing, and this "
                     "design cannot pull them apart. Individual effects are "
                     "small: a median R² near 0.01.",
-                    "The within-country results are Europe-only. The ESS is "
-                    "the only regional wellbeing source with the coverage this "
-                    "design needs — Gallup's subnational files are paywalled — "
-                    "so the priorities argument generalises across 16 European "
-                    "countries and not beyond them. That belongs in the text as "
-                    "a scope condition, not buried in a limitations paragraph, "
-                    "because the ranking flip is the most policy-relevant "
-                    "result here and will be the most contested.",
+                    "The individual-level results are Europe-only. The ESS is "
+                    "the second wellbeing instrument the whole replication "
+                    "rests on, and it covers 36 European countries — so where "
+                    "the commentary says two instruments agree, that agreement "
+                    "is demonstrated in Europe and assumed elsewhere. That "
+                    "belongs in the text as a scope condition rather than "
+                    "buried in a limitations paragraph.",
                     "Some of the parity and learning indicators' weakness is "
                     "coverage rather than construct — they are the youngest and "
                     "thinnest series in the SDG database, and thin series fail "
@@ -948,18 +809,25 @@ DECISIONS = [
      "change the analysis."),
     ("Display items",
      "Commentaries allow one or two. Proposed: the three-panel composite as "
-     "Figure 1, the ranking flip as Figure 2. Everything else moves to "
+     "Figure 1 and the domain scorecard as Figure 2. Everything else moves to "
      "supplementary."),
-    ("Scope of the within-country work",
-     "It now sits inside Act III as the evidence on priorities. Does it "
-     "belong there, or in a third paper? It is the most policy-relevant and "
-     "the most contested result we have, and it is Europe-only."),
+    ("Resolved: the within-country work is a separate paper",
+     "The ESS × subnational-HDI regional analysis is out of the commentary. It "
+     "is Europe-only across 16 countries, its coverage is uneven (Italy "
+     "matches 30% of respondents to a region), and it is specification-"
+     "sensitive in a way that needs room to examine: education’s median "
+     "regional correlation changes sign between two defensible aggregations, "
+     "and the health-versus-trust ordering swaps under the same choice. Those "
+     "are interesting problems given a robustness section and liabilities "
+     "without one. The code, figures and processed files all stay in the "
+     "repository."),
     ("Resolved: subnational sub-indices",
-     "The per-domain GDL exports are in. Within countries the external health "
-     "index leads education and income (+0.34 vs +0.06 and +0.12), so the "
-     "flip no longer rests on self-report. GDL's DHS-based Education &amp; "
-     "Work and Health datasets were also examined: they cover only 6 ESS "
-     "countries and cannot serve the European design."),
+     "The per-domain GDL exports are in and the analysis stands: within "
+     "countries the external health index leads education and income (+0.34 "
+     "vs +0.06 and +0.12), so the ranking flip does not rest on self-report. "
+     "It travels with the within-country paper rather than this one. GDL’s "
+     "DHS-based Education &amp; Work and Health datasets were also examined: "
+     "they cover only 6 ESS countries and cannot serve the European design."),
     ("Methods note",
      "Pooled R² and significant-country share tell different stories at "
      "several points. Proposal: report both throughout and discuss the "
@@ -978,9 +846,6 @@ APPENDIX = [
      "Country-aggregated ESS years of schooling predicts WHR happiness at "
      "R² = 0.308, against 0.161 for the HDI's own schooling series on the same "
      "cells — an independently measured education variable roughly doubles it."),
-    ("shdi_within_country_spread.png", "Regional development spread within countries",
-     "Every region a dot, two countries per UNDP development tier, 2022. "
-     "Germany's regions span 0.05 of SHDI; China's span 0.30, India's 0.19."),
     ("sdg_by_goal.png", "SDG significance by goal, pooled",
      "The leading goal (Energy, 16.0%) clears FDR significance in barely one "
      "country-test in six; pooled Education ranks 12th of 17."),
@@ -1007,21 +872,4 @@ APPENDIX = [
     ("hdi_vs_lifesat_trends.png", "HDI progress against life-satisfaction trends, 2010–2023",
      "HDI rose nearly everywhere. ESS life satisfaction rose in 19 countries "
      "and fell in 8."),
-    ("region_shdi_lifesat_pooled.png", "Region-level SHDI against life satisfaction, pooled",
-     "1,313 region-years, pooled R² = 0.32 — this mixes between- and "
-     "within-country variation, which the within-country panels separate."),
-    ("within_country_small_multiples.png", "Within-country regional gradients, small multiples",
-     "Holding country fixed, the regional development–wellbeing gradient is "
-     "weak in most countries. France is the clearest exception."),
-    ("european_regional_inequality.png", "Regional SHDI spread within ESS countries",
-     "Italy and Poland carry several times the internal development "
-     "inequality of Germany or the Nordics."),
-    ("mechanisms_trust_health.png", "Trust and health as rival predictors, nationally",
-     "Self-rated health out-predicts the HDI nationally on significant-country "
-     "share, 37% against 19%."),
-    ("mechanisms_percountry_detail.png", "Per-country detail behind the ranking flip",
-     "Signed within-country regional correlations for all 16 countries; "
-     "filled markers are p &lt; .05. Sweden reads negative on all three, but "
-     "only 57% of Swedish respondents carry a usable region code, so that "
-     "result should not be interpreted."),
 ]

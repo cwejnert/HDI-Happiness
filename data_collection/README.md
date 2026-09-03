@@ -167,6 +167,10 @@ which previously existed only as hand-renamed copies with nothing recording it
 (`ranking_flip.png` is G4; `mechanisms_trust_health.png` is E1, not G3). It
 reports anything missing and anything in `deck/figures/` that nothing maps to.
 
+The within-country regional figures (G1-G4, H1, D1-D4, E1-E3, L1) are no longer
+published to the deck. That analysis came out of the commentary and belongs to
+its own paper; every builder and output stays here.
+
 `specification_synthesis.py` also computes the one cell the pipeline never
 produced. G3 in `make_figures.py` runs development, social trust and self-rated
 health within countries across regions, but not education — so the deck had
