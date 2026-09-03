@@ -147,27 +147,35 @@ def slide_hook(prs):
     for i, p in enumerate(C.HOOK["body"]):
         para(tf, p, size=size, color=INK_SOFT, spacing=1.34, space_after=12, first=(i == 0))
 
-    # the three acts, right column
+    # the acts, right column -- pace the rows to however many there are
     x = Inches(7.35)
     tf = textbox(s, x, Inches(0.62), Inches(5.3), Inches(0.3))
     para(tf, "The argument", size=11, color=ACCENT, font=MONO, caps=True, first=True)
-    top = Inches(1.12)
-    for numeral, claim, gloss in C.HOOK["acts"]:
+    acts = C.HOOK["acts"]
+    top, avail = Inches(1.12), Inches(6.0)
+    step = int(min(Inches(1.45), avail / len(acts)))
+    claim_sz, gloss_sz = (13.5, 11) if len(acts) <= 4 else (12, 9.5)
+    for numeral, claim, gloss in acts:
         rule(s, x, top, Inches(5.3), RGBColor(0xCD, 0xD3, 0xDB), Pt(0.75))
-        tf = textbox(s, x, top + Inches(0.16), Inches(0.55), Inches(0.5))
-        para(tf, numeral, size=20, color=ACCENT, font=SERIF, first=True)
-        tf = textbox(s, x + Inches(0.7), top + Inches(0.16), Inches(4.6), Inches(1.2))
-        para(tf, claim, size=13.5, color=INK, bold=True, space_after=3, first=True)
-        para(tf, gloss, size=11, color=INK_SOFT, spacing=1.25)
-        top += Inches(1.45)
+        tf = textbox(s, x, top + Inches(0.14), Inches(0.72), Inches(0.5))
+        para(tf, numeral, size=17 if len(numeral) > 3 else 20, color=ACCENT,
+             font=SERIF, first=True)
+        tf = textbox(s, x + Inches(0.85), top + Inches(0.14), Inches(4.45), Inches(1.2))
+        para(tf, claim, size=claim_sz, color=INK, bold=True, space_after=3, first=True)
+        para(tf, gloss, size=gloss_sz, color=INK_SOFT, spacing=1.22)
+        top += step
 
 
 def slide_act_open(prs, act):
     s = blank(prs)
     fill(s, INK)
 
-    tf = textbox(s, Inches(9.0), Inches(0.9), Inches(3.6), Inches(4.5))
-    p = para(tf, act["numeral"], size=200, color=RGBColor(0x2A, 0x33, 0x40),
+    # the ghosted numeral is set to fill the right margin, so a longer one
+    # ("II-a") has to come down in size or it runs off the slide
+    numeral = act["numeral"]
+    ghost = 200 if len(numeral) <= 3 else 120
+    tf = textbox(s, Inches(8.4), Inches(0.9), Inches(4.2), Inches(4.5))
+    p = para(tf, numeral, size=ghost, color=RGBColor(0x2A, 0x33, 0x40),
              font=SERIF, first=True)
     p.alignment = PP_ALIGN.RIGHT
 

@@ -1,7 +1,21 @@
 """
-Comparative figures for the reframed narrative:
-- ESS levels-vs-diffs collapse (Act I completion)
-- Domain comparisons across frameworks at levels (Act II)
+Comparative figures for the reframed narrative.
+
+Every panel in this file reports ONE unit: the percentage of units (countries,
+or regions) in which the association is Benjamini-Hochberg FDR-significant at
+q < .05. That is the same test the SDG paper and the HDI replication use, so
+the bars can be read side by side.
+
+A note on why that matters. An earlier version of this file scored the ESS
+bars as "R-squared > 0.04" on ~7 country-round means. At n = 7, two-thirds of
+PURE NOISE series clear R-squared > 0.04, so those bars measured sample size,
+not association, and they were being plotted against FDR-corrected bars from
+the other frameworks. The ESS domain figures below are therefore computed from
+the individual respondent file (351,023 respondents, ~10,700 per country),
+demeaned within country-round so the association is within-country and
+within-year by construction.
+
+    python build_comparative_figures.py
 """
 from __future__ import annotations
 
@@ -10,52 +24,33 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy import stats
 
 OUT_DIR = "figures_out"
+ESS_SAV = "raw/ess_extract.sav"
+ESS_CACHE = "processed/ess_individual_domain_fdr.csv"
 
-# Palette matches make_commentary_figure.py
 BLUE = "#2A78D6"
-ORANGE = "#EDA100"
 GREEN = "#1BAF7A"
-PURPLE = "#4A3AA7"
-VERMILION = "#EB6834"
 RED = "#E34948"
 GREY = "#8A8A8A"
 BG = "#FCFCFB"
 INK = "#1A1A1A"
 MUTED = "#52514E"
 
-
-def fast_r2(x, y):
-    """Compute R² efficiently."""
-    ok = x.notna() & y.notna()
-    x, y = x[ok].to_numpy(), y[ok].to_numpy()
-    if len(x) < 4 or np.std(x) == 0 or np.std(y) == 0:
-        return np.nan
-    return np.corrcoef(x, y)[0, 1] ** 2
+DOMAINS = [("eduyrs", "Education"), ("good_health", "Health"), ("ppltrst", "Social trust")]
 
 
-def levels_r2(panel, unit_col, x_col, y_col):
-    """R² at levels: correlate across units (countries)."""
-    return panel.groupby(unit_col).apply(lambda g: fast_r2(g[x_col], g[y_col]))
-
-
-def diffs_r2(panel, unit_col, time_col, x_col, y_col):
-    """R² in first-differences: within each unit over time."""
-    out = {}
-    for unit, grp in panel.sort_values(time_col).groupby(unit_col):
-        grp = grp.dropna(subset=[x_col, y_col])
-        if len(grp) < 5:
-            out[unit] = np.nan
-            continue
-        dx = grp[x_col].diff().to_numpy()[1:]
-        dy = grp[y_col].diff().to_numpy()[1:]
-        ok = ~np.isnan(dx) & ~np.isnan(dy)
-        if ok.sum() < 4 or np.std(dx[ok]) == 0 or np.std(dy[ok]) == 0:
-            out[unit] = np.nan
-            continue
-        out[unit] = np.corrcoef(dx[ok], dy[ok])[0, 1] ** 2
-    return pd.Series(out)
+def bh(pvals, alpha=0.05):
+    """Benjamini-Hochberg. Returns a boolean mask of rejected nulls."""
+    p = np.asarray(pvals, dtype=float)
+    n = len(p)
+    order = np.argsort(p)
+    below = np.where(p[order] <= alpha * np.arange(1, n + 1) / n)[0]
+    out = np.zeros(n, dtype=bool)
+    if len(below):
+        out[order[: below.max() + 1]] = True
+    return out
 
 
 def style_axes(ax):
@@ -64,176 +59,186 @@ def style_axes(ax):
     ax.spines["right"].set_visible(False)
 
 
-def ess_collapse():
-    """ESS levels-vs-diffs collapse figure (Act I).
+def label_bars(ax, bars, labels, size=9.5):
+    for bar, text in zip(bars, labels):
+        h = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width() / 2, h + 1.5, text, ha="center",
+                va="bottom", fontsize=size, fontweight="bold", color=INK)
 
-    Unlike SDG and HDI, ESS shows persistent significant associations in both
-    levels AND differences — a key indicator that self-reported measures are
-    responsive to year-to-year change, unlike administrative development data.
+
+def heading(fig, title, subtitle, footnote=None):
+    fig.text(0.05, 0.97, title, fontsize=14, fontweight="bold", color=INK, va="top")
+    fig.text(0.05, 0.915, subtitle, fontsize=9.5, color=MUTED, va="top")
+    if footnote:
+        fig.text(0.05, 0.03, footnote, fontsize=7.5, color=GREY, va="bottom", style="italic")
+
+
+# --------------------------------------------------------------------------
+# Individual-level ESS: the only level at which the domain items are measured
+# --------------------------------------------------------------------------
+def ess_individual_fdr(rebuild=False):
+    """% of ESS countries where each domain predicts life satisfaction.
+
+    Estimated across respondents within each country, demeaned within
+    country-round so no part of the association can come from between-country
+    differences or from a common year shock. FDR-corrected across countries.
     """
-    panel = pd.read_csv("processed/country_round_panel.csv")
+    from pathlib import Path
+    if Path(ESS_CACHE).exists() and not rebuild:
+        return pd.read_csv(ESS_CACHE)
 
-    # Compute levels and diffs R² for satisfaction and happiness
-    stflife_levels = levels_r2(panel, "cntry", "hdi", "stflife")
-    stflife_diffs = diffs_r2(panel, "cntry", "year", "hdi", "stflife")
+    import pyreadstat
+    df, _ = pyreadstat.read_sav(ESS_SAV)
+    for c in ["stflife", "ppltrst", "health", "eduyrs"]:
+        df[c] = pd.to_numeric(df[c], errors="coerce")
+    # ESS codes refusals / don't-knows above the scale maximum
+    df.loc[df.stflife > 10, "stflife"] = np.nan
+    df.loc[df.ppltrst > 10, "ppltrst"] = np.nan
+    df.loc[df.health > 5, "health"] = np.nan
+    df.loc[df.eduyrs > 40, "eduyrs"] = np.nan
+    df["good_health"] = 6 - df["health"]  # reverse so higher = better health
 
-    happy_levels = levels_r2(panel, "cntry", "hdi", "happy")
-    happy_diffs = diffs_r2(panel, "cntry", "year", "hdi", "happy")
+    rows = []
+    for var, label in DOMAINS:
+        per_country = []
+        for cntry, g in df.groupby("cntry"):
+            g = g[["stflife", var, "essround"]].dropna()
+            if len(g) < 200:
+                continue
+            x = (g[var] - g.groupby("essround")[var].transform("mean")).to_numpy()
+            y = (g["stflife"] - g.groupby("essround")["stflife"].transform("mean")).to_numpy()
+            if x.std() == 0 or y.std() == 0:
+                continue
+            r, p = stats.pearsonr(x, y)
+            per_country.append((cntry, r ** 2, p, len(g)))
+        d = pd.DataFrame(per_country, columns=["cntry", "r2", "p", "n"])
+        sig = bh(d.p.values)
+        rows.append({"domain": label, "n_countries": len(d), "n_sig": int(sig.sum()),
+                     "pct_sig": 100 * sig.mean(), "median_r2": d.r2.median(),
+                     "median_n": d.n.median()})
+    out = pd.DataFrame(rows)
+    out.to_csv(ESS_CACHE, index=False)
+    print(f"Saved: {ESS_CACHE}")
+    return out
 
-    # Count countries significant at p < 0.05 (R² > 0.04)
-    n_sig_levels = max(
-        (stflife_levels > 0.04).sum(),
-        (happy_levels > 0.04).sum()
-    )
-    n_sig_diffs = max(
-        (stflife_diffs > 0.04).sum(),
-        (happy_diffs > 0.04).sum()
-    )
-    n_countries = panel["cntry"].nunique()
 
-    fig, ax = plt.subplots(figsize=(11, 6.5))
+def hdi_fdr():
+    """% of the 150 HDI countries FDR-significant at levels, by component."""
+    h = pd.read_csv("processed/hdi_country_indicator_significance.csv")
+    return {ind: 100 * (g.sig_levels_fdr == "q<.05").mean() for ind, g in h.groupby("indicator")}
+
+
+def sdg_goal_pct():
+    s = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
+    s = s[s.Goal != "Goal"].copy()
+    s["Goal"] = pd.to_numeric(s.Goal)
+    return dict(zip(s.Goal, s.pct_sig_levels.astype(float)))
+
+
+# --------------------------------------------------------------------------
+# Act I -- the collapse, replicated three ways
+# --------------------------------------------------------------------------
+def collapse_three_ways():
+    """SDG x WHR, HDI x WHR, and SHDI x ESS: levels hold, differences do not."""
+    r = pd.read_csv("processed/region_round_panel.csv")
+
+    # Levels, one spatial scale down: across regions inside each country
+    lv = []
+    for _, g in r.groupby("cntry"):
+        g = g.dropna(subset=["shdi", "stflife"])
+        if g.region_key.nunique() >= 8:
+            lv.append(stats.pearsonr(g["shdi"], g["stflife"])[1])
+    reg_levels = 100 * bh(lv).mean()
+
+    # Differences, within each region over survey rounds
+    df_p = []
+    for _, g in r.groupby("region_key"):
+        g = g.sort_values("year").dropna(subset=["shdi", "stflife"])
+        if len(g) >= 5:
+            dx, dy = np.diff(g["shdi"]), np.diff(g["stflife"])
+            if dx.std() > 0 and dy.std() > 0:
+                df_p.append(stats.pearsonr(dx, dy)[1])
+    reg_diffs = 100 * bh(df_p).mean()
+
+    pairings = [
+        (f"SDG x WHR\n42 countries\n661 series", 71.0, 5.0),
+        (f"HDI x WHR\n150 countries\ncomposite index", 42.0, 2.0),
+        (f"SHDI x ESS\n{len(lv)} countries / {len(df_p)} regions\nsubnational", reg_levels, reg_diffs),
+    ]
+
+    fig, ax = plt.subplots(figsize=(11, 6))
     fig.patch.set_facecolor(BG)
+    x = np.arange(len(pairings))
+    w = 0.36
+    lvl = [p[1] for p in pairings]
+    dif = [p[2] for p in pairings]
+    b1 = ax.bar(x - w / 2, lvl, w, label="Levels", color=BLUE, alpha=0.85)
+    b2 = ax.bar(x + w / 2, dif, w, label="First differences", color=RED, alpha=0.85)
+    label_bars(ax, b1, [f"{v:.0f}%" for v in lvl])
+    label_bars(ax, b2, [f"{v:.0f}%" for v in dif])
 
-    x = np.arange(2)
-    width = 0.35
-
-    # Show both SDG+HDI pattern and ESS pattern for comparison
-    sdg_hdi_levels = [71, 42]  # SDG and HDI
-    sdg_hdi_diffs = [5, 2]
-
-    # ESS shows persistent signal in differences (not a collapse)
-    ax.bar([0 - width/2, 1 - width/2], sdg_hdi_levels, width,
-           label="Levels", color=BLUE, alpha=0.7)
-    ax.bar([0 + width/2, 1 + width/2], sdg_hdi_diffs, width,
-           label="First-differences", color=RED, alpha=0.7)
-    ax.bar([2 - width/2], [100 * n_sig_levels / n_countries], width, color=BLUE, alpha=0.7)
-    ax.bar([2 + width/2], [100 * n_sig_diffs / n_countries], width, color=RED, alpha=0.7)
-
-    ax.set_xticks([0, 1, 2])
-    ax.set_xticklabels(["SDG indicators\n(42 countries)", "HDI composite\n(151 countries)",
-                       "ESS + HDI\n(36 countries)"])
-    ax.set_ylabel("% of countries FDR-significant", fontsize=10)
-    ax.set_ylim(0, 80)
-    ax.legend(fontsize=9, loc="upper right")
+    ax.set_xticks(x)
+    ax.set_xticklabels([p[0] for p in pairings], fontsize=9.5)
+    ax.set_ylabel("% of units FDR-significant (q < .05)", fontsize=10.5)
+    ax.set_ylim(0, 85)
+    ax.legend(fontsize=9.5, loc="upper right", frameon=False)
     style_axes(ax)
+    ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+    ax.set_axisbelow(True)
 
-    # Add value labels
-    for i, (lv, dv) in enumerate([(71, 5), (42, 2)]):
-        ax.text(i - width/2, lv + 1.5, f"{lv}%", ha='center', va='bottom',
-                fontsize=9, fontweight='bold', color=INK)
-        ax.text(i + width/2, dv + 1.5, f"{dv}%", ha='center', va='bottom',
-                fontsize=9, fontweight='bold', color=INK)
-
-    ess_levels_pct = 100 * n_sig_levels / n_countries
-    ess_diffs_pct = 100 * n_sig_diffs / n_countries
-    ax.text(2 - width/2, ess_levels_pct + 1.5, f"{ess_levels_pct:.0f}%", ha='center', va='bottom',
-            fontsize=9, fontweight='bold', color=INK)
-    ax.text(2 + width/2, ess_diffs_pct + 1.5, f"{ess_diffs_pct:.0f}%", ha='center', va='bottom',
-            fontsize=9, fontweight='bold', color=INK)
-
-    fig.text(0.05, 0.95, "Replication 2: ESS shows a different pattern",
-             fontsize=13, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.90, "Self-reported wellbeing persists in differences. Caveat: 36 European countries,\n"
-             "self-reported measures, annual survey cycles (vs administrative data).",
-             fontsize=8.5, color=MUTED, transform=fig.transFigure, va="top")
-
-    fig.tight_layout(rect=(0, 0, 1, 0.88))
+    heading(fig, "The collapse replicates: swap the framework, swap the wellbeing measure, swap the scale",
+            "Change one leg of the design at a time. Levels stay informative; differences go to almost nothing in every pairing.",
+            "Every bar is the same test: Benjamini-Hochberg FDR at q < .05, corrected within the family of units shown.\n"
+            "SHDI x ESS levels are estimated across regions inside each country; its differences within each region over survey rounds.")
+    fig.tight_layout(rect=(0, 0.07, 1, 0.87))
     path = f"{OUT_DIR}/ess_levels_diffs_collapse.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()
     print(f"Saved: {path}")
 
 
+# --------------------------------------------------------------------------
+# Act II / II-a -- the three domains
+# --------------------------------------------------------------------------
 def domains_at_levels():
-    """
-    Show all three domains (education, health, trust) at levels across frameworks.
-    All frameworks show % of countries/contexts where significant (R² > 0.04).
-    """
-    # Load ESS individual-level R² data
-    panel = pd.read_csv("processed/country_round_panel.csv")
+    """All three domains, each framework, one unit."""
+    ess = ess_individual_fdr().set_index("domain")
+    hdi = hdi_fdr()
+    sdg = sdg_goal_pct()
 
-    # Compute individual-level R² for each domain in ESS
-    ess_education_r2 = []
-    ess_health_r2 = []
-    ess_trust_r2 = []
+    spec = [
+        ("Education", BLUE, hdi["eys"], sdg[4]),
+        ("Health", RED, hdi["le"], sdg[3]),
+        ("Social trust", GREEN, None, sdg[16]),
+    ]
 
-    for cntry in panel["cntry"].unique():
-        grp = panel[panel["cntry"] == cntry]
-        ess_education_r2.append(fast_r2(grp["eduyrs"], grp["stflife"]))
-        ess_health_r2.append(fast_r2(grp["health"], grp["stflife"]))
-        ess_trust_r2.append(fast_r2(grp["ppltrst"], grp["stflife"]))
-
-    # Convert to % of countries significant (R² > 0.04)
-    n_ess = len([x for x in ess_education_r2 if not np.isnan(x)])
-    ess_education_pct = 100 * (np.array(ess_education_r2) > 0.04).sum() / n_ess
-    ess_health_pct = 100 * (np.array(ess_health_r2) > 0.04).sum() / n_ess
-    ess_trust_pct = 100 * (np.array(ess_trust_r2) > 0.04).sum() / n_ess
-
-    # Load HDI data from hdi_country_indicator_significance.csv
-    hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
-
-    # Extract education, health, income R² at levels and count significant
-    hdi_education_r2 = hdi_sig[hdi_sig["indicator"] == "eys"]["r2_levels"].values
-    hdi_education_pct = (hdi_education_r2 > 0.04).sum() / len(hdi_education_r2) * 100 if len(hdi_education_r2) > 0 else 34.0
-
-    hdi_health_r2 = hdi_sig[hdi_sig["indicator"] == "le"]["r2_levels"].values
-    hdi_health_pct = (hdi_health_r2 > 0.04).sum() / len(hdi_health_r2) * 100 if len(hdi_health_r2) > 0 else 20.0
-
-    # Load SDG data
-    sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
-    sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
-    sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
-    # Extract education (Goal 4), health (Goal 3), trust (Goal 16) percentages
-    sdg_education = float(sdg_sig[sdg_sig["Goal"] == 4]["pct_sig_levels"].values[0]) if len(sdg_sig[sdg_sig["Goal"] == 4]) > 0 else 3.3
-    sdg_health = float(sdg_sig[sdg_sig["Goal"] == 3]["pct_sig_levels"].values[0]) if len(sdg_sig[sdg_sig["Goal"] == 3]) > 0 else 11.5
-    sdg_trust = float(sdg_sig[sdg_sig["Goal"] == 16]["pct_sig_levels"].values[0]) if len(sdg_sig[sdg_sig["Goal"] == 16]) > 0 else 1.5
-
-    # Build figure: 3 domains × 3 frameworks
-    fig, axes = plt.subplots(1, 3, figsize=(14, 5))
+    fig, axes = plt.subplots(1, 3, figsize=(14, 5.4))
     fig.patch.set_facecolor(BG)
-
-    domains = ["Education", "Health", "Social trust"]
-    colors = [BLUE, RED, GREEN]
-
-    ess_values = [ess_education_pct, ess_health_pct, ess_trust_pct]
-    hdi_values = [hdi_education_pct, hdi_health_pct, 0]  # HDI doesn't measure trust
-    sdg_values = [sdg_education, sdg_health, sdg_trust]
-
-    for idx, (domain, color, ess_val, hdi_val, sdg_val) in enumerate(zip(domains, colors, ess_values, hdi_values, sdg_values)):
-        ax = axes[idx]
-
-        frameworks = ["ESS\n(36 countries)", "HDI\n(150 countries)", "SDG\n(~42-74 countries)"]
-        values = [ess_val, hdi_val, sdg_val]
-        bar_colors = [color, color, GREY]
-
-        bars = ax.bar(frameworks, values, color=bar_colors, alpha=0.8)
-
-        # Set alpha for HDI bar if zero
-        if hdi_val == 0:
-            bars[1].set_alpha(0.2)
-
-        ax.set_ylabel("% of countries/contexts significant", fontsize=9)
-        ax.set_title(domain, fontsize=11, fontweight="bold", color=INK)
-        ax.set_ylim(0, 110)
+    for ax, (domain, color, hdi_val, sdg_val) in zip(axes, spec):
+        ess_val = ess.loc[domain, "pct_sig"]
+        vals = [ess_val, 0 if hdi_val is None else hdi_val, sdg_val]
+        names = ["ESS\n36 countries\n(individual)", "HDI\n150 countries\n(country)",
+                 "SDG\n42-74 countries\n(country-indicator)"]
+        bars = ax.bar(names, vals, color=[color, color, GREY], alpha=0.85)
+        if hdi_val is None:
+            bars[1].set_alpha(0.15)
+            ax.text(1, 2.5, "not measured", ha="center", fontsize=8, color=GREY, style="italic")
+        labels = [f"{ess_val:.0f}%", "" if hdi_val is None else f"{hdi_val:.0f}%", f"{sdg_val:.1f}%"]
+        label_bars(ax, bars, labels, size=10)
+        ax.set_ylabel("% of countries FDR-significant", fontsize=9)
+        ax.set_title(domain, fontsize=11.5, fontweight="bold", color=INK)
+        ax.set_ylim(0, 115)
+        ax.tick_params(labelsize=8.5)
         style_axes(ax)
+        ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+        ax.set_axisbelow(True)
 
-        # Add value labels
-        for i, (bar, val) in enumerate(zip(bars, values)):
-            if val > 0:
-                height = bar.get_height()
-                label_txt = f"{val:.0f}%"
-                ax.text(bar.get_x() + bar.get_width()/2., height + 1.5,
-                        label_txt, ha='center', va='bottom', fontsize=9, fontweight='bold')
-            else:
-                ax.text(bar.get_x() + bar.get_width()/2., 0.005,
-                        "not measured", ha='center', va='bottom', fontsize=7.5, color=GREY, style='italic')
-
-    fig.text(0.05, 0.97, "All three domains at levels: education, health, and social trust",
-             fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.91, "All frameworks show % of countries where domain significantly predicts wellbeing at levels (R² > 0.04).",
-             fontsize=8.5, color=MUTED, transform=fig.transFigure, va="top")
-
-    fig.tight_layout(rect=(0, 0, 1, 0.88))
+    heading(fig, "Three domains, three frameworks, one unit",
+            "% of countries where the domain predicts life satisfaction at levels, FDR-corrected. "
+            "ESS is measured across respondents; the HDI and SDG frameworks across country-years.",
+            "The ESS bars are the same domains measured on people rather than on national aggregates. "
+            "Social trust has no HDI counterpart at all, and its SDG counterpart measures confidence in institutions rather than trust in people.")
+    fig.tight_layout(rect=(0, 0.07, 1, 0.86))
     path = f"{OUT_DIR}/domains_at_levels_comparison.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()
@@ -241,69 +246,36 @@ def domains_at_levels():
 
 
 def education_deep_dive():
-    """Education: % of countries where significant across frameworks at levels."""
-    panel = pd.read_csv("processed/country_round_panel.csv")
+    ess = ess_individual_fdr().set_index("domain")
+    hdi = hdi_fdr()
+    edu = pd.read_csv("processed/sdg_education_category_significance.csv")
+    access = float(edu.loc[edu.edu_category == "Access & Participation", "pct_sig_levels"].iloc[0])
+    pooled = sdg_goal_pct()[4]
 
-    # ESS individual-level: % of 36 countries significant
-    ess_education_r2 = []
-    for cntry in panel["cntry"].unique():
-        grp = panel[panel["cntry"] == cntry]
-        ess_education_r2.append(fast_r2(grp["eduyrs"], grp["stflife"]))
-    ess_education_r2 = [x for x in ess_education_r2 if not np.isnan(x)]
-    ess_sig = (np.array(ess_education_r2) > 0.04).sum()
-    ess_pct = ess_sig / len(ess_education_r2) * 100
-
-    # HDI education (expected years of schooling): % of 150 countries significant
-    hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
-    hdi_eys = hdi_sig[hdi_sig["indicator"] == "eys"]["r2_levels"].values
-    hdi_eys_sig = (hdi_eys > 0.04).sum()
-    hdi_pct = hdi_eys_sig / len(hdi_eys) * 100
-
-    # SDG education: access indicators only vs pooled
-    sdg_access_pct = 12.7  # Access & participation indicators
-    sdg_pooled_pct = 3.3   # All 35 indicators pooled
+    names = ["ESS\n36 countries\n(years of schooling,\nindividual)",
+             "HDI\n150 countries\n(expected years\nof schooling)",
+             "SDG4 access only\n~42 countries\n(2 series,\n63 country-pairs)",
+             "SDG4 pooled\n~42 countries\n(all 35 series)"]
+    vals = [ess.loc["Education", "pct_sig"], hdi["eys"], access, pooled]
 
     fig, ax = plt.subplots(figsize=(11, 6))
     fig.patch.set_facecolor(BG)
-
-    frameworks = ["ESS\n36 countries\n(individual level)",
-                  "HDI\n150 countries\n(country level)",
-                  "SDG4 access\n~42 countries\n(access indicators only)",
-                  "SDG4 pooled\n~42 countries\n(all 35 indicators)"]
-    values = [ess_pct, hdi_pct, sdg_access_pct, sdg_pooled_pct]
-    colors = [BLUE, BLUE, BLUE, BLUE]
-    alphas = [0.75, 0.75, 0.75, 0.4]  # Pool is faded
-
-    bars = ax.bar(frameworks, values, color=colors, width=0.6)
-
-    # Set alphas individually
-    for bar, alpha in zip(bars, alphas):
-        bar.set_alpha(alpha)
-
-    # Add value labels
-    for bar, val, label in zip(bars, values,
-                                [f"{ess_pct:.0f}%\n({ess_sig}/{len(ess_education_r2)})",
-                                 f"{hdi_pct:.0f}%\n({hdi_eys_sig}/{len(hdi_eys)})",
-                                 f"{sdg_access_pct:.1f}%",
-                                 f"{sdg_pooled_pct:.1f}%"]):
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
-                label, ha='center', va='bottom', fontsize=9.5, fontweight='bold', color=INK)
-
-    ax.set_ylabel("% of countries where significant", fontsize=11)
+    bars = ax.bar(names, vals, color=BLUE, width=0.6)
+    for bar, a in zip(bars, [0.85, 0.85, 0.85, 0.35]):
+        bar.set_alpha(a)
+    label_bars(ax, bars, [f"{vals[0]:.0f}%", f"{vals[1]:.0f}%", f"{access:.1f}%", f"{pooled:.1f}%"], size=10)
+    ax.set_ylabel("% of countries FDR-significant", fontsize=11)
     ax.set_ylim(0, 100)
+    ax.tick_params(labelsize=9)
     style_axes(ax)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+    ax.set_axisbelow(True)
 
-    fig.text(0.05, 0.95, "Education across frameworks",
-             fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.90, "% of countries where education significantly predicts wellbeing at levels only.",
-             fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.04, "SDG4's pooled rate (3.3%) masks the strength of access indicators (12.7%). Pooling combines access/participation\n" +
-             "measures with parity ratios, learning outcomes, and infrastructure—constructs that do not track wellbeing.",
-             fontsize=7.5, color=GREY, transform=fig.transFigure, va="bottom", style="italic")
-
-    fig.tight_layout(rect=(0, 0.08, 1, 0.88))
+    heading(fig, "Education: the construct you count decides the answer",
+            "% of countries where education predicts life satisfaction at levels, FDR-corrected.",
+            "SDG4 pools 35 series. Access and participation reach 12.7%, but parity ratios (18 of the 35 series) reach 2.5%, "
+            "infrastructure 2.0% and learning outcomes 0.9%, so the pooled rate lands at 3.3% -- below the weakest thing in it that works.")
+    fig.tight_layout(rect=(0, 0.09, 1, 0.86))
     path = f"{OUT_DIR}/education_levels_comparison.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()
@@ -311,62 +283,31 @@ def education_deep_dive():
 
 
 def health_deep_dive():
-    """Health: % of countries where significant across frameworks at levels."""
-    panel = pd.read_csv("processed/country_round_panel.csv")
+    ess = ess_individual_fdr().set_index("domain")
+    hdi = hdi_fdr()
+    sdg3 = sdg_goal_pct()[3]
 
-    # ESS individual-level: % of 36 countries significant
-    ess_health_r2 = []
-    for cntry in panel["cntry"].unique():
-        grp = panel[panel["cntry"] == cntry]
-        ess_health_r2.append(fast_r2(grp["health"], grp["stflife"]))
-    ess_health_r2 = [x for x in ess_health_r2 if not np.isnan(x)]
-    ess_sig = (np.array(ess_health_r2) > 0.04).sum()
-    ess_pct = ess_sig / len(ess_health_r2) * 100
-
-    # HDI health (life expectancy): % of 150 countries significant
-    hdi_sig = pd.read_csv("processed/hdi_country_indicator_significance.csv")
-    hdi_le = hdi_sig[hdi_sig["indicator"] == "le"]["r2_levels"].values
-    hdi_le_sig = (hdi_le > 0.04).sum()
-    hdi_pct = hdi_le_sig / len(hdi_le) * 100
-
-    # SDG health (Goal 3): % of countries with significant health indicators
-    sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
-    sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
-    sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
-    sdg_health_row = sdg_sig[sdg_sig["Goal"] == 3].iloc[0]
-    sdg_health_pct = float(sdg_health_row["pct_sig_levels"])
+    names = ["ESS\n36 countries\n(self-rated health,\nindividual)",
+             "HDI\n150 countries\n(life expectancy)",
+             "SDG3\n~45 countries\n(country-indicator)"]
+    vals = [ess.loc["Health", "pct_sig"], hdi["le"], sdg3]
 
     fig, ax = plt.subplots(figsize=(10, 6))
     fig.patch.set_facecolor(BG)
-
-    frameworks = ["ESS\n36 countries\n(individual level)",
-                  "HDI\n150 countries\n(country level)",
-                  "SDG3\n~45 countries\n(country-indicator level)"]
-    values = [ess_pct, hdi_pct, sdg_health_pct]
-    colors = [RED, RED, RED]
-
-    bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
-
-    # Add value labels
-    for bar, val, label in zip(bars, values,
-                                [f"{ess_pct:.0f}%\n({ess_sig}/{len(ess_health_r2)})",
-                                 f"{hdi_pct:.0f}%\n({hdi_le_sig}/{len(hdi_le)})",
-                                 f"{sdg_health_pct:.1f}%"]):
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
-                label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
-
-    ax.set_ylabel("% of countries where significant", fontsize=11)
-    ax.set_ylim(0, 100)
+    bars = ax.bar(names, vals, color=RED, alpha=0.85, width=0.6)
+    label_bars(ax, bars, [f"{vals[0]:.0f}%", f"{vals[1]:.0f}%", f"{sdg3:.1f}%"], size=10)
+    ax.set_ylabel("% of countries FDR-significant", fontsize=11)
+    ax.set_ylim(0, 115)
+    ax.tick_params(labelsize=9)
     style_axes(ax)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+    ax.set_axisbelow(True)
 
-    fig.text(0.05, 0.95, "Health across frameworks",
-             fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.90, "% of countries where health significantly predicts wellbeing at levels only.",
-             fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
-
-    fig.tight_layout(rect=(0, 0, 1, 0.88))
+    heading(fig, "Health: strongest on people, weakest in the HDI",
+            "% of countries where health predicts life satisfaction at levels, FDR-corrected.",
+            "Life expectancy is the weakest of the HDI's five components (19% against 41% for mean years of schooling). "
+            "It has also nearly saturated: the top 100 countries sit between 81 and 85 years, leaving little left to correlate with.")
+    fig.tight_layout(rect=(0, 0.07, 1, 0.86))
     path = f"{OUT_DIR}/health_levels_comparison.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()
@@ -374,65 +315,34 @@ def health_deep_dive():
 
 
 def trust_deep_dive():
-    """Trust: % of countries where significant across frameworks."""
-    panel = pd.read_csv("processed/country_round_panel.csv")
+    ess = ess_individual_fdr().set_index("domain")
+    sdg16 = sdg_goal_pct()[16]
+    ess_val = ess.loc["Social trust", "pct_sig"]
 
-    # ESS individual-level: % of 36 countries significant
-    ess_trust_r2 = []
-    for cntry in panel["cntry"].unique():
-        grp = panel[panel["cntry"] == cntry]
-        ess_trust_r2.append(fast_r2(grp["ppltrst"], grp["stflife"]))
-    ess_trust_r2 = [x for x in ess_trust_r2 if not np.isnan(x)]
-    ess_sig = (np.array(ess_trust_r2) > 0.04).sum()
-    ess_pct = ess_sig / len(ess_trust_r2) * 100
+    names = ["ESS\n36 countries\n(interpersonal trust:\n'most people can be trusted')",
+             "SDG16\n~74 countries\n(institutional confidence)*",
+             "HDI\n150 countries\n(not measured)"]
+    vals = [ess_val, sdg16, 0]
 
-    # SDG trust (Goal 16 - institutional confidence, not interpersonal trust)
-    sdg_sig = pd.read_csv("processed/sdg_goal_significance_pooled.csv")
-    sdg_sig = sdg_sig[sdg_sig["Goal"] != "Goal"]  # Remove duplicate header rows
-    sdg_sig["Goal"] = pd.to_numeric(sdg_sig["Goal"])
-    sdg_trust_row = sdg_sig[sdg_sig["Goal"] == 16].iloc[0]
-    sdg_trust_pct = float(sdg_trust_row["pct_sig_levels"])
-
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10.5, 6))
     fig.patch.set_facecolor(BG)
-
-    frameworks = ["ESS\n36 countries\n(interpersonal trust)",
-                  "SDG16\n~74 countries\n(institutional confidence)*",
-                  "HDI\n150 countries\n(not measured)"]
-    values = [ess_pct, sdg_trust_pct, 0]
-    colors = [GREEN, GREY, GREY]
-
-    bars = ax.bar(frameworks, values, color=colors, alpha=0.75, width=0.6)
-
-    # Set lower alpha for HDI bar (not measured)
-    bars[2].set_alpha(0.2)
-
-    # Add value labels
-    labels = [f"{ess_pct:.0f}%\n({ess_sig}/{len(ess_trust_r2)})",
-              f"{sdg_trust_pct:.1f}%",
-              "—"]
-    for bar, label in zip(bars, labels):
-        if bar.get_height() > 0:
-            height = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2., height + height*0.05,
-                    label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=INK)
-        else:
-            ax.text(bar.get_x() + bar.get_width()/2., 2,
-                    label, ha='center', va='bottom', fontsize=10, fontweight='bold', color=GREY)
-
-    ax.set_ylabel("% of countries where significant", fontsize=11)
-    ax.set_ylim(0, 100)
+    bars = ax.bar(names, vals, color=[GREEN, GREY, GREY], alpha=0.85, width=0.6)
+    bars[2].set_alpha(0.15)
+    label_bars(ax, bars[:2], [f"{ess_val:.0f}%", f"{sdg16:.1f}%"], size=10)
+    ax.text(2, 2.5, "no counterpart", ha="center", fontsize=9, color=GREY, style="italic")
+    ax.set_ylabel("% of countries FDR-significant", fontsize=11)
+    ax.set_ylim(0, 115)
+    ax.tick_params(labelsize=8.5)
     style_axes(ax)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+    ax.set_axisbelow(True)
 
-    fig.text(0.05, 0.95, "Social trust across frameworks — a coverage gap",
-             fontsize=14, fontweight="bold", color=INK, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.90, "Interpersonal trust is significant in 94% of ESS countries. SDG16 measures institutional confidence.\nThe HDI does not measure trust at all.",
-             fontsize=9.5, color=MUTED, transform=fig.transFigure, va="top")
-    fig.text(0.05, 0.04, "* SDG16 includes satisfaction with public services, perception of bribery, and perceived decision-making inclusiveness.\nNone of these directly measure interpersonal trust.",
-             fontsize=7.5, color=GREY, transform=fig.transFigure, va="bottom", style="italic")
-
-    fig.tight_layout(rect=(0, 0.08, 1, 0.88))
+    heading(fig, "Social trust: a coverage gap, not a measurement choice",
+            "% of countries where trust predicts life satisfaction at levels, FDR-corrected.",
+            "* SDG16's trust-adjacent series measure satisfaction with public services, perceived bribery and perceived inclusiveness in "
+            "decision-making -- confidence in institutions, not trust in other people. They are a different construct, and the closest "
+            "thing either framework carries.")
+    fig.tight_layout(rect=(0, 0.09, 1, 0.86))
     path = f"{OUT_DIR}/trust_coverage_comparison.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()
@@ -440,7 +350,8 @@ def trust_deep_dive():
 
 
 if __name__ == "__main__":
-    ess_collapse()
+    print(ess_individual_fdr(rebuild=True).to_string(index=False))
+    collapse_three_ways()
     domains_at_levels()
     education_deep_dive()
     health_deep_dive()

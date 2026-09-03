@@ -788,9 +788,8 @@ def section_f():
     ax.set_ylabel("% of country-indicator pairs FDR-significant (levels)")
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right", fontsize=8.5)
     suptitle(fig, "F1. SDG Levels-Significance by Goal, Pooled Across Countries",
-             "Blue = Education (Goal 4); red = Health (Goal 3); yellow = income-adjacent goals "
-             "(Poverty/Labor/Inequality). Dashed blue line shows SDG4 access indicators only (12.7%), "
-             "vs. pooled rate (3.3%) that includes parity ratios and learning outcomes.")
+             "Red = Health (Goal 3), 4th of 17. Blue = Education (Goal 4), 12th -- but its access series alone "
+             "reach the dashed line (12.7%); pooling all 35 series drags it to 3.3%.")
     savefig(fig, "F1_sdg_goal_significance_ranking.png", SOURCE_SDG)
 
     # F2: SDG4 (Education) broken into meaningful sub-categories, not pooled
