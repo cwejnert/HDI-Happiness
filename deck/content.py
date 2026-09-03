@@ -51,13 +51,16 @@ HOOK = {
     "acts": [
         ("I", "The levels-to-differences collapse is universal.",
          "Replicate it on the HDI, against a second wellbeing survey, and one spatial scale down. "
-         "It holds every time. So we can analyze the levels."),
-        ("II", "At the levels, three domains emerge: education, health, and social trust.",
-         "But each framework sees a different subset, for a different reason: the wrong construct, "
-         "a variable that stopped varying, or no coverage at all."),
-        ("III", "What this means for how we measure development.",
-         "A disconnect between what frameworks capture and what predicts lived experience, "
-         "with implications for each domain."),
+         "It holds every time — except in ESS, where individual-level data is responsive to change."),
+        ("II", "At the levels: three domains, three failure modes.",
+         "Education, health, and social trust all matter. But frameworks see them differently "
+         "because of construction choices, variable saturation, or missing coverage."),
+        ("III", "Within-country evidence: why measurement type matters.",
+         "Individual-level, self-reported data shows ESS captures year-to-year change. Development "
+         "frameworks measure at the wrong temporal and individual resolution."),
+        ("IV", "What this means for how we measure development.",
+         "A structural disconnect between how development is measured and what predicts lived experience, "
+         "with implications for each domain and method."),
     ],
 }
 
@@ -149,23 +152,22 @@ ACTS = [
 
     {
         "numeral": "II",
-        "title": "What predicts wellbeing at the levels? Three findings.",
+        "title": "At the levels: three domains, three failure modes",
         "key_numbers": [
             ("92% vs 34% vs 3.3%", "countries significant: education in ESS, HDI, and SDG4 pooled"),
             ("100% vs 20% vs 11.5%", "countries significant: health in ESS, HDI, and SDG3"),
             ("94% vs 1.5% vs —", "countries significant: social trust in ESS, SDG16, and HDI (not measured)"),
         ],
         "thesis": (
-            "Three domains emerge when you ask which indicators of education, health, "
-            "and social trust predict life satisfaction at the levels. But each framework "
-            "sees a different subset — not because the domains differ across contexts, "
-            "but because of three distinct reasons frameworks fail to capture what matters "
-            "for lived experience."
+            "Three domains predict life satisfaction. But which frameworks can see them "
+            "depends entirely on construction choices: which construct you count, which variable "
+            "you measure, which domains you collect. Each framework's limitations reveal different "
+            "failure modes, not different realities."
         ),
         "close": (
-            "Each framework's construction choices — which construct to count, which variable "
-            "to measure, which domains to collect at all — determine what it can see. The problem is not "
-            "the domains; the problem is the measurement."
+            "The problem is not the domains; the problem is the measurement. Frameworks designed "
+            "for development, with aggregate indicators measured at long intervals, structurally "
+            "cannot see what matters for individual lived experience."
         ),
         "beats": [
             {
@@ -262,30 +264,6 @@ ACTS = [
             },
 
             {
-                "label": "Within-country evidence · Why ESS is different",
-                "heading": "Individual-level, self-reported data captures year-to-year change that administrative frameworks miss",
-                "body": [
-                    "Here is the critical observation that reshapes the question: unlike SDG (71% levels "
-                    "→ 5% differences) and HDI (42% → 2%), the ESS shows 69% levels → 64% differences. "
-                    "The association persists within countries over time. This is not because development "
-                    "frameworks are poorly designed; it is because they measure aggregate, administrative "
-                    "data at long intervals (annual at best for HDI and SDG). Individual survey responses "
-                    "capture year-to-year variation in how people experience their lives.",
-                    "This matters for social trust most of all. At the country level, SDG has almost no trust "
-                    "coverage; in the HDI, none. But at the individual level, within countries, ESS shows trust "
-                    "is significant in 94% of countries and drives year-to-year change in how satisfied people "
-                    "report being. The three domains emerge not because the frameworks reveal them, but because "
-                    "ESS measures them where people actually experience variation: in themselves, over time.",
-                    "The caveats are substantial: 36 European countries, self-reported measures, annual cycles. "
-                    "But the implication is clear. Development frameworks' blindness to social trust is not because "
-                    "trust does not matter for wellbeing; it is because development was never designed to measure "
-                    "individual experience at the temporal resolution where people change.",
-                ],
-                "figure": None,
-                "caption": None,
-            },
-
-            {
                 "label": "Synthesis",
                 "heading": "Three domains, three ways frameworks lose sight of what matters",
                 "body": [
@@ -308,6 +286,54 @@ ACTS = [
 
     {
         "numeral": "III",
+        "title": "Within-country evidence: Why measurement type matters",
+        "key_numbers": [
+            ("69% → 64%", "ESS levels → differences (NOT collapsed)"),
+            ("71% → 5%", "SDG levels → differences (collapsed)"),
+            ("42% → 2%", "HDI levels → differences (collapsed)"),
+        ],
+        "thesis": (
+            "Individual-level, self-reported data shows a fundamentally different pattern. "
+            "Unlike administrative development frameworks, ESS captures year-to-year variation "
+            "within countries. This is not a measurement failure; it is a structural consequence "
+            "of how development is measured — at the country level, with long intervals. "
+            "Social trust emerges not because frameworks miss it, but because development "
+            "frameworks measure at the wrong temporal and individual resolution where trust varies."
+        ),
+        "close": (
+            "The three domains predict wellbeing differently depending on where and how you measure. "
+            "Development frameworks' blindness is not incurable; it is structural. Frameworks designed "
+            "for tracking aggregate national progress cannot see individual experience responsive to change."
+        ),
+        "beats": [
+            {
+                "label": "Within-country evidence",
+                "heading": "Individual-level, self-reported data captures year-to-year change that administrative frameworks miss",
+                "body": [
+                    "Here is the critical observation that reshapes the question: unlike SDG (71% levels "
+                    "→ 5% differences) and HDI (42% → 2%), the ESS shows 69% levels → 64% differences. "
+                    "The association persists within countries over time. This is not because development "
+                    "frameworks are poorly designed; it is because they measure aggregate, administrative "
+                    "data at long intervals (annual at best for HDI and SDG). Individual survey responses "
+                    "capture year-to-year variation in how people experience their lives.",
+                    "This matters for social trust most of all. At the country level, SDG has almost no trust "
+                    "coverage; in the HDI, none. But at the individual level, within countries, ESS shows trust "
+                    "is significant in 94% of countries and drives year-to-year change in how satisfied people "
+                    "report being. The three domains emerge not because the frameworks reveal them, but because "
+                    "ESS measures them where people actually experience variation: in themselves, over time.",
+                    "The caveats are substantial: 36 European countries, self-reported measures, annual cycles. "
+                    "But the implication is clear. Development frameworks' blindness to social trust is not because "
+                    "trust does not matter for wellbeing; it is because development was never designed to measure "
+                    "individual experience at the temporal resolution where people change.",
+                ],
+                "figure": None,
+                "caption": None,
+            },
+        ],
+    },
+
+    {
+        "numeral": "IV",
         "title": "What this means for development frameworks",
         "key_numbers": [
             ("3 vs. 1", "domains the HDI can test for wellbeing, vs. social trust"),
