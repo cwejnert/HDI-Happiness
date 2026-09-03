@@ -40,6 +40,7 @@ MAPPING = {
 
     # Act II -- frameworks, the three results, the synthesis
     "domains_at_levels_comparison.png": "domains_at_levels_comparison.png",
+    "domains_survive_differences.png": "domains_survive_differences.png",
     "education_levels_comparison.png": "education_levels_comparison.png",
     "sdg4_unpooled.png": "F2_sdg4_education_categories.png",
     "health_levels_comparison.png": "health_levels_comparison.png",

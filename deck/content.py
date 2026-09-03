@@ -65,8 +65,8 @@ HOOK = {
          "The HDI's five components and the SDGs' seventeen goals, ranked. Health is 4th of 17. "
          "Education looks 12th — until you unpool it."),
         ("II-a", "Measure the same domains on people, and a third one appears.",
-         "In the ESS, health, education and social trust are all significant within countries. Trust "
-         "is second strongest — and neither framework collects it."),
+         "Social trust joins health and education, ahead of education. And pooled for power, health "
+         "and trust keep tracking wellbeing year to year where development composites stop."),
         ("III", "Three domains, three different reasons frameworks lose them.",
          "Wrong construct pooled together, a variable that has stopped varying, and a domain that "
          "was never collected at all."),
@@ -86,7 +86,7 @@ ACTS = [
         "key_numbers": [
             ("71% → 5%", "SDG × WHR, 42 countries, ~13 years — the original finding"),
             ("42% → 2%", "HDI × WHR, 150 countries, ~13 years — swap the framework"),
-            ("47%", "SHDI × ESS at levels, across regions — swap the instrument and scale"),
+            ("+0.44 → +0.20", "HDI × ESS pooled, levels → differences — swap the instrument"),
         ],
         "thesis": (
             "The SDG null invites an easy dismissal: sprawling framework, uneven coverage, so "
@@ -95,10 +95,10 @@ ACTS = [
             "is an artefact of the SDGs, it should not survive."
         ),
         "close": (
-            "Two well-powered pairings, the same asymmetry in both. The ESS corroborates the levels "
-            "half with an independent wellbeing instrument, and is too short a panel to rule on "
-            "differences either way. Differences cannot carry an argument — so everything that "
-            "follows is a question about the levels."
+            "Three pairings, the same asymmetry in all of them: development composites predict wellbeing "
+            "between units and barely track it within one over time. That holds whichever framework and "
+            "whichever wellbeing instrument you use. So the levels are where to look next — and the "
+            "differences question comes back in Act II-a, once the predictor is no longer a composite."
         ),
         "beats": [
             {
@@ -146,18 +146,21 @@ ACTS = [
                     "The European Social Survey asks its own life-satisfaction item of individuals, on a "
                     "different sampling frame, run by a different institution. Holding the HDI and the country "
                     "unit fixed and changing only the wellbeing data isolates that one leg.",
-                    "The result is 8% at levels and 16% in differences across 25 countries — and it should be "
-                    "read as a null test rather than a finding in either direction. The ESS runs seven survey "
-                    "rounds where the WHR panels run thirteen years, and differences coming out above levels is "
-                    "not a pattern a real association produces. Panel b is the check: at seven observations, a "
-                    "genuine correlation of 0.5 is recovered in about 3% of units. This design cannot see much "
-                    "at that length, so its silence is not evidence.",
-                    "Where the ESS does have power is in cross-section. Pairing subnational HDI with ESS life "
-                    "satisfaction across regions inside each country — many regions per country rather than "
-                    "seven rounds — gives 47% of 15 countries FDR-significant at levels, sitting right on top "
-                    "of the 42% the HDI reaches nationally against the Cantril ladder. So the levels half "
-                    "corroborates on an independent instrument at a finer scale. The differences half rests on "
-                    "the SDG and HDI panels, which is where it always rested.",
+                    "Run country by country it returns 8% at levels and 16% in differences across 25 countries, "
+                    "which is a null test rather than a finding: the ESS has seven survey rounds where the WHR "
+                    "panels have thirteen years, and panel b shows what that costs — at seven observations a "
+                    "genuine correlation of 0.5 is recovered in about 3% of units. Differences landing above "
+                    "levels is the tell that the test is not working, not a result.",
+                    "Pooled across countries, where the power is, it does replicate: the HDI's within-country "
+                    "association with ESS life satisfaction falls from r = +0.44 at levels to +0.20 in first "
+                    "differences. The attenuation is sharp, though it stops short of the clean null the "
+                    "Cantril ladder gives on the full panel — there, across 1,548 country-year changes, the "
+                    "HDI goes from +0.15 to −0.02 and is not significant at all.",
+                    "The ESS also corroborates the levels half in cross-section, where it has plenty of power: "
+                    "subnational HDI predicts ESS life satisfaction across regions inside each country in 47% "
+                    "of 15 countries, sitting on top of the 42% the HDI reaches nationally. So the collapse "
+                    "survives the instrument swap. What it does not survive — and this is Act II-a — is "
+                    "changing the predictor from a development composite to the domain measures themselves.",
                 ],
                 "figure": "ess_levels_diffs_collapse.png",
                 "caption": "Panel a: the same FDR test, levels and differences on the same units, in all three "
@@ -250,20 +253,22 @@ ACTS = [
         "numeral": "II-a",
         "title": "Now measure the same domains on people",
         "key_numbers": [
-            ("100% / 97% / 89%", "ESS countries significant: health, trust, education"),
-            ("0.092 / 0.039 / 0.006", "median individual R² for the same three"),
-            ("351,023", "respondents, 36 countries, ~10,700 per country"),
+            ("100% / 97% / 89%", "ESS countries significant at levels: health, trust, education"),
+            ("+0.40 / +0.59", "health and trust in first differences, pooled — they survive"),
+            ("+0.03 / −0.02", "education and the HDI in differences — they do not"),
         ],
         "thesis": (
-            "Everything so far is national aggregates against national aggregates. The ESS carries the "
-            "same three domains asked directly of individuals — self-rated health, years of schooling, "
-            "and whether most people can be trusted. Estimated across respondents and demeaned within "
-            "country-round, so the association is within-country and within-year by construction."
+            "Everything so far uses a development composite as the predictor. The ESS carries the three "
+            "domains asked directly of people — self-rated health, years of schooling, and whether most "
+            "people can be trusted — which lets us change the predictor rather than the outcome. That "
+            "surfaces a third domain neither framework collects, and it turns out to be where the "
+            "differences half of the argument finally has something to say."
         ),
         "close": (
-            "Health, trust and education are all significant on people, in almost every country. The "
-            "ordering is the surprise: interpersonal trust is second, ahead of education, and it is the "
-            "one domain of the three that neither development framework collects."
+            "Health, trust and education are all significant on people, in almost every country, and "
+            "interpersonal trust — the one domain neither framework collects — outranks education. Pooled "
+            "for power, health and trust also survive differencing where the HDI does not. The collapse was "
+            "never about differencing; it was about what the frameworks chose to measure."
         ),
         "beats": [
             {
@@ -342,6 +347,36 @@ ACTS = [
                            "absent HDI one. The asterisked bar is a different construct.",
             },
             {
+                "label": "Back to differences · which domains survive it",
+                "heading": "The collapse is domain-specific: health tracks wellbeing year to year, development composites do not",
+                "body": [
+                    "Act I left the differences half unresolved, because the per-country design spends its "
+                    "power on 25 separate tests of seven points each. Pool the same within-country question "
+                    "across all countries and it has the power to answer — and the answer is that the collapse "
+                    "is not a universal property of differencing. It is specific to what you differenced.",
+                    "Within the ESS: health goes from r = +0.56 at levels to +0.40 in first differences, and "
+                    "social trust from +0.51 to +0.59. Both survive. Education goes from +0.29 to +0.03, not "
+                    "significant, and the HDI composite from +0.44 to +0.20. Against the World Happiness Report "
+                    "ladder on the full 150-country panel, the HDI collapses outright: +0.15 at levels to "
+                    "−0.02 in differences across 1,548 country-year changes.",
+                    "So when a country's self-rated health rises between rounds, its life satisfaction rises "
+                    "with it. When its HDI rises, that tells you almost nothing. This is the sharpest version "
+                    "of the paper's claim: development composites move too slowly and too smoothly to track "
+                    "how people feel — within a country the HDI moves about a tenth of its between-country "
+                    "spread, where the domain measures move two to three times that.",
+                    "One caveat has to travel with the trust result. It is strong within the ESS (+0.59) and "
+                    "absent against the independent WHR outcome (+0.06, not significant). Health survives both "
+                    "(+0.40 and +0.20). That difference is the signature of common-method variance — same "
+                    "questionnaire, same respondents — so the trust dynamic is reported as same-survey only, "
+                    "and health is the domain that carries a clean cross-source result.",
+                ],
+                "figure": "domains_survive_differences.png",
+                "caption": "Pooled within-country correlations, levels against first differences. Panel a "
+                           "within the ESS; panel b against the independent WHR ladder. Health is the only "
+                           "domain significant in differences in both.",
+            },
+
+            {
                 "label": "Why the SDG trust series cannot stand in",
                 "heading": "Institutional confidence does not survive an income control; interpersonal trust does",
                 "body": [
@@ -379,7 +414,8 @@ ACTS = [
         "close": (
             "None of this is a criticism of frameworks built to track development. It is the "
             "observation that which domain looks consequential for lived experience depends on "
-            "construction choices made for other reasons — and that one domain is missing outright."
+            "construction choices made for other reasons — that one domain is missing outright, "
+            "and that the domain measures track wellbeing dynamically in a way the composites do not."
         ),
         "beats": [
             {

@@ -425,3 +425,101 @@ if __name__ == "__main__":
     education_deep_dive()
     health_deep_dive()
     trust_deep_dive()
+
+
+# --------------------------------------------------------------------------
+# Act II-a -- which domains survive the differences test, pooled for power
+# --------------------------------------------------------------------------
+def pooled_within(panel, unit, x, y, t="year"):
+    """Within-country levels and first differences, pooled across all countries.
+
+    The per-country design the SDG paper uses spends its power on 25-150
+    separate tests of ~7 points each. Pooling asks the same within-country
+    question of every country at once, which is the difference between no
+    verdict and a clear one.
+    """
+    d = panel.dropna(subset=[x, y]).copy()
+    keep = d.groupby(unit)[x].transform("count") >= 3
+    d = d[keep]
+    xd = d[x] - d.groupby(unit)[x].transform("mean")
+    yd = d[y] - d.groupby(unit)[y].transform("mean")
+    lr, lp = stats.pearsonr(xd, yd)
+
+    dx, dy = [], []
+    for _, g in panel.groupby(unit):
+        g = g.sort_values(t).dropna(subset=[x, y])
+        if len(g) >= 3:
+            dx += list(np.diff(g[x]))
+            dy += list(np.diff(g[y]))
+    dr, dp = stats.pearsonr(np.array(dx), np.array(dy))
+    return {"levels_r": lr, "levels_p": lp, "levels_n": len(d),
+            "diffs_r": dr, "diffs_p": dp, "diffs_n": len(dx)}
+
+
+def which_domains_survive_differences():
+    """Does within-country CHANGE in each domain track change in wellbeing?
+
+    This is the test the deck previously tried to answer with HDI x ESS, which
+    only ever asked whether the development composite tracks ESS wellbeing. The
+    substantive question is about the domain measures themselves.
+    """
+    p = pd.read_csv("processed/country_round_panel.csv")
+    p["good_health"] = 6 - p["health"]
+    nat = pd.read_csv("processed/national_hdi_shdi_whr_panel.csv")
+
+    same = [("Education", "eduyrs"), ("Health", "good_health"), ("Social trust", "ppltrst"),
+            ("HDI composite", "hdi")]
+    rows = []
+    for lab, v in same:
+        r = pooled_within(p, "cntry", v, "stflife")
+        rows.append({"predictor": lab, "outcome": "ESS life satisfaction", "source": "same survey", **r})
+    for lab, v in same[:3]:
+        r = pooled_within(p, "cntry", v, "whr_happiness")
+        rows.append({"predictor": lab, "outcome": "WHR ladder", "source": "cross-source", **r})
+    r = pooled_within(nat, "iso3", "hdi", "whr_happiness")
+    rows.append({"predictor": "HDI composite", "outcome": "WHR ladder", "source": "cross-source", **r})
+    res = pd.DataFrame(rows)
+    res.to_csv("processed/pooled_within_country_domains.csv", index=False)
+    print(f"Saved: processed/pooled_within_country_domains.csv")
+
+    def star(pv):
+        return "***" if pv < .001 else "**" if pv < .01 else "*" if pv < .05 else "n.s."
+
+    fig, axes = plt.subplots(1, 2, figsize=(13.5, 5.8), gridspec_kw={"width_ratios": [1, 1]})
+    fig.patch.set_facecolor(BG)
+    palette = {"Education": BLUE, "Health": RED, "Social trust": GREEN, "HDI composite": "#7A6BC4"}
+
+    for ax, src, title in [(axes[0], "same survey", "a  Within the ESS (same survey)"),
+                           (axes[1], "cross-source", "b  Against the WHR ladder (independent source)")]:
+        d = res[res.source == src]
+        x, w = np.arange(len(d)), 0.34
+        cols = [palette[k] for k in d.predictor]
+        b1 = ax.bar(x - w / 2, d.levels_r, w, color=cols, alpha=0.9, label="Levels (within country)")
+        b2 = ax.bar(x + w / 2, d.diffs_r, w, color=cols, alpha=0.38, hatch="///",
+                    edgecolor="white", label="First differences")
+        for bar, rv, pv in list(zip(b1, d.levels_r, d.levels_p)) + list(zip(b2, d.diffs_r, d.diffs_p)):
+            ax.text(bar.get_x() + bar.get_width() / 2, max(rv, 0) + 0.018,
+                    f"{rv:+.2f}\n{star(pv)}", ha="center", va="bottom", fontsize=8.5,
+                    fontweight="bold", color=INK if pv < .05 else GREY)
+        ax.axhline(0, color=INK, lw=0.9)
+        ax.set_xticks(x)
+        ax.set_xticklabels(d.predictor, fontsize=9.5)
+        ax.set_ylabel("pooled within-country correlation", fontsize=10)
+        ax.set_ylim(-0.09, 0.78)
+        ax.set_title(title, fontsize=11.5, fontweight="bold", color=INK, loc="left")
+        style_axes(ax)
+        ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
+        ax.set_axisbelow(True)
+    axes[0].legend(fontsize=9, loc="upper left", frameon=False)
+
+    heading(fig, "The collapse is domain-specific: health and trust survive it, development composites do not",
+            "Pooled across all countries rather than tested country by country, so the differences half has the power to return a verdict.",
+            "Solid = levels, demeaned within country. Hatched = first differences. Health survives differencing in both panels. Trust survives\n"
+            "strongly within the ESS but not against an independent outcome, which is the signature of common-method variance and is why the\n"
+            "trust result is reported as same-survey only. Education and the HDI composite collapse in both panels, as they do country by country.")
+    fig.tight_layout(rect=(0, 0.11, 1, 0.86))
+    path = f"{OUT_DIR}/domains_survive_differences.png"
+    fig.savefig(path, dpi=200, facecolor=BG)
+    plt.close()
+    print(f"Saved: {path}")
+    print(res[["predictor", "outcome", "levels_r", "levels_p", "diffs_r", "diffs_p", "diffs_n"]].to_string(index=False))
