@@ -177,20 +177,24 @@ def ts_levels_diffs(panel, unit, xcol, ycol, tcol="year", minn=5):
 
 
 def collapse_and_its_limits():
-    """Panel a: the collapse across three pairings. Panel b: how to read the third.
+    """The collapse across three pairings, same unit within each.
 
-    All three pairings hold the unit fixed across both halves -- an earlier
-    version did not, taking the third pairing's levels from a cross-section
-    across regions and its differences from a time series within regions, which
-    made the two halves incomparable.
+    An earlier version took the third pairing's levels from a cross-section
+    across regions and its differences from a time series within regions,
+    which made the two halves incomparable; that is fixed here. A later
+    version added a second panel simulating detection power by series length,
+    to explain why the third pairing looks weak -- dropped in favour of a
+    single panel, with the power caveat carried in the footnote and the beat
+    text instead. The detection-rate simulation (detection_rate()) still
+    backs the "7 rounds is underpowered" claim in the text; it is just not
+    drawn.
 
     The third pairing swaps only the wellbeing instrument: same HDI, same
     countries, Cantril ladder replaced by ESS life satisfaction. It runs on
-    seven survey rounds instead of thirteen years, and it comes back weak in
-    levels AND inverted (differences above levels), which is not a pattern any
-    real association produces. Panel b gives the reason rather than asking the
-    reader to take it on trust: at seven observations the test recovers a
-    genuine correlation of 0.5 in about 3% of units.
+    seven survey rounds instead of thirteen years and comes back weak in
+    levels AND inverted (differences above levels), which is not a pattern a
+    real association produces -- the hatching and the footnote flag that
+    without a second panel to prove it.
     """
     nat = pd.read_csv("processed/country_round_panel.csv")
     ess_lv, ess_df, ess_n, ess_yrs = ts_levels_diffs(nat, "cntry", "hdi", "stflife")
@@ -204,10 +208,9 @@ def collapse_and_its_limits():
             lv.append(stats.pearsonr(g["shdi"], g["stflife"])[1])
     reg_levels, n_ctry = 100 * bh(lv).mean(), len(lv)
 
-    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(13.5, 5.8), gridspec_kw={"width_ratios": [1.3, 1]})
+    fig, ax = plt.subplots(figsize=(11, 6.2))
     fig.patch.set_facecolor(BG)
 
-    # -- panel a: three pairings, same unit within each ----------------------
     pairings = [("SDG x WHR\n42 countries\n~13 years each", 71.0, 5.0, True),
                 ("HDI x WHR\n150 countries\n~13 years each", 42.0, 2.0, True),
                 (f"HDI x ESS\n{ess_n} countries\n{ess_yrs:.0f} rounds each", ess_lv, ess_df, False)]
@@ -221,45 +224,23 @@ def collapse_and_its_limits():
     label_bars(ax, b1, [f"{p[1]:.0f}%" for p in pairings])
     label_bars(ax, b2, [f"{p[2]:.0f}%" for p in pairings])
     ax.set_xticks(x)
-    ax.set_xticklabels([p[0] for p in pairings], fontsize=9)
-    ax.set_ylabel("% of countries FDR-significant (q < .05)", fontsize=10)
+    ax.set_xticklabels([p[0] for p in pairings], fontsize=10)
+    ax.set_ylabel("% of countries FDR-significant (q < .05)", fontsize=10.5)
     ax.set_ylim(0, 85)
-    ax.legend(fontsize=9.5, loc="upper right", frameon=False)
-    ax.set_title("a  Same test, three pairings", fontsize=11.5,
-                 fontweight="bold", color=INK, loc="left")
-    ax.annotate("hatched: 7 rounds, underpowered.\ndifferences above levels is\nthe signature of a test\nthat is not working",
-                xy=(2.16, max(ess_lv, ess_df)), xytext=(1.42, 46), fontsize=8,
+    ax.legend(fontsize=10, loc="upper right", frameon=False)
+    ax.annotate("hatched: 7 rounds, underpowered.\ndifferences above levels is\nthe signature of a test that\nis not working, not a result",
+                xy=(2.16, max(ess_lv, ess_df)), xytext=(1.32, 48), fontsize=8.5,
                 color=MUTED, arrowprops=dict(arrowstyle="->", color=GREY, lw=0.9))
     style_axes(ax)
     ax.grid(axis="y", color="#E6E6E6", linewidth=0.8)
     ax.set_axisbelow(True)
 
-    # -- panel b: power against series length -------------------------------
-    rhos = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    ess = [detection_rate(rr, 7, 27) for rr in rhos]
-    frame = [detection_rate(rr, 13, 42) for rr in rhos]
-    ax2.plot(rhos, frame, "-o", color=BLUE, lw=2, ms=5, label="13 years (SDG, HDI)")
-    ax2.plot(rhos, ess, "-o", color=GREY, lw=2, ms=5, label="7 rounds (ESS)")
-    ax2.axhline(50, color="#CFCFCF", lw=0.9, ls=":")
-    ax2.annotate(f"a real rho of 0.5 is\nfound in {ess[2]:.0f}% of units",
-                 xy=(0.5, ess[2]), xytext=(0.53, 30), fontsize=8.5, color=MUTED,
-                 arrowprops=dict(arrowstyle="->", color=GREY, lw=0.9))
-    ax2.set_xlabel("true correlation present in the data", fontsize=9.5)
-    ax2.set_ylabel("% of units the test recovers", fontsize=10)
-    ax2.set_ylim(0, 100)
-    ax2.legend(fontsize=9, loc="upper left", frameon=False)
-    ax2.set_title("b  How much of a real effect each series length recovers", fontsize=11.5,
-                  fontweight="bold", color=INK, loc="left")
-    style_axes(ax2)
-    ax2.grid(axis="y", color="#E6E6E6", linewidth=0.8)
-    ax2.set_axisbelow(True)
-
-    heading(fig, "The collapse holds under both well-powered pairings; the ESS pairing is too short to add a verdict",
-            "Panel b simulates data where the association is REAL and asks how often a per-unit test finds it, by series length.",
+    heading(fig, "The collapse holds under both well-powered pairings",
+            "Levels and first differences, per country, on the same unit for both halves of each pairing.",
             f"All bars are Benjamini-Hochberg FDR at q < .05, corrected across the units shown, with levels and differences on the same units.\n"
             f"The ESS does contribute a well-powered levels result, just not a time-series one: across regions inside each country, subnational HDI predicts\n"
             f"ESS life satisfaction in {reg_levels:.0f}% of {n_ctry} countries -- close to the 42% the HDI reaches nationally, and with an independent wellbeing instrument.")
-    fig.tight_layout(rect=(0, 0.10, 1, 0.86))
+    fig.tight_layout(rect=(0, 0.11, 1, 0.86))
     path = f"{OUT_DIR}/ess_levels_diffs_collapse.png"
     fig.savefig(path, dpi=200, facecolor=BG)
     plt.close()

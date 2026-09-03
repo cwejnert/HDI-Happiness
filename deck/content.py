@@ -147,11 +147,11 @@ ACTS = [
                     "The European Social Survey asks its own life-satisfaction item of individuals, on a "
                     "different sampling frame, run by a different institution. Holding the HDI and the country "
                     "unit fixed and changing only the wellbeing data isolates that one leg.",
-                    "Run country by country it returns 8% at levels and 16% in differences across 25 countries, "
-                    "which is a null test rather than a finding: the ESS has seven survey rounds where the WHR "
-                    "panels have thirteen years, and panel b shows what that costs — at seven observations a "
-                    "genuine correlation of 0.5 is recovered in about 3% of units. Differences landing above "
-                    "levels is the tell that the test is not working, not a result.",
+                    "Run country by country it returns 8% at levels and 16% in differences across 25 countries. "
+                    "Read that as a null test rather than a finding: the ESS has seven survey rounds where the "
+                    "WHR panels have thirteen years, and differences landing above levels is the signature of "
+                    "an underpowered test, not a real result — a genuine effect does not get easier to detect "
+                    "once you difference it.",
                     "The comparison is like-for-like on the outcome: the Cantril ladder is a life evaluation, "
                     "so the ESS analogue is its life-satisfaction item rather than its separate happiness "
                     "question. Pooled across countries, where the power is, the HDI's within-country "
@@ -170,9 +170,9 @@ ACTS = [
                     "changing the predictor from a development composite to the domain measures themselves.",
                 ],
                 "figure": "ess_levels_diffs_collapse.png",
-                "caption": "Panel a: the same FDR test, levels and differences on the same units, in all three "
-                           "pairings. Panel b: how much of a genuine association each series length recovers — "
-                           "the reason the hatched bars carry no verdict.",
+                "caption": "The same FDR test, levels and differences on the same units, in all three "
+                           "pairings. The hatched bars carry no verdict — seven survey rounds is too short "
+                           "a panel for this design to see anything, in either direction.",
             },
         ],
     },
