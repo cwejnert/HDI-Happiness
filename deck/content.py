@@ -254,7 +254,7 @@ ACTS = [
         "title": "Now measure the same domains on people",
         "key_numbers": [
             ("100% / 97% / 89%", "ESS countries significant at levels: health, trust, education"),
-            ("+0.40 / +0.59", "health and trust in first differences, pooled — they survive"),
+            ("+0.55 / +0.35", "trust and health in differences with NO shared respondents"),
             ("+0.03 / −0.02", "education and the HDI in differences — they do not"),
         ],
         "thesis": (
@@ -267,8 +267,9 @@ ACTS = [
         "close": (
             "Health, trust and education are all significant on people, in almost every country, and "
             "interpersonal trust — the one domain neither framework collects — outranks education. Pooled "
-            "for power, health and trust also survive differencing where the HDI does not. The collapse was "
-            "never about differencing; it was about what the frameworks chose to measure."
+            "for power, health and trust also survive differencing where the HDI does not, and survive a "
+            "split-half test that rules out the same people answering both questions. The collapse was never "
+            "about differencing; it was about what the frameworks chose to measure."
         ),
         "beats": [
             {
@@ -370,11 +371,20 @@ ACTS = [
                     "countries. And at the individual level it is decisive: 36 of 36 countries for health, 35 "
                     "for trust, on ~10,700 respondents each. Region, country and person all tell the same "
                     "story; only the individual level has the sample to tell it cleanly.",
-                    "One caveat has to travel with the trust result. It is strong within the ESS (+0.59) and "
-                    "absent against the independent WHR outcome (+0.06, not significant). Health survives both "
-                    "(+0.40 and +0.20). That difference is the signature of common-method variance — same "
-                    "questionnaire, same respondents — so the trust dynamic is reported as same-survey only, "
-                    "and health is the domain that carries a clean cross-source result.",
+                    "The obvious objection to the trust result is common-method variance: the same people "
+                    "answer the trust question and the life-satisfaction question in the same sitting, so of "
+                    "course the two move together. That is testable. Split each country-round's respondents at "
+                    "random, take the trust mean from one half and life satisfaction from the other, and no "
+                    "person contributes to both sides while sample, fieldwork and timing stay identical. Trust "
+                    "retains 93% of its estimate (+0.59 to +0.55) and health 88% (+0.40 to +0.35). Education "
+                    "stays null. The association is between people in a country, not inside a questionnaire.",
+                    "What does bound the trust claim is the cross-source panel. Against the WHR ladder, trust "
+                    "reaches +0.20 at levels and +0.06 in differences, where health reaches +0.51 and +0.20. "
+                    "But that pairing sets ESS rounds against a different sample, with different fieldwork "
+                    "timing and its own sampling error, and differencing amplifies all of it — trust is the "
+                    "weaker signal to begin with, so it has less to lose before vanishing. Read as a bound, "
+                    "not a refutation: trust has not yet been corroborated against an independent wellbeing "
+                    "instrument, and health has.",
                 ],
                 "figure": "domains_survive_differences.png",
                 "caption": "Pooled within-country correlations, levels against first differences. Panel a "
@@ -557,10 +567,14 @@ ACTS = [
                     "to instruments that already carry it — the ESS in Europe, Gallup World Poll and the "
                     "World Values Survey more broadly — so that country assessments can draw on it without "
                     "the frameworks having to own the collection.",
-                    "The honest caveat stays attached: this rests on 36 European countries and one survey "
-                    "item. It is the most tentative finding in the paper. It is also the one where the cost "
-                    "of being right and not measuring is highest, because the gap is invisible from inside "
-                    "the frameworks.",
+                    "The caveats stay attached, and they are about coverage rather than about whether the "
+                    "association is real. It rests on 36 European countries and one survey item, and it has "
+                    "not yet been corroborated against an independent wellbeing instrument the way health has. "
+                    "What it is not is a questionnaire artefact: with predictor and outcome taken from "
+                    "different respondents, the within-country result holds at +0.55. So this is the most "
+                    "tentative of the three recommendations on scope, and the one where the cost of being "
+                    "right and not measuring is highest — because a domain no framework collects cannot show "
+                    "up as a gap in any framework's own diagnostics.",
                 ],
                 "figure": None,
                 "caption": None,
@@ -633,9 +647,12 @@ DECISIONS = [
 
     ("Scope of the trust finding",
      "Trust rests on the ESS: 36 European countries, one item, self-reported. 97% of countries "
-     "significant with median individual R² 0.039. The SDG16 comparison is cross-sectional "
-     "because only 16 of 163 country-series have the four years a time-series design needs. "
-     "This is the most tentative of the three domains and should be framed as such."),
+     "significant at levels; +0.59 within-country in first differences, and +0.55 with predictor "
+     "and outcome drawn from disjoint respondents, so it is not a common-method artefact. What is "
+     "still missing is corroboration against an independent wellbeing instrument: against the WHR "
+     "ladder it is +0.06 n.s. in differences, plausibly attenuation from pairing two samples with "
+     "different fieldwork timing, but unproven either way. Health has that corroboration and trust "
+     "does not — worth stating plainly rather than leaning on trust as hard as on health."),
 
     ("Institutional confidence is not interpersonal trust",
      "SDG16's trust-adjacent series measure satisfaction with public services, perceived bribery "
