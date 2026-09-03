@@ -28,39 +28,37 @@ SCOPE = (
 # Opening
 # --------------------------------------------------------------------------
 HOOK = {
-    "kicker": "The setup",
-    "heading": "Development rose almost everywhere. Wellbeing did not follow it.",
+    "kicker": "Three questions about measurement",
+    "heading": "What actually matters for individual lived experience, and are development frameworks measuring it?",
     "body": [
-        "The SDG paper now under review makes a narrow, awkward claim: the "
-        "association between development indicators and happiness is strong "
-        "when countries are compared with one another, and close to absent "
-        "when each is compared with its own past. Thirty of 42 countries are "
-        "significant in levels. Two are in year-to-year changes.",
-        "There is an obvious way to dismiss that. The SDG framework is a "
-        "sprawling, negotiated instrument with uneven coverage; a null inside "
-        "it says as much about the framework as about the world. This "
-        "commentary closes that escape route by asking: which parts of "
-        "development track lived experience at all? And why do some frameworks "
-        "capture them while others systematically miss them?",
-        "The answer turns out to be about the frameworks' construction choices, "
-        "not about development itself. Education, health, and social trust all "
-        "matter — but which one you find depends on which framework you measure "
-        "with, which construct you count, and whether you collected the data "
-        "in the first place.",
+        "Development measurement has a wellbeing problem. Frameworks like the SDG and HDI were built to track "
+        "progress on development goals, not to understand what predicts how people experience their lives. But "
+        "if development is meant to improve wellbeing, we should ask: Do the frameworks capture what actually matters? "
+        "What does matter at the individual level? And if they don't align, how should development measurement change?",
+        "The SDG paper under review provides the opening: the association between development indicators and "
+        "happiness is strong between countries but nearly absent within them year-to-year. Thirty of 42 countries "
+        "are significant in levels. Two are in differences. The obvious dismissal: the SDG framework is sprawling "
+        "and unevenly covered; a null says as much about the framework as the world.",
+        "This commentary answers the three questions by testing them across frameworks. We replicate the collapse "
+        "on the HDI, test it against individual-level wellbeing data (the ESS), and ask what domains actually predict "
+        "life satisfaction when measured at the right level and resolution. The answer: education, health, and social "
+        "trust all matter. But which framework sees them depends entirely on construction choices—which construct you "
+        "count, which variable you measure, which domains you collect. Based on that evidence, we suggest how development "
+        "measurement could evolve.",
     ],
     "acts": [
         ("I", "The levels-to-differences collapse is universal.",
          "Replicate it on the HDI, against a second wellbeing survey, and one spatial scale down. "
          "It holds every time — except in ESS, where individual-level data is responsive to change."),
-        ("II", "At the levels: three domains, three failure modes.",
-         "Education, health, and social trust all matter. But frameworks see them differently "
-         "because of construction choices, variable saturation, or missing coverage."),
-        ("III", "Within-country evidence: why measurement type matters.",
-         "Individual-level, self-reported data shows ESS captures year-to-year change. Development "
-         "frameworks measure at the wrong temporal and individual resolution."),
-        ("IV", "What this means for how we measure development.",
-         "A structural disconnect between how development is measured and what predicts lived experience, "
-         "with implications for each domain and method."),
+        ("II", "At the levels: what actually matters for lived experience?",
+         "Three domains predict life satisfaction: education, health, and social trust. But frameworks see them differently "
+         "because of construction choices, variable saturation, or missing coverage. This is what measurement shows matters."),
+        ("III", "Why measurement type matters: within-country evidence.",
+         "Individual-level, self-reported data captures year-to-year change that administrative frameworks miss. "
+         "Development frameworks measure at the wrong temporal and individual resolution to see lived experience."),
+        ("IV", "How development frameworks could evolve.",
+         "Based on what matters for individual wellbeing, specific recommendations for education, health, and social trust. "
+         "A roadmap for aligning development measurement with what research shows actually predicts lived experience."),
     ],
 }
 
@@ -368,63 +366,56 @@ ACTS = [
         ),
         "beats": [
             {
-                "label": "The disconnect",
-                "heading": "These frameworks work for development. They do not work for wellbeing.",
+                "label": "The structural disconnect",
+                "heading": "These frameworks were built to measure development, not to capture what predicts wellbeing",
                 "body": [
-                    "The HDI and SDG frameworks do not answer the question 'what makes people's "
-                    "lives better?' any more than a global income statistics database answers 'what "
-                    "makes a person happy?' They were designed to track development, measured at "
-                    "the aggregate level, with indicators chosen before the question of individual "
-                    "wellbeing was systematically tested. That is not a design failure; it is the "
-                    "intended scope.",
-                    "But it means the gap is structural. Education's access indicators work; pooling "
-                    "them with constructs that do not does not fix wellbeing prediction — it just "
-                    "builds a worse measure. Choosing a variable for health that is closer to saturated "
-                    "than the outcome it predicts is a measurement choice, not an incurable problem. "
-                    "And when a domain is never collected, no amount of better construction on the "
-                    "others will reach it.",
+                    "The HDI and SDG frameworks do not answer the question 'what makes people's lives better?' "
+                    "They were designed to track development at the aggregate level, with indicators chosen before "
+                    "the question of individual wellbeing was systematically tested. That is not a design failure; "
+                    "it is the intended scope. But it creates a structural gap: frameworks measuring aggregate, "
+                    "infrequent administrative data cannot see individual experience that responds to change.",
+                    "The gap is not incurable. It is built on three concrete, fixable problems: wrong constructs "
+                    "for some domains, saturated variables for others, and missing coverage for those not measured "
+                    "at all. This commentary suggests how to fix each.",
                 ],
                 "figure": None,
                 "caption": None,
             },
 
             {
-                "label": "Implication 1 · Measurement choices constrain what frameworks can see",
-                "heading": "Education and health: the case for measurement specificity",
+                "label": "Implication 1 · Fix wrong constructs",
+                "heading": "Education and health: measurement specificity based on what predicts wellbeing",
                 "body": [
-                    "Education is significant everywhere it is measured as attainment, but nearly "
-                    "invisible in SDG4 because most indicators measure something else. Health is "
-                    "nearly invisible in the HDI because life expectancy has saturated. Neither domain "
-                    "has changed; the frameworks' construction choices have.",
-                    "For education, this suggests development measurement should weigh access and "
-                    "completion more heavily than parity ratios in wellbeing contexts — not universally, "
-                    "but with explicit construction choices that account for what is known to matter. "
-                    "For health, it suggests that wellbeing-motivated measurement may need different "
-                    "variables at different development levels: life expectancy in lower-income settings, "
-                    "self-reported health or specific conditions in saturated ones.",
+                    "Education is significant everywhere it is measured as attainment (92% in ESS, 34% in HDI, "
+                    "12.7% in SDG4 access alone). But SDG4 averages it with parity ratios and learning outcomes, "
+                    "which do not predict wellbeing, collapsing the pooled rate to 3.3%. The fix: development "
+                    "frameworks should make construction choices with explicit reference to what research shows "
+                    "matters for lived experience. For education in wellbeing contexts, this means weighting access "
+                    "and completion more heavily than equity ratios.",
+                    "Health is nearly invisible in the HDI (20% significant) because life expectancy is saturated "
+                    "in developed countries — the top 100 range from 81–85 years. Yet self-rated health is significant "
+                    "in 100% of ESS countries. The fix: use different variables at different income levels. Life expectancy "
+                    "for lower-income settings where it still varies; self-reported health, or condition-specific mortality "
+                    "(maternal, neonatal, under-five), in saturated ones.",
                 ],
                 "figure": None,
                 "caption": None,
             },
 
             {
-                "label": "Implication 2 · Coverage gaps are more fundamental than construct choice",
-                "heading": "Social trust: why you cannot fix a measurement by measuring better",
+                "label": "Implication 2 · Add missing coverage",
+                "heading": "Social trust: why coverage gaps cannot be fixed by better measurement of wrong things",
                 "body": [
-                    "Social trust is the most tentative finding here. The ESS is Europe-only, across "
-                    "36 countries, and relies on a single item. That bounds the claim: the pattern "
-                    "holds in Europe, with a wellbeing survey, on a self-report basis. It does not claim "
-                    "universality.",
-                    "But the reason it is tentative points to the deepest problem: trust is not collected "
-                    "at global scale in either framework. The SDG database has 13 series adjacent to trust, "
-                    "but they measure institutional confidence, not interpersonal trust, and they are "
-                    "intermittent (147 of 163 country-series have fewer than four years of data). "
-                    "This is not a construct-choice problem that better measurement can solve. "
-                    "It is a coverage gap that requires deciding to collect the data in the first place.",
-                    "For wellbeing-conscious development monitoring, this suggests either building "
-                    "interpersonal-trust measurement into the core frameworks, or acknowledging that "
-                    "other surveys (the ESS, Gallup World Poll, World Values Survey) may be more suitable "
-                    "for understanding what shapes lived experience.",
+                    "Social trust is significant in 94% of ESS countries and is the third-strongest predictor after "
+                    "health and income. Neither the HDI nor the SDG framework measures it. The SDG database has 13 "
+                    "series under Goal 16, but they measure institutional confidence—satisfaction with government, "
+                    "healthcare, education—not interpersonal trust. Moreover, 147 of 163 country-series have fewer than "
+                    "four years of data, making time-series designs impossible.",
+                    "The fix: development frameworks cannot discover what matters by measuring something else and hoping "
+                    "it correlates. If wellbeing is part of development measurement's purpose, interpersonal trust must be "
+                    "collected at scale. This could mean building social trust into core frameworks, or integrating data from "
+                    "surveys designed to measure individual experience (ESS, Gallup World Poll, World Values Survey). The scope "
+                    "of trust findings—36 European countries, individual-level—is tentative. But tentative is better than absent.",
                 ],
                 "figure": None,
                 "caption": None,
@@ -432,20 +423,20 @@ ACTS = [
 
             {
                 "label": "Conclusion",
-                "heading": "A question rather than a prescription",
+                "heading": "From evidence to redesign",
                 "body": [
-                    "The evidence shows a consistent pattern: which domain looks most consequential "
-                    "for wellbeing depends on which framework measures it and what variable they chose. "
-                    "This is not about the domains; it is about the tools.",
-                    "Whether development frameworks should be redesigned around wellbeing is outside "
-                    "the scope here. But if they were, this finding suggests the question to ask: "
-                    "should measurement choices be made with explicit reference to which variables "
-                    "still move and still matter for lived experience? Should coverage be built in for "
-                    "domains the frameworks discovered only by studying something else?",
-                    "The frameworks work well for their stated purpose. The question is whether wellbeing "
-                    "should become part of that purpose — and if it does, whether the measurement that comes "
-                    "from that intent should be different from the aggregate, development-first measurement "
-                    "in place today.",
+                    "The evidence is clear: which domain predicts life satisfaction depends on which framework measures it "
+                    "and what variable they chose. This is not about the domains; it is about the tools. Development frameworks "
+                    "work well for their stated purpose — tracking aggregate progress toward development goals. But if that purpose "
+                    "is understood to include supporting lived experience, the measurement needs to change.",
+                    "The three implications suggest where to start: make construction choices based on what research shows matters "
+                    "(education's access, health's variation, not saturation); choose variables that still move at the development "
+                    "levels being measured; and collect data for domains that matter but are currently missing. This is not a complete "
+                    "redesign. It is targeted adjustment rooted in evidence about what predicts individual wellbeing.",
+                    "The underlying question remains: Should development measurement be redesigned with lived experience in mind? "
+                    "If yes, should it measure at the individual level, with shorter intervals, using variables chosen for their "
+                    "responsiveness to change and their evidence of predicting wellbeing? The frameworks in place today are built for "
+                    "a different answer. These findings suggest what a different answer might measure.",
                 ],
                 "figure": None,
                 "caption": None,
