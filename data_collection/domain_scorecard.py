@@ -65,7 +65,7 @@ ROWS = [
         ("40.7% / 34.0%\nmean / expected schooling", STRONG),
         ("+0.057\n2 of 16 countries", WEAK),
         ("33 of 36\nR² = 0.0098", STRONG),
-        ("+0.130\n2 of 16 countries", WEAK),
+        ("no consistent sign\n8 of 16 countries positive", WEAK),
     ]),
     ("Health", [
         ("11.5%\nSDG3, 4th of 17 goals", STRONG),

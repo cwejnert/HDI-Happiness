@@ -159,7 +159,13 @@ the deck asks and each reads a different mix of its outputs:
 ```bash
 python domain_scorecard.py         # J1  three domains x five instruments
 python specification_synthesis.py  # L1  the same domains under three specifications
+python publish_deck_figures.py     # copy everything into ../deck/figures/
 ```
+
+`publish_deck_figures.py` carries the deck-name -> figures_out-name mapping,
+which previously existed only as hand-renamed copies with nothing recording it
+(`ranking_flip.png` is G4; `mechanisms_trust_health.png` is E1, not G3). It
+reports anything missing and anything in `deck/figures/` that nothing maps to.
 
 `specification_synthesis.py` also computes the one cell the pipeline never
 produced. G3 in `make_figures.py` runs development, social trust and self-rated

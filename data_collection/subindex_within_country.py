@@ -16,14 +16,18 @@ Outputs:
     processed/within_country_subindex_correlations.csv
     figures_out/H1_within_country_external_domains.png
 
+Every domain is shown on both sides where it has one, so the shared-method
+question is answered per domain rather than in aggregate.
+
 Result (2010-2023 pooled, countries with >=6 matched regions):
-    GDL health index   median r=+0.344, 6/15  (Albania excluded: its regional
-                                               healthindex is constant)
-    GDL income index   median r=+0.120, 2/16
-    GDL education idx  median r=+0.057, 2/16
-So the flip is specifically a health flip, and it does not depend on
-self-report. Self-rated health still runs higher (+0.50), consistent with
-part of its lead being shared method variance -- exactly as caveated.
+    external   health +0.344 (6/15, Albania excluded: constant healthindex)
+               income +0.120 (2/16)   education +0.057 (2/16)
+    ESS        trust  +0.565 (8/16)   health    +0.502 (7/16)
+               education +0.130 (2/16)
+Among the external measures the flip is specifically a health flip. Each
+self-report runs higher than its external counterpart by a similar margin,
+which is shared method variance inflating every domain rather than reordering
+them -- education is last on both sides, health leads both.
 """
 from __future__ import annotations
 
@@ -33,6 +37,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.patches import Patch
 from scipy import stats
 
 from config import ESS_ISO2_TO_ISO3
@@ -41,7 +46,11 @@ MIN_REGIONS = 6
 
 EXTERNAL = [("healthindex", "Health index"), ("incindex", "Income index"),
             ("edindex", "Education index")]
-SELFREPORT = [("good_health", "Self-rated health"), ("ppltrst", "Social trust")]
+# every domain the commentary carries appears on both sides where it can, so a
+# reader can see which leads are self-report artefacts and which are not.
+# Development has no ESS self-report counterpart and trust no external one.
+SELFREPORT = [("good_health", "Self-rated health"), ("ppltrst", "Social trust"),
+              ("eduyrs", "Education (years)")]
 
 
 def build_panel() -> pd.DataFrame:
@@ -51,7 +60,8 @@ def build_panel() -> pd.DataFrame:
     reg = (ess.dropna(subset=["gdl_region_name"])
               .groupby(["cntry", "iso3", "gdl_region_name"])
               .agg(stflife=("stflife", "mean"), good_health=("good_health", "mean"),
-                   ppltrst=("ppltrst", "mean"), n=("stflife", "size"))
+                   ppltrst=("ppltrst", "mean"), eduyrs=("eduyrs", "mean"),
+                   n=("stflife", "size"))
               .reset_index())
 
     si = pd.read_csv("raw/shdi_subindices.csv")
@@ -92,37 +102,56 @@ def main():
     # ---- figure ----
     BLUE, ORANGE, RED, GREEN = "#2A78D6", "#EDA100", "#E34948", "#1BAF7A"
     GREY, BG, INK = "#8A8A8A", "#FCFCFB", "#1A1A1A"
-    order = [("healthindex", RED, 0.95), ("incindex", ORANGE, 0.95),
-             ("edindex", BLUE, 0.95), ("good_health", RED, 0.40),
-             ("ppltrst", GREEN, 0.40)]
-    fig, ax = plt.subplots(figsize=(11, 5.6))
+    # paired by domain rather than listed flat, so the shared-method question
+    # is answered per domain: the gap between the two bars is what self-report
+    # buys, and where a domain has only one bar the reason is stated
+    DOMAINS = [("Health", "healthindex", "good_health", RED),
+               ("Education", "edindex", "eduyrs", BLUE),
+               ("Income /\ndevelopment", "incindex", None, ORANGE),
+               ("Social trust", None, "ppltrst", GREEN)]
+
+    def cell(var):
+        if var is None:
+            return None
+        hit = summ[summ.predictor == var]
+        return hit.iloc[0] if len(hit) else None
+
+    fig, ax = plt.subplots(figsize=(11.5, 5.8))
     fig.patch.set_facecolor(BG)
     ax.set_facecolor(BG)
-    y = np.arange(len(order))[::-1]
-    for yi, (var, col, alpha) in zip(y, order):
-        row = summ[summ.predictor == var].iloc[0]
-        ax.barh(yi, row.median_r, 0.58, color=col, alpha=alpha)
-        ax.text(row.median_r + 0.012, yi,
-                f"{row.median_r:+.3f}   ({int(row.sig)}/{int(row.n)} countries sig.)",
-                va="center", fontsize=9.5, color=INK)
+    y = np.arange(len(DOMAINS))[::-1]
+    for yi, (label, ext, self_, col) in zip(y, DOMAINS):
+        for off, var, alpha in ((0.17, ext, 0.95), (-0.17, self_, 0.40)):
+            row = cell(var)
+            if row is None:
+                ax.text(0.012, yi + off,
+                        "no external measure" if var is ext else "no ESS counterpart",
+                        va="center", fontsize=8.2, color=GREY, style="italic")
+                continue
+            ax.barh(yi + off, row.median_r, 0.30, color=col, alpha=alpha)
+            ax.text(row.median_r + 0.012, yi + off,
+                    f"{row.median_r:+.3f}   ({int(row.sig)}/{int(row.n)} sig.)",
+                    va="center", fontsize=8.8, color=INK)
     ax.set_yticks(y)
-    ax.set_yticklabels([
-        "GDL health index\n(external)", "GDL income index\n(external)",
-        "GDL education index\n(external)", "Self-rated health\n(same-survey)",
-        "Social trust\n(same-survey)"], fontsize=9)
-    ax.set_xlim(0, 0.75)
+    ax.set_yticklabels([d[0] for d in DOMAINS], fontsize=10)
+    ax.legend(handles=[
+        Patch(facecolor=GREY, alpha=0.95, label="external (GDL sub-index)"),
+        Patch(facecolor=GREY, alpha=0.40, label="self-reported (ESS)")],
+        loc="upper right", frameon=False, fontsize=8.6)
+    ax.set_xlim(0, 0.88)
     ax.set_xlabel("Median within-country regional correlation with life satisfaction", fontsize=9.5)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
     ax.grid(axis="x", color="#E6E6E6", linewidth=0.8)
     ax.grid(axis="y", visible=False)
     ax.set_axisbelow(True)
-    ax.set_title("The within-country flip survives external measurement — and it is a health flip",
-                 fontsize=12.5, fontweight="bold", color=INK, loc="left", pad=30)
+    ax.set_title("The within-country flip survives external measurement — and among external\nmeasures it is a health flip",
+                 fontsize=12.5, fontweight="bold", color=INK, loc="left", pad=54)
     ax.text(0, 1.02,
-            "GDL regional sub-indices share no method with the ESS outcome. Health leads "
-            "income and education among the external\nmeasures; self-rated health runs higher "
-            "still, consistent with part of its lead being shared method variance.",
+            "GDL regional sub-indices share no method with the ESS outcome, and they give the same domain "
+            "ordering the self-reports give.\nEach self-report runs higher than its external "
+            "counterpart by a similar margin — shared method variance inflating every domain "
+            "rather than reordering them.",
             transform=ax.transAxes, fontsize=8.7, color="#5A5A5A", va="bottom")
     fig.text(0.008, 0.02,
              "16 ESS countries with ≥6 crosswalked regions, sub-indices pooled 2010–2023. Albania excluded "

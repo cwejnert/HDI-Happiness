@@ -52,25 +52,45 @@ them. `specification_synthesis.py` now puts them side by side:
 
 | | Between countries, levels | Same countries, differences | Inside countries, across regions |
 |---|---|---|---|
-| Education | 40.7% (61/150) | 1.3% (2/150) | +0.06 external, +0.13 self-report (2/16) |
-| Health | 19.9% (30/151) | 2.6% (4/151) | +0.34 external (6/15), +0.51 self-report (8/16) |
-| Social trust | not measured | not measured | +0.49 (6/16) |
-| Development | 42.4% (64/151) | 2.0% (3/151) | +0.12 (2/16), +0.12 (3/16) |
+| Education | 40.7% (61/150) | 1.3% (2/150) | +0.06 external (2/16), **−0.08** ESS (3/16, 8 of 16 positive) |
+| Health | 19.9% (30/151) | 2.6% (4/151) | +0.34 external (6/15, 13 of 15 positive), +0.51 ESS (8/16, 12 of 16 positive) |
+| Social trust | not measured | not measured | +0.49 (6/16, 14 of 16 positive) |
+| Development | 42.4% (64/151) | 2.0% (3/151) | +0.12 (2/16), +0.12 (3/16, 9 of 16 positive) |
 
 The ranking changes twice, in a consistent direction: what predicts *where*
 wellbeing is high is structural (schooling, income, which between countries
 proxy the whole development bundle); what predicts it *inside* a country is
 experiential (health, trust). Education's odd combination of near-universal
-significance and tiny effect is what a structural variable looks like once the
-structure is held fixed.
+significance and near-zero, sign-unstable within-country correlation is what a
+structural variable looks like once the structure is held fixed.
 
 Panels (a) and (b) are the same instrument on the same countries, so that
 collapse is exact. Panel (c) is a different instrument at a different scale and
-is read alongside them, never subtracted from them. `ess_regional_education()`
-in that script computes the one cell the pipeline never produced — G3 in
-`make_figures.py` runs development, trust and self-rated health within
-countries but not education, so the deck had been quoting +0.13 against a
-number nothing generated. It reproduces exactly.
+is read alongside them, never subtracted from them.
+
+**Education has no consistent within-country signal, and the deck must not
+quote a single number for it.** G3 in `make_figures.py` originally ran
+development, trust and self-rated health within countries but not education, so
+the deck was quoting +0.13 from a one-off calculation. Adding education to G3
+properly showed why that number was misleading:
+
+- **8 of 16 countries positive, 8 negative.** Health is 12 of 16 positive and
+  trust 14 of 16.
+- The median depends on how region values are built: **−0.08** averaging each
+  region's per-round means (G3, and what the figures now use) against **+0.13**
+  pooling respondents directly (`pooled_regional_education()`).
+- The three countries that reach significance **point both ways** — Austria
+  −0.81, France +0.50, the Netherlands +0.60.
+
+Report it as "no consistent signal, positive in 8 of 16", never as a median.
+`specification_synthesis.py` prints both aggregations on every run so the
+instability stays visible, and panel (c) prints the count of positive countries
+beside each bar because a median near zero can mean consistently tiny or wildly
+inconsistent — for health and trust it is the first, for education the second.
+
+This strengthens rather than weakens the argument: education is a
+between-country signal that does not survive holding the country fixed, which
+is exactly what a structural variable should look like.
 
 ## Act III's altitude: implications, not recommendations
 
@@ -158,10 +178,16 @@ carries the supporting figures not used in the acts.
 
 ## Figures
 
-`figures/` holds the PNGs produced by `../data_collection/make_figures.py`,
-three standalone builders — `domain_scorecard.py` (`J1_`),
-`sdg_trust_cross_section.py` (`K1_`), `specification_synthesis.py` (`L1_`) —
-plus three built by `../data_collection/make_commentary_figure.py`:
+`figures/` is populated by `../data_collection/publish_deck_figures.py`, which
+holds the deck-name → `figures_out` name mapping. That mapping used to exist
+only as a set of hand-renamed copies, so a rebuild meant guessing — and guessing
+wrong is silent, since the deck embeds whatever PNG carries the right name.
+(`mechanisms_trust_health.png` is E1, not G3, for instance.) Add a figure there
+when you add one here.
+
+Sources are `make_figures.py`, `make_commentary_figure.py`, and three
+standalone builders — `domain_scorecard.py` (`J1_`),
+`sdg_trust_cross_section.py` (`K1_`), `specification_synthesis.py` (`L1_`):
 
 - `Figure1_commentary.png` / `.pdf` — the proposed submission figure
 - `collapse_hdi_shdi_whr.png` — rebuilt; the original reported an HDI
@@ -183,11 +209,11 @@ of schooling leads that column with 7 of 150 countries — a lead over the
 composite's 3, and still a collapse. It is the exception in *consistency*
 across frameworks, producers, instruments, and units of observation.
 
-Education leading is a **between-country** claim. Inside countries it falls to
-+0.13 with 2 of 16 significant, below health and trust and level with
-development. Act III's education recommendation says what a global monitoring
-framework should count; it is not a claim that moving one region's schooling
-moves its wellbeing, and the text now says so explicitly.
+Education leading is a **between-country** claim. Inside countries it has no
+consistent signal at all — positive in 8 of 16 — which is weaker than "small".
+Act III's education implication says what a global monitoring framework should
+count; it is not a claim that moving one region's schooling moves its
+wellbeing, and the text now says so explicitly.
 
 The SDG and HDI **detection** rates (71% vs 51% of each dataset's countries
 with any indicator significant) are a fair comparison, not an artifact:
@@ -218,7 +244,7 @@ number has been checked against source.
 | Region crosswalk, 217,422 / 351,023 | reproduced; three hand-rejected mismatches now excluded |
 | SDG trust cross-section, 9 of 13 testable, 4 significant | computed fresh from the UN SDG API; comparators on each series' own country set |
 | SDG4 access 12.7% = 3rd of 17 goals if it were one | checked against `sdg_education_category_significance.csv` and the goal table; 2 series / 63 pairs, and the text says so |
-| Three-specification synthesis, all 11 cells | recomputed by `specification_synthesis.py`; ESS regional education (+0.130, 2/16) reproduces the figure the deck had been quoting |
+| Three-specification synthesis, all cells | recomputed by `specification_synthesis.py`; education's regional cell is aggregation-sensitive and both values are printed on every run |
 
 Three region matches cleared the 0.6 similarity threshold but were the wrong
 region (`SI` Notranjsko-kraška→Obalno-kraska, `SK` Trnavský→Bratislavsky,

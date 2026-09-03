@@ -209,7 +209,7 @@ ACTS = [
         "numeral": "II",
         "title": "Education, health, and what changes when you change the question",
         "key_numbers": [
-            ("40.7% → +0.13", "education: leads the HDI between countries, near zero inside them"),
+            ("40.7% → 8 of 16", "education: leads the HDI between countries, inconsistent inside them"),
             ("12.7%", "SDG4 access alone — third of 17 goals if it were one"),
             ("19.9% → +0.51", "health: last of the HDI's five, first inside countries"),
             ("1 of 16", "SDG trust country-series testable at all, not 1 of 163"),
@@ -479,8 +479,11 @@ ACTS = [
                     "places to live, holding national institutions, history and "
                     "policy fixed.",
                     "Education leads the first and all but vanishes in the "
-                    "third: 40.7% of countries, then +0.13 with 2 of 16 "
-                    "significant. Health and trust do the reverse — health "
+                    "third: 40.7% of countries, then no consistent regional "
+                    "signal at all — 8 of 16 countries positive, a median "
+                    "between −0.08 and +0.13 depending on how region values "
+                    "are aggregated, and the significant countries pointing "
+                    "both ways. Health and trust do the reverse — health "
                     "last of the HDI’s five between countries, first inside "
                     "them at +0.51; trust unmeasured between, second inside at "
                     "+0.49. The middle panel flattens everything: nothing "
@@ -638,7 +641,7 @@ ACTS = [
         "title": "What this may imply for how development is measured",
         "key_numbers": [
             ("+0.87 → +0.12", "development, between countries → within them"),
-            ("+0.13 vs +0.51", "education vs health inside countries, across regions"),
+            ("8 of 16 vs 12 of 16", "countries where education vs health tracks wellbeing regionally"),
             ("11.2% vs 1.2%", "health vs education, SDG data, high-income countries"),
         ],
         "thesis": (
@@ -687,25 +690,25 @@ ACTS = [
                     "a median regional correlation of +0.12, significant in 3 of "
                     "16 countries, while self-rated health holds at +0.51 "
                     "(8 of 16) and social trust at +0.49 (6 of 16). Education "
-                    "falls with development, not with health and trust: +0.13, "
-                    "2 of 16. The World Happiness Report cannot see any of this "
+                    "falls with development, not with health and trust — and "
+                    "further: its correlations are positive in only 8 of 16 "
+                    "countries, and the three that reach significance point "
+                    "both ways (Austria −0.81, France +0.50, the Netherlands "
+                    "+0.60). The World Happiness Report cannot see any of this "
                     "— it has no subnational values. It is the specific thing "
                     "the ESS adds.",
-                    "This is the third panel of Act II's specification figure, "
-                    "at full detail. The point that figure makes and this beat "
-                    "supplies the evidence for: the domains that lead between "
-                    "countries are the structural ones, and they are not the "
-                    "domains that lead inside them.",
-                    "Two cautions on the detail. The health-versus-trust "
-                    "ordering is not stable: aggregating region means across "
-                    "waves rather than within them reverses it, putting trust "
-                    "at +0.57 and health at +0.50. What is stable, under every "
-                    "specification we tried, is that both sit near +0.5 while "
-                    "development sits near zero. And per-country coverage "
-                    "varies sharply — Italy matches only 30% of respondents to "
-                    "a region, Sweden 57%, Croatia 69%, against 91–100% "
-                    "elsewhere. Dropping those three, or dropping regions built "
-                    "on fewer than 200 respondents, leaves the flip intact.",
+                    "This is Act II's third panel at full detail: the domains "
+                    "that lead between countries are the structural ones, and "
+                    "they are not the domains that lead inside them.",
+                    "Two cautions. The health-versus-trust ordering is not "
+                    "stable — aggregating region means across waves rather "
+                    "than within them reverses it (trust +0.57, health +0.50). "
+                    "What is stable is that both sit near +0.5 while "
+                    "development and education sit at zero. And coverage varies "
+                    "sharply: Italy matches 30% of respondents to a region, "
+                    "Sweden 57%, Croatia 69%, against 91–100% elsewhere. "
+                    "Dropping those three, or regions built on under 200 "
+                    "respondents, leaves the flip intact.",
                 ],
                 "figure": "ranking_flip.png",
                 "caption": "Candidate Figure 2. National correlations beside "
@@ -791,8 +794,9 @@ ACTS = [
                     "Two cautions travel with this and it is weaker without "
                     "them. Education is the most consistent signal and the "
                     "smallest one. And it is a <em>between</em>-country signal: "
-                    "inside countries it falls to +0.13 with 2 of 16 "
-                    "significant. So the implication is about what a global "
+                    "inside countries it has no consistent signal at all, "
+                    "positive in 8 of 16 and negative in 8. So the implication "
+                    "is about what a global "
                     "monitoring framework counts, not a claim that moving one "
                     "region's schooling moves its wellbeing.",
                 ],

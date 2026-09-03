@@ -292,6 +292,9 @@ def build_country_round_panel():
              hdi=("hdi", "mean"), le=("le", "mean"), eys=("eys", "mean"),
              mys=("mys", "mean"), gnipc=("gnipc", "mean"),
              ppltrst=("ppltrst", "mean"), health=("health", "mean"),
+             # ESS-measured schooling, so education competes in G3/G4 on the
+             # same footing as trust and health rather than through HDI mys
+             eduyrs=("eduyrs", "mean"),
              whr_happiness=("whr_happiness", "mean"), n=("stflife", "size"))
         .reset_index()
     )
@@ -574,7 +577,8 @@ def build_region_round_panel():
     panel = (
         df.groupby(["cntry", "gdl_region_name", "essround"])
         .agg(stflife=("stflife", "mean"), happy=("happy", "mean"), shdi=("shdi", "mean"),
-             ppltrst=("ppltrst", "mean"), health=("health", "mean"), n=("stflife", "size"))
+             ppltrst=("ppltrst", "mean"), health=("health", "mean"),
+             eduyrs=("eduyrs", "mean"), n=("stflife", "size"))
         .reset_index()
     )
     panel["region_key"] = panel["cntry"] + " / " + panel["gdl_region_name"]
@@ -665,12 +669,14 @@ def section_e():
     nat = pd.read_csv("processed/country_round_panel.csv")
     reg = pd.read_csv("processed/region_round_panel.csv")
 
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    fig, axes = plt.subplots(2, 3, figsize=(16.5, 10))
     specs = [
-        (axes[0, 0], nat, "hdi", "ppltrst", "National HDI vs. Social Trust", CAT["blue"]),
-        (axes[0, 1], nat, "hdi", "health", "National HDI vs. Self-Rated Health", CAT["green"]),
-        (axes[1, 0], reg, "shdi", "ppltrst", "Subnational SHDI vs. Social Trust", CAT["aqua"]),
-        (axes[1, 1], reg, "shdi", "health", "Subnational SHDI vs. Self-Rated Health", CAT["violet"]),
+        (axes[0, 0], nat, "hdi", "eduyrs", "National HDI vs. Schooling (years)", CAT["blue"]),
+        (axes[0, 1], nat, "hdi", "health", "National HDI vs. Self-Rated Health", CAT["red"]),
+        (axes[0, 2], nat, "hdi", "ppltrst", "National HDI vs. Social Trust", CAT["aqua"]),
+        (axes[1, 0], reg, "shdi", "eduyrs", "Subnational SHDI vs. Schooling (years)", CAT["blue"]),
+        (axes[1, 1], reg, "shdi", "health", "Subnational SHDI vs. Self-Rated Health", CAT["red"]),
+        (axes[1, 2], reg, "shdi", "ppltrst", "Subnational SHDI vs. Social Trust", CAT["aqua"]),
     ]
     for ax, data, xcol, ycol, title, color in specs:
         sub = data.dropna(subset=[xcol, ycol])
@@ -681,19 +687,22 @@ def section_e():
         ax.set_title(title, fontsize=10.5, loc="left")
         ax.set_xlabel(xcol.upper())
         ax.set_ylabel("mean (country/region, pooled across years)")
-    suptitle(fig, "E. Development vs. Two Mechanism Variables",
-             "health is self-rated (1=very good...5=very bad, reverse of intuition -- check sign). "
-             "ppltrst is 0-10 generalized trust. First look only; concept note's full mechanism model is a next step.")
+    suptitle(fig, "E1. Development vs. the Three Mechanism Variables",
+             "All three domains the commentary carries, at both scales. health is self-rated "
+             "(1=very good...5=very bad, reverse of intuition -- check sign); ppltrst is 0-10 "
+             "generalized trust; eduyrs is ESS-measured years of schooling.")
     savefig(fig, "E1_mechanism_variables.png", SOURCE_ESS, top=0.87)
 
     # E2: same layout, but mechanism variables plotted directly against stflife
     # (not against HDI/SHDI) -- isolates each variable's own link to wellbeing.
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    fig, axes = plt.subplots(2, 3, figsize=(16.5, 10))
     specs2 = [
-        (axes[0, 0], nat, "ppltrst", "stflife", "National: Social Trust vs. Life Satisfaction", CAT["blue"]),
-        (axes[0, 1], nat, "health", "stflife", "National: Self-Rated Health vs. Life Satisfaction", CAT["green"]),
-        (axes[1, 0], reg, "ppltrst", "stflife", "Regional: Social Trust vs. Life Satisfaction", CAT["aqua"]),
-        (axes[1, 1], reg, "health", "stflife", "Regional: Self-Rated Health vs. Life Satisfaction", CAT["violet"]),
+        (axes[0, 0], nat, "eduyrs", "stflife", "National: Schooling vs. Life Satisfaction", CAT["blue"]),
+        (axes[0, 1], nat, "health", "stflife", "National: Self-Rated Health vs. Life Satisfaction", CAT["red"]),
+        (axes[0, 2], nat, "ppltrst", "stflife", "National: Social Trust vs. Life Satisfaction", CAT["aqua"]),
+        (axes[1, 0], reg, "eduyrs", "stflife", "Regional: Schooling vs. Life Satisfaction", CAT["blue"]),
+        (axes[1, 1], reg, "health", "stflife", "Regional: Self-Rated Health vs. Life Satisfaction", CAT["red"]),
+        (axes[1, 2], reg, "ppltrst", "stflife", "Regional: Social Trust vs. Life Satisfaction", CAT["aqua"]),
     ]
     for ax, data, xcol, ycol, title, color in specs2:
         sub = data.dropna(subset=[xcol, ycol])
@@ -710,15 +719,18 @@ def section_e():
              "more tightly than development itself.")
     savefig(fig, "E2_mechanism_vs_stflife.png", SOURCE_ESS, top=0.85)
 
-    # E3: ranking bar chart -- share of units where HDI/SHDI, trust, or health
-    # significantly predicts stflife (levels), national and regional side by
-    # side. FDR-corrected jointly across the 3 predictors within each unit.
-    nat_share = significance_share(nat, "cntry", ["hdi", "ppltrst", "health"], "stflife", "levels")
-    reg_share = significance_share(reg, "region_key", ["shdi", "ppltrst", "health"], "stflife", "levels")
-    nat_labels = {"hdi": "HDI", "ppltrst": "Social trust", "health": "Self-rated health"}
-    reg_labels = {"shdi": "SHDI", "ppltrst": "Social trust", "health": "Self-rated health"}
+    # E3: ranking bar chart -- share of units where HDI/SHDI, trust, health or
+    # schooling significantly predicts stflife (levels), national and regional
+    # side by side. FDR-corrected jointly across the 4 predictors within each
+    # unit, so adding education tightens the correction for the others too.
+    nat_share = significance_share(nat, "cntry", ["hdi", "ppltrst", "health", "eduyrs"], "stflife", "levels")
+    reg_share = significance_share(reg, "region_key", ["shdi", "ppltrst", "health", "eduyrs"], "stflife", "levels")
+    nat_labels = {"hdi": "HDI", "ppltrst": "Social trust", "health": "Self-rated health",
+                  "eduyrs": "Schooling (years)"}
+    reg_labels = {"shdi": "SHDI", "ppltrst": "Social trust", "health": "Self-rated health",
+                  "eduyrs": "Schooling (years)"}
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(13.5, 6), sharey=True)
     for ax, share, lbl_map, level in zip(
         axes, [nat_share, reg_share], [nat_labels, reg_labels],
         ["National (country-level)", "Regional (region-level)"]
@@ -727,17 +739,19 @@ def section_e():
         labels = [lbl_map[k] for k, _ in ordered]
         vals = [v[2] for _, v in ordered]
         counts = [f"{v[0]:.0f}/{v[1]:.0f}" for _, v in ordered]
-        colors = [CAT["blue"] if lbl in ("HDI", "SHDI") else CAT["aqua"] if lbl == "Social trust" else CAT["violet"]
-                  for lbl in labels]
+        bar_colors = {"HDI": CAT["yellow"], "SHDI": CAT["yellow"],
+                      "Social trust": CAT["aqua"], "Self-rated health": CAT["red"],
+                      "Schooling (years)": CAT["blue"]}
+        colors = [bar_colors[lbl] for lbl in labels]
         bars = ax.bar(labels, vals, color=colors, width=0.6, alpha=0.9)
         ax.bar_label(bars, labels=counts, padding=3, fontsize=10, color=INK_SECONDARY)
         ax.set_title(level, fontsize=11, loc="left")
         ax.set_ylim(0, 100)
-        plt.setp(ax.get_xticklabels(), fontsize=9.5)
+        plt.setp(ax.get_xticklabels(), fontsize=8.5)
     axes[0].set_ylabel("% of units FDR-significant (q<.05) vs. stflife")
     suptitle(fig, "E3. Which Predictor Explains Life Satisfaction Best?",
              "Share of countries/regions where each predictor is individually FDR-significant, corrected "
-             "jointly across the 3 predictors per unit. Bar labels show sig./total units.")
+             "jointly across the 4 predictors per unit. Bar labels show sig./total units.")
     savefig(fig, "E3_r2_ranking_stflife.png", SOURCE_ESS)
 
     print(f"Section E significance share -- National: {sorted(nat_share.items(), key=lambda kv: -kv[1][2])}")
@@ -1013,11 +1027,16 @@ def section_g():
     # trust, and (reversed) self-rated health -- signed r, per country.
     rmeans_m = panel.groupby(["cntry", "gdl_region_name"]).agg(
         stflife=("stflife", "mean"), shdi=("shdi", "mean"),
-        ppltrst=("ppltrst", "mean"), health=("health", "mean")).reset_index().dropna()
+        ppltrst=("ppltrst", "mean"), health=("health", "mean"),
+        eduyrs=("eduyrs", "mean")).reset_index().dropna()
     rmeans_m["good_health"] = 6 - rmeans_m["health"]  # 1=very good..5=very bad -> reverse
 
-    PRED_LABELS = {"shdi": "Development (SHDI)", "ppltrst": "Social trust", "good_health": "Self-rated health"}
-    PRED_COLORS = {"shdi": CAT["blue"], "ppltrst": CAT["aqua"], "good_health": CAT["violet"]}
+    # all four domains the commentary carries, in the acts' order, so G3, G4
+    # and the deck's Figure 2 show the same field rather than a subset of it
+    PRED_LABELS = {"eduyrs": "Education (years)", "good_health": "Self-rated health",
+                   "ppltrst": "Social trust", "shdi": "Development (SHDI)"}
+    PRED_COLORS = {"eduyrs": CAT["blue"], "good_health": CAT["red"],
+                   "ppltrst": CAT["aqua"], "shdi": CAT["yellow"]}
 
     mech_rows = []
     for cntry, grp in rmeans_m.groupby("cntry"):
@@ -1032,7 +1051,7 @@ def section_g():
 
     order = mech.drop_duplicates("cntry").sort_values("nat_hdi")["cntry"].tolist()
     fig, ax = plt.subplots(figsize=(11, 8))
-    offsets = {"shdi": -0.22, "ppltrst": 0.0, "good_health": 0.22}
+    offsets = {"eduyrs": -0.27, "good_health": -0.09, "ppltrst": 0.09, "shdi": 0.27}
     for pred in PRED_LABELS:
         sub = mech[mech.predictor == pred].set_index("cntry").loc[order].reset_index()
         y = np.arange(len(sub)) + offsets[pred]
@@ -1049,7 +1068,9 @@ def section_g():
     ax.legend(frameon=False, fontsize=9, loc="lower left", title="Filled = p<.05, open = ns")
     suptitle(fig, "G3. Within Countries: What Tracks Regional Wellbeing?",
              "Region-mean correlations per country (>=6 matched regions), ordered by national HDI. "
-             "Health and trust are mostly positive; development is scattered around zero.")
+             "Health (12/16) and trust (14/16) are mostly positive; development (9/16) and "
+             "education (8/16) are scattered around zero -- education's significant countries "
+             "point in both directions.")
     savefig(fig, "G3_within_country_mechanisms.png",
             f"health reversed so positive = better self-rated health. {SOURCE_ESS}")
 
@@ -1058,9 +1079,14 @@ def section_g():
     cmeans["good_health"] = 6 - cmeans["health"]
     cmeans = cmeans.groupby("cntry").agg(
         stflife=("stflife", "mean"), whr=("whr_happiness", "mean"), hdi=("hdi", "mean"),
-        ppltrst=("ppltrst", "mean"), good_health=("good_health", "mean")).dropna()
+        ppltrst=("ppltrst", "mean"), good_health=("good_health", "mean"),
+        eduyrs=("eduyrs", "mean")).dropna()
 
-    nat_pred = {"shdi": "hdi", "ppltrst": "ppltrst", "good_health": "good_health"}
+    # development is the only domain whose national counterpart is a different
+    # variable from its regional one (HDI nationally, SHDI regionally); the
+    # other three are the same ESS item at both scales
+    nat_pred = {"eduyrs": "eduyrs", "good_health": "good_health",
+                "ppltrst": "ppltrst", "shdi": "hdi"}
     contexts = []
     for pred in PRED_LABELS:
         r_whr, _ = sps.pearsonr(cmeans[nat_pred[pred]], cmeans["whr"])
@@ -1079,20 +1105,27 @@ def section_g():
     width = 0.26
     for i, (col, color) in enumerate(zip(ctx_cols, ctx_colors)):
         bars = ax.bar(x + (i - 1) * width, ctx[col], width, label=col, color=color, alpha=0.9)
-        ax.bar_label(bars, fmt="%+.2f", padding=3, fontsize=9, color=INK_SECONDARY)
-    for xi, (n_sig_w, n_tot_w) in enumerate(zip(ctx["n_sig_within"], ctx["n_within"])):
-        ax.annotate(f"sig. in {n_sig_w}/{n_tot_w}\ncountries", xy=(xi + width, 0.02), ha="center",
-                    fontsize=7.5, color="white", fontweight="bold")
+        if col.startswith("Within"):
+            # the significance count used to sit inside this bar in white; with
+            # education negative and short there is no bar to sit in, so it goes
+            # in the value label where the width of the text cannot clip it
+            labels = [f"{v:+.2f}\n{s}/{n} sig." for v, s, n
+                      in zip(ctx[col], ctx["n_sig_within"], ctx["n_within"])]
+            ax.bar_label(bars, labels=labels, padding=3, fontsize=8.5,
+                         color=INK_SECONDARY)
+        else:
+            ax.bar_label(bars, fmt="%+.2f", padding=3, fontsize=9, color=INK_SECONDARY)
     ax.axhline(0, color=BASELINE, linewidth=1)
     g4_labels = {"Development (SHDI)": "Development\n(HDI nat. / SHDI reg.)"}
     ax.set_xticks(x)
     ax.set_xticklabels([g4_labels.get(p, p) for p in ctx["predictor"]], fontsize=10.5)
     ax.set_ylabel("Correlation with wellbeing (signed r)")
-    ax.set_ylim(-0.1, 1.05)
+    ax.set_ylim(-0.28, 1.05)
     ax.legend(frameon=False, fontsize=9)
     suptitle(fig, "G4. The Factor Ranking Flips Within Countries",
              "Nationally, development leads (identically for WHR and ESS -- the instruments agree, r=0.90). "
-             "Within countries, development drops toward zero while health and trust hold up.")
+             "Within countries, health and trust hold up while development and education both drop to zero; "
+             "education's median even turns slightly negative.")
     savefig(fig, "G4_ranking_flip_national_vs_within.png",
             f"National bars: country-mean correlations, 35 countries. Within-country bar: median of per-country "
             f"regional correlations (G3). health reversed so positive = better. {SOURCE_ESS}")

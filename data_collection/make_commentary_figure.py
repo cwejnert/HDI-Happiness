@@ -30,6 +30,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 
 # --------------------------------------------------------------------------
 # Palette: matches the figures already produced by make_figures.py.
@@ -148,7 +149,7 @@ INVERSION = [
     # instrument,                    health, education, metric note
     ("HDI\n(vs WHR happiness)", 19.9, 40.7, "% of countries significant\nhealth = life expectancy"),
     ("SDG data\n(high-income only)", 11.2, 1.2, "% of country × indicator pairs\nhealth = SDG3 series"),
-    ("ESS\n(within countries)", 0.513, 0.130, "median regional correlation\nhealth = self-rated"),
+    ("ESS\n(individual respondents)", 0.0910, 0.0098, "median within-country R²\nhealth = self-rated"),
 ]
 
 # --------------------------------------------------------------------------
@@ -156,7 +157,7 @@ INVERSION = [
 # --------------------------------------------------------------------------
 METHOD = [
     ("Health", 11.5, 0.513, RED),
-    ("Education", 3.3, 0.130, BLUE),
+    ("Education", 3.3, -0.078, BLUE),
     ("Social trust", 1.5, 0.487, GREEN),
 ]
 
@@ -185,7 +186,7 @@ def panel_b(ax):
     ax.text(0, 1.012,
             "Each instrument uses its own metric (noted above each bar), so only the\n"
             "ordering compares. Education leads under the HDI; health leads by an order of\n"
-            "magnitude everywhere health is measured somewhere it still varies.",
+            "magnitude in both sources that measure it somewhere it still varies.",
             transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
 
 
@@ -202,27 +203,33 @@ def panel_c(ax):
         ax.barh(yi + w / 2, a, w, color=m[3], alpha=0.95)
         ax.barh(yi - w / 2, b, w, color=m[3], alpha=0.40)
         ax.text(a + 0.015, yi + w / 2, f"{m[1]}%", va="center", fontsize=8.5, color=INK)
-        ax.text(b + 0.015, yi - w / 2, f"+{m[2]:.3f}", va="center", fontsize=8.5, color=INK)
+        ax.text(b + (0.015 if b >= 0 else -0.015), yi - w / 2, f"{m[2]:+.3f}",
+                va="center", ha="left" if b >= 0 else "right", fontsize=8.5, color=INK)
 
-    ax.barh([], [], color="#6E6E6E", alpha=0.95, label="UN SDG database (administrative)")
-    ax.barh([], [], color="#6E6E6E", alpha=0.40, label="European Social Survey (self-reported)")
+    # empty barh containers render with the axes' colour cycle rather than the
+    # colour asked for, so build the legend from explicit patches
+    ax.legend(handles=[
+        Patch(facecolor="#6E6E6E", alpha=0.95, label="UN SDG database (administrative)"),
+        Patch(facecolor="#6E6E6E", alpha=0.40, label="European Social Survey (self-reported)")],
+        frameon=False, fontsize=8.5, loc="upper right", bbox_to_anchor=(1.0, 0.62))
     ax.set_yticks(y)
     ax.set_yticklabels([m[0] for m in METHOD], fontsize=9.5)
-    ax.set_xlim(0, 1.22)
+    ax.set_xlim(-0.30, 1.22)
+    ax.axvline(0, color=INK, linewidth=0.9)
     ax.set_xticks([0, 0.5, 1.0])
     ax.set_xticklabels(["0", "half the leader", "leading domain"], fontsize=8)
     ax.set_xlabel("Position relative to the leading domain within each source", fontsize=9)
     style_axes(ax)
     ax.grid(axis="y", visible=False)
     ax.grid(axis="x", color="#E6E6E6", linewidth=0.8)
-    ax.legend(frameon=False, fontsize=8.5, loc="upper right", bbox_to_anchor=(1.0, 0.62))
     ax.set_title("c  Only health leads in both an administrative and a self-report source",
                  fontsize=10.5, fontweight="bold", color=INK, loc="left", pad=34)
     ax.text(0, 1.012,
             "Labels give the raw values: % of SDG country × indicator pairs significant, "
             "and median within-country\nregional correlation in the ESS. Trust tops the "
-            "self-report source and sits near the bottom of the administrative one —\n"
-            "the SDG framework has no interpersonal-trust indicator at all.",
+            "self-report source and sits near the bottom of the administrative one. Education "
+            "is weak\nin both, and inside countries its correlations are not even consistently "
+            "signed — positive in 8 of 16.",
             transform=ax.transAxes, fontsize=8.3, color="#5A5A5A", va="bottom")
 
 
@@ -432,7 +439,7 @@ HORSE = {
         ("Self-rated health", 0.502, 7, 16, RED),
         ("Household income", 0.230, 2, 16, ORANGE),
         ("Development (SHDI)", 0.219, 3, 16, PURPLE),
-        ("Education (years)", 0.130, 2, 16, BLUE),
+        ("Education (years)", -0.078, 3, 16, BLUE),
     ],
 }
 PANELS = [
@@ -507,7 +514,7 @@ CORROB = [
     ("Health", 11.5, "SDG3, 4th of 17 goals; 16 of the top 25 series overall",
      0.513, RED, "corroborated"),
     ("Education", 3.3, "SDG4, 12th of 17; best series 100th of 609",
-     0.130, BLUE, "weak in both"),
+     -0.078, BLUE, "weak in both"),
     ("Social trust /\ninstitutions", 1.5, "SDG16, 15th of 17; no trust indicator exists",
      0.487, GREEN, "ESS only"),
 ]
