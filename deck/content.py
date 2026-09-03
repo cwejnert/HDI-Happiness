@@ -238,7 +238,7 @@ ACTS = [
             },
 
             {
-                "label": "Result 3 · Discussion · The coverage gap",
+                "label": "Result 3 · Social trust",
                 "heading": "Social trust leads the ESS, is nearly invisible to development frameworks",
                 "body": [
                     "Social trust — 'most people can be trusted' — is significant in 94% of ESS countries, "
@@ -259,6 +259,30 @@ ACTS = [
                 "caption": "Social trust: 94% of ESS countries significant (individual level), 1.5% of SDG16 "
                            "country-indicator pairs (institutional confidence, not interpersonal trust), "
                            "not measured in the HDI.",
+            },
+
+            {
+                "label": "Within-country evidence · Why ESS is different",
+                "heading": "Individual-level, self-reported data captures year-to-year change that administrative frameworks miss",
+                "body": [
+                    "Here is the critical observation that reshapes the question: unlike SDG (71% levels "
+                    "→ 5% differences) and HDI (42% → 2%), the ESS shows 69% levels → 64% differences. "
+                    "The association persists within countries over time. This is not because development "
+                    "frameworks are poorly designed; it is because they measure aggregate, administrative "
+                    "data at long intervals (annual at best for HDI and SDG). Individual survey responses "
+                    "capture year-to-year variation in how people experience their lives.",
+                    "This matters for social trust most of all. At the country level, SDG has almost no trust "
+                    "coverage; in the HDI, none. But at the individual level, within countries, ESS shows trust "
+                    "is significant in 94% of countries and drives year-to-year change in how satisfied people "
+                    "report being. The three domains emerge not because the frameworks reveal them, but because "
+                    "ESS measures them where people actually experience variation: in themselves, over time.",
+                    "The caveats are substantial: 36 European countries, self-reported measures, annual cycles. "
+                    "But the implication is clear. Development frameworks' blindness to social trust is not because "
+                    "trust does not matter for wellbeing; it is because development was never designed to measure "
+                    "individual experience at the temporal resolution where people change.",
+                ],
+                "figure": None,
+                "caption": None,
             },
 
             {
