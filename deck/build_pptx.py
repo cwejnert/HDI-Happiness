@@ -6,7 +6,7 @@ beat per slide, figures at full height beside the text.
 
     python build_pptx.py [out.pptx]
 
-Default output: deck/The_Education_Exception.pptx
+Default output: deck/Measured_Where_It_Varies.pptx
 """
 from __future__ import annotations
 
@@ -306,7 +306,7 @@ def slide_appendix(prs, fname, title, desc):
 
 
 def main():
-    out = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "The_Education_Exception.pptx"
+    out = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "Measured_Where_It_Varies.pptx"
     prs = Presentation()
     prs.slide_width, prs.slide_height = W, H
 

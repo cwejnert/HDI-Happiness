@@ -171,6 +171,22 @@ ACTS = [
         ),
         "beats": [
             {
+                "label": "Framework comparison",
+                "heading": "How the frameworks compare on detection, budget-match, and per-indicator basis",
+                "body": [
+                    "Before we ask what matters, we need to understand how these frameworks differ. "
+                    "The SDG database detects significance in more countries (71% raw) than the HDI (51% raw), "
+                    "but when both are given the same budget — five indicators across 42 countries — the HDI's edge "
+                    "becomes real but modest (30% vs 51% among those 42 countries). When normalized per indicator, "
+                    "the HDI dominates: most SDG series sit in the zero-significance tail, while HDI indicators cluster "
+                    "higher. This is context we need before asking which components matter most.",
+                ],
+                "figure": "framework_three_comparisons.png",
+                "caption": "How SDG and HDI frameworks compare on detection rate, budget-matched analysis, "
+                           "and per-indicator significance distribution.",
+            },
+
+            {
                 "label": "All three matter",
                 "heading": "Education, health, and social trust all significantly predict life satisfaction",
                 "body": [
@@ -244,9 +260,10 @@ ACTS = [
                 "heading": "Health indicators rank 4th among 17 SDG goals; the low percentage reflects weak overall SDG signal",
                 "body": [
                     "The SDG database is vast: 661 series across 42 countries testing 17 goals. The overall significance "
-                    "rate is low — only 3-4% of all country-indicator pairs are significant. Within that sparse landscape, "
-                    "health indicators rank fourth, with 16 of the top 25 most predictive SDG series falling under Goal 3. "
-                    "These are survival measures: infant mortality, under-five mortality, stunting, neonatal mortality, "
+                    "rate is low — only 3-4% of all country-indicator pairs are significant. At the goal level, health (Goal 3) "
+                    "reaches 11.5% of country-indicator pairs, ranking fourth of 17 goals. Within that sparse landscape, "
+                    "health indicators dominate the top-ranked individual series, with 16 of the top 25 most predictive SDG series "
+                    "falling under Goal 3. These are survival measures: infant mortality, under-five mortality, stunting, neonatal mortality, "
                     "sanitation, drinking water — all objective, externally measured.",
                     "The low 11.5% rate for health is not evidence that health doesn't matter. It is evidence that most of "
                     "the SDG database does not predict wellbeing. Within that context, health ranks high.",
@@ -322,6 +339,23 @@ ACTS = [
             "for tracking aggregate national progress cannot see individual experience responsive to change."
         ),
         "beats": [
+            {
+                "label": "Method matters · what survives",
+                "heading": "Health survives both measurement methods. Social trust does not.",
+                "body": [
+                    "A critical test: which domains actually predict wellbeing regardless of how you measure development? "
+                    "Health is significant in both administrative sources (SDG, 11.5% of country-indicator pairs) and "
+                    "self-reported sources (ESS, median R² = 0.091). This is robust. Education shows weak signal in both "
+                    "(SDG 3.3%, ESS R² = 0.0098), so the issue is not method-dependent but measurement-dependent. "
+                    "Social trust, however, only appears in self-reported data: 94% of ESS countries (median R² = 0.041) "
+                    "versus 1.5% of SDG16 country-pairs measuring institutional confidence instead. The three domains do not "
+                    "behave the same way across measurement methods.",
+                ],
+                "figure": "health_trust_corroboration.png",
+                "caption": "Health is robust across administrative and self-reported sources. Education is weak in both. "
+                           "Social trust appears only in self-reported individual-level data.",
+            },
+
             {
                 "label": "Within-country evidence",
                 "heading": "Individual-level, self-reported data captures year-to-year change that administrative frameworks miss",
